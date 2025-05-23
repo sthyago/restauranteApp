@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/listar-clientes"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Novo Cliente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Nome</ion-label>
+    <ion-input [(ngModel)]="cliente.nome" placeholder="Ex: João da Silva"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Telefone</ion-label>
+    <ion-input [(ngModel)]="cliente.telefone" name="telefone" required pattern="\\(\\d{2}\\) \\d{5}-\\d{4}"
+      inputmode="tel" placeholder="(99) 99999-9999"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Email</ion-label>
+    <ion-input [(ngModel)]="cliente.email" name="email" type="email" required pattern="[^ @]+@[^ @]+\\.[^ @]+"
+      placeholder="email@exemplo.com"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" class="ion-margin-top add-btn" (click)="salvarCliente()">
+    Salvar Cliente
+  </ion-button>
+</ion-content>

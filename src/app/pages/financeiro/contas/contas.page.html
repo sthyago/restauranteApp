@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/financeiro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Contas a Receber</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Filtrar por cliente</ion-label>
+    <ion-input [(ngModel)]="filtroCliente" (ionInput)="filtrar()"></ion-input>
+  </ion-item>
+
+  <ion-list>
+    <ion-item *ngFor="let conta of contasFiltradas">
+      <ion-label>
+        <h3>{{ conta.cliente_nome }}</h3>
+        <p>Valor: R$ {{ conta.total | number:'1.2-2' }}</p>
+        <p>Data: {{ conta.data | date:'shortDate' }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="success" (click)="marcarComoPago(conta.id)">
+        Marcar como pago
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

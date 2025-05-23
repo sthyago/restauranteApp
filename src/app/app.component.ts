@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SqliteService } from './services/sqlite.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,11 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private sqlite: SqliteService) {
+    this.initializeApp();
+  }
+
+  async initializeApp() {
+    await this.sqlite.initDb();
+  }
 }

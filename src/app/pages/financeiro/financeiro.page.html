@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Financeiro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-button expand="block" color="warning" routerLink="/tabs/contas">
+    Contas (Clientes Mensalistas)
+  </ion-button>
+
+  <ion-button expand="block" color="warning" routerLink="/tabs/abertura-caixa">
+    Abertura de Caixa
+  </ion-button>
+
+  <ion-button expand="block" color="warning" routerLink="/tabs/fechamento">
+    Fechamento do Dia
+  </ion-button>
+
+  <ion-button expand="block" color="warning" routerLink="/tabs/sangrias">
+    Sangrias
+  </ion-button>
+
+  <ion-button expand="block" color="warning" routerLink="/tabs/relatorio">
+    Relatório
+  </ion-button>
+
+  <ng-container *ngIf="caixa">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Abertura</ion-card-title>
+        <ion-card-subtitle>{{ caixa.data_abertura | date:'short' }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Valor inicial:</strong> R$ {{ caixa.valor_abertura | number:'1.2-2' }}</p>
+        <p><strong>Status:</strong>
+          <ion-badge [color]="caixa.data_fechamento ? 'medium' : 'success'">
+            {{ caixa.data_fechamento ? 'Fechado' : 'Aberto' }}
+          </ion-badge>
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Entradas por Tipo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>Dinheiro</ion-label>
+            <ion-note slot="end">R$ {{ caixa.total_dinheiro | number:'1.2-2' }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label>Pix</ion-label>
+            <ion-note slot="end">R$ {{ caixa.total_pix | number:'1.2-2' }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label>Débito</ion-label>
+            <ion-note slot="end">R$ {{ caixa.total_debito | number:'1.2-2' }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label>Crédito</ion-label>
+            <ion-note slot="end">R$ {{ caixa.total_credito | number:'1.2-2' }}</ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Sangrias</ion-card-title>
+      </ion-card-header>
+      <ion-card-content *ngIf="sangrias.length > 0; else semSangrias">
+        <ion-list>
+          <ion-item *ngFor="let s of sangrias">
+            <ion-label>
+              {{ s.data | date:'shortTime' }} - {{ s.motivo }}
+            </ion-label>
+            <ion-note slot="end">R$ {{ s.valor | number:'1.2-2' }}</ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+      <ng-template #semSangrias>
+        <p class="ion-padding">Nenhuma sangria realizada.</p>
+      </ng-template>
+    </ion-card>
+
+    <ion-card color="light">
+      <ion-card-header>
+        <ion-card-title>Saldo Atual</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h2 class="ion-text-end">R$ {{ saldo | number:'1.2-2' }}</h2>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ng-container *ngIf="!caixa">
+    <ion-text color="medium">
+      <p class="ion-padding">Nenhum caixa aberto hoje.</p>
+    </ion-text>
+  </ng-container>
+</ion-content>

@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Relatórios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label>De:</ion-label>
+    <ion-datetime [(ngModel)]="dataInicio" presentation="date"></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label>Até:</ion-label>
+    <ion-datetime [(ngModel)]="dataFim" presentation="date"></ion-datetime>
+  </ion-item>
+  <ion-button expand="block" (click)="gerarRelatorio()">Gerar Relatório</ion-button>
+
+  <ng-container *ngIf="relatorio">
+    <ion-card>
+      <ion-card-header><ion-card-title>Totais</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <p><strong>Geral:</strong> R$ {{ relatorio.totalGeral | number:'1.2-2' }}</p>
+        <p><strong>Dinheiro:</strong> R$ {{ relatorio.porForma.dinheiro }}</p>
+        <p><strong>Pix:</strong> R$ {{ relatorio.porForma.pix }}</p>
+        <p><strong>Débito:</strong> R$ {{ relatorio.porForma.debito }}</p>
+        <p><strong>Crédito:</strong> R$ {{ relatorio.porForma.credito }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header><ion-card-title>Por Tipo de Pedido</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <p><strong>Local:</strong> R$ {{ relatorio.porTipo.local }}</p>
+        <p><strong>Entrega:</strong> R$ {{ relatorio.porTipo.entrega }}</p>
+        <p><strong>Levar:</strong> R$ {{ relatorio.porTipo.levar }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="sangrias.length > 0">
+      <ion-card-header><ion-card-title>Sangrias</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ion-item *ngFor="let s of sangrias">
+          <ion-label>
+            {{ s.data | date:'shortDate' }} - {{ s.motivo }}
+          </ion-label>
+          <ion-note slot="end">R$ {{ s.valor | number:'1.2-2' }}</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+</ion-content>

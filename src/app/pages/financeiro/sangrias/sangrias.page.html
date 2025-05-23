@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/financeiro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sangrias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Valor da sangria</ion-label>
+    <ion-input [(ngModel)]="valor" type="number"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Motivo</ion-label>
+    <ion-textarea [(ngModel)]="motivo"></ion-textarea>
+  </ion-item>
+
+  <ion-button expand="block" color="warning" (click)="registrarSangria()">
+    Registrar Sangria
+  </ion-button>
+
+  <ion-list class="ion-margin-top">
+    <ion-list-header>
+      <ion-label>Sangrias do Dia</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let s of sangriasDoDia">
+      <ion-label>
+        <h3>R$ {{ s.valor | number: '1.2-2' }}</h3>
+        <p>{{ s.motivo }}</p>
+        <small>{{ s.data | date:'shortTime' }}</small>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Novo Pedido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <h2>Escolha um produto</h2>
+
+  <ion-item>
+    <ion-select placeholder="Selecione um item" interface="popover" (ionChange)="adicionarItem($event)">
+      <ion-select-option *ngFor="let item of insumos" [value]="item">
+        {{ item.nome }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <h3 class="ion-margin-top">Itens no pedido</h3>
+
+  <ion-list *ngIf="pedidoSelecionado.length > 0">
+    <ion-item *ngFor="let item of pedidoSelecionado">
+      <ion-thumbnail slot="start">
+        <img [src]="item.foto" />
+      </ion-thumbnail>
+
+      <ion-label>
+        <h4>{{ item.nome }}</h4>
+        <p>{{ item.descricao }}</p>
+        <p>
+          R$ {{ item.valor_unitario | number:'1.2-2' }} x {{ item.qtd }} =
+          <strong>R$ {{ item.qtd * item.valor_unitario | number:'1.2-2' }}</strong>
+        </p>
+      </ion-label>
+
+      <div class="qtd-controls">
+        <ion-button size="default" (click)="alterarQtd(item, -1)" color="danger">
+          <ion-icon name="remove-outline"></ion-icon>
+        </ion-button>
+        <span class="qtd">{{ item.qtd }}</span>
+        <ion-button size="default" (click)="alterarQtd(item, 1)" color="success">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="pedidoSelecionado.length > 0">
+    <ion-card-content>
+      <h2>Total do Pedido: R$ {{ calcularTotal() | number:'1.2-2' }}</h2>
+    </ion-card-content>
+  </ion-card>
+
+
+  <ion-segment [(ngModel)]="tipoPedido" color="danger">
+    <ion-segment-button value="local">
+      <ion-label>🍽️ Local</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="levar">
+      <ion-label>🛍️ Levar</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="entrega">
+      <ion-label>🚚 Entrega</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="confirmarPedido()">
+    Pagamento
+  </ion-button>
+
+</ion-content>

@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/novo-pedido"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Finalizar Pedido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h3>Resumo do Pedido</h3>
+
+  <ion-list *ngIf="itensDetalhados.length">
+    <ion-item *ngFor="let item of itensDetalhados">
+      <ion-label>
+        <h3>{{ item.nome }} x {{ item.qtd }}</h3>
+        <p>
+          R$ {{ item.valor_unitario | number:'1.2-2' }} →
+          <strong>R$ {{ item.valor_unitario * item.qtd | number:'1.2-2' }}</strong>
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-card>
+    <ion-card-content>
+      <h2>Total: R$ {{ pedido!.total | number:'1.2-2' }}</h2>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-item>
+    <ion-label>Forma de pagamento</ion-label>
+    <ion-select [(ngModel)]="formaPagamento">
+      <ion-select-option value="dinheiro">Dinheiro</ion-select-option>
+      <ion-select-option value="cartao">Cartão</ion-select-option>
+      <ion-select-option value="pix">Pix</ion-select-option>
+      <ion-select-option value="na_conta">Na conta do cliente</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="formaPagamento === 'na_conta'">
+    <ion-label position="stacked">Nome do cliente</ion-label>
+
+    <ion-select [(ngModel)]="clienteSelecionadoId" interface="popover" placeholder="Selecione um cliente">
+      <ion-select-option *ngFor="let c of clientes" [value]="c.id">{{ c.nome }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="confirmarFinalizacao()" [disabled]="!formaPagamento">
+    Confirmar Pedido
+  </ion-button>
+</ion-content>

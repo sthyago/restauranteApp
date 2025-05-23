@@ -1,0 +1,27 @@
+.header-row {
+    background: #f0f0f0;
+    font-weight: bold;
+    padding: 6px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+ion-row {
+    align-items: center;
+    padding: 4px 0;
+}
+
+ion-col {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alerta {
+    background-color: #ffe6e6;
+    color: #b30000;
+    font-weight: bold;
+}
+
+ion-button.add-btn {
+    --background: red;
+}

@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pedidos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-button expand="block" routerLink="/novo-pedido" class="add-btn">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Novo Pedido
+  </ion-button>
+
+  <ion-segment [(ngModel)]="statusFiltro" (ionChange)="onSegmentChange()" class="ion-margin-top" value="em_andamento"
+    color="danger">
+    <ion-segment-button value="em_andamento">
+      <ion-label>Em Andamento</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="na_conta">
+      <ion-label>Na Conta</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="finalizado">
+      <ion-label>Finalizados</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-list class="ion-margin-top">
+    <ion-item *ngFor="let pedido of pedidosFiltrados">
+      <ion-label>
+        <h3>{{ pedido.tipo | titlecase }} • {{ pedido.data | date:'short' }}</h3>
+        <p>Total: R$ {{ pedido.total | number:'1.2-2' }}</p>
+        <p *ngIf="pedido.status === 'na_conta'">Cliente: {{ pedido.cliente_nome }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

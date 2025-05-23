@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/finalizar-pedido"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Novo Cliente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+  <ion-item>
+    <ion-label position="floating">Produto</ion-label>
+    <ion-select [(ngModel)]="novoInsumo.produto_id">
+      <ion-select-option *ngFor="let p of produtos" [value]="p.id">
+        {{ p.nome }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Quantidade</ion-label>
+    <ion-input type="number" [(ngModel)]="novoInsumo.quantidade"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Valor Pago (total)</ion-label>
+    <ion-input type="number" [(ngModel)]="novoInsumo.valor_pago"></ion-input>
+  </ion-item>
+
+  <ion-button class="add-btn" expand="block" (click)="salvar()">Salvar</ion-button>
+
+</ion-content>

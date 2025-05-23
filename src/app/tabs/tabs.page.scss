@@ -1,1 +1,9 @@
+ion-tab-bar {
+    --background: #e32726; // vermelho principal da fachada
+    --color: #ffffff;
+    --color-selected: #fbd40a; // amarelo para item ativo
+}
 
+ion-tab-button {
+    font-weight: bold;
+}

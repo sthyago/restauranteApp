@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Clientes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/cadastrar-cliente">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list *ngIf="clientes.length > 0">
+    <ion-item *ngFor="let c of clientes">
+      <ion-label>
+        <h2>{{ c.nome }}</h2>
+        <p>{{ c.telefone }} • {{ c.email }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-text *ngIf="clientes.length === 0" color="medium">
+    Nenhum cliente cadastrado.
+  </ion-text>
+</ion-content>
