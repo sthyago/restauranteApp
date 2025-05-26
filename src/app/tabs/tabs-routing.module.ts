@@ -8,6 +8,18 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
+        path: 'cadastrar-produto',
+        loadChildren: () => import('../pages/produtos/cadastro-produto/cadastro-produto.module').then(m => m.CadastroProdutoPageModule)
+      },
+      {
+        path: 'cadastrar-estoque',
+        loadChildren: () => import('../pages/estoque/cadastrar-estoque/cadastrar-estoque.module').then(m => m.CadastrarEstoquePageModule)
+      },
+      {
+        path: 'cadastrar-cliente',
+        loadChildren: () => import('../pages/clientes/cadastrar-cliente/cadastrar-cliente.module').then(m => m.CadastrarClientePageModule)
+      },
+      {
         path: 'listar-clientes',
         loadChildren: () => import('../pages/clientes/listar-clientes/listar-clientes.module').then(m => m.ListarClientesPageModule)
       },

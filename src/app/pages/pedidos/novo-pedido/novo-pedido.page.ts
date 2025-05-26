@@ -10,23 +10,21 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 })
 export class NovoPedidoPage {
 
-  insumos: any[] = [];
+  novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
+  produtos: { id: number; nome: string }[] = [];
   pedidoSelecionado: any[] = [];
   tipoPedido: 'local' | 'levar' | 'entrega' = 'local';
   numeroDaMesa: any;
 
   constructor(private navCtrl: NavController, private sqlite: SqliteService) { }
 
-  async ngOnInit() {
-    const res = await this.sqlite.db?.query('SELECT id, nome, descricao, valor_venda FROM produtos');
-    this.insumos = (res?.values || []).map(p => ({
-      ...p,
-      valor_unitario: p.valor_venda
-    }));
+  ionViewWillEnter() {
+    this.carregarProdutos();
   }
 
-  get insumosOrdenados() {
-    return [...this.insumos].sort((a, b) => a.nome.localeCompare(b.nome));
+  async carregarProdutos() {
+    const res = await this.sqlite.db?.query('SELECT id, nome FROM produtos');
+    this.produtos = res?.values || [];
   }
 
   adicionarItem(ev: any) {

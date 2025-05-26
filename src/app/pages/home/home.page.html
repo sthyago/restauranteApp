@@ -6,14 +6,19 @@
 
 <ion-content [fullscreen]="true" class="home-content">
   <div class="menu-grid">
+    <ion-button expand="block" class="red-btn" routerLink="/tabs/pedidos">
+      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+      Pedidos
+    </ion-button>
+
     <ion-button expand="block" class="red-btn" routerLink="/tabs/estoque">
       <ion-icon name="cube-outline" slot="start"></ion-icon>
       Estoque
     </ion-button>
 
-    <ion-button expand="block" class="red-btn" routerLink="/tabs/pedidos">
-      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
-      Pedidos
+    <ion-button expand="block" class="red-btn" routerLink="/tabs/cadastrar-produto">
+      <ion-icon name="cube-outline" slot="start"></ion-icon>
+      Produtos
     </ion-button>
 
     <ion-button expand="block" class="red-btn" routerLink="/tabs/listar-clientes">

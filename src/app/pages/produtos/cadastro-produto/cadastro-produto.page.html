@@ -1,10 +1,14 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
     <ion-title>Cadastro de Produto</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content fullscreen="true" class="ion-padding">
+  <!-- Formulário -->
   <ion-item>
     <ion-label position="floating">Nome</ion-label>
     <ion-input [(ngModel)]="produto.nome"></ion-input>
@@ -20,5 +24,18 @@
     <ion-input type="number" [(ngModel)]="produto.valor_venda"></ion-input>
   </ion-item>
 
-  <ion-button expand="block" (click)="salvar()">Salvar</ion-button>
+  <ion-button expand="block" (click)="salvar()" class="add-btn">Salvar</ion-button>
+
+  <!-- Lista scrollável -->
+  <div *ngIf="produtos.length > 0" style="max-height: 300px; overflow-y: auto; margin-top: 16px;">
+    <ion-list>
+      <ion-item *ngFor="let produto of produtos">
+        {{ produto.nome }} - R$ {{ produto.valor_venda | number:'1.2-2' }}
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="produtos.length === 0" class="ion-text-center ion-margin-top">
+    Nenhum produto encontrado
+  </div>
 </ion-content>

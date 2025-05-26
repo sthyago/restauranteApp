@@ -1,10 +1,13 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/financeiro"></ion-back-button>
+    </ion-buttons>
     <ion-title>Relatórios</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content fullscreen="true" class="ion-padding">
   <ion-item>
     <ion-label>De:</ion-label>
     <ion-datetime [(ngModel)]="dataInicio" presentation="date"></ion-datetime>

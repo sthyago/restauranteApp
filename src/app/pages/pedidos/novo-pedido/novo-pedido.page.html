@@ -7,14 +7,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content fullscreen="true" class="ion-padding">
 
   <h2>Escolha um produto</h2>
 
   <ion-item>
-    <ion-select placeholder="Selecione um item" interface="popover" (ionChange)="adicionarItem($event)">
-      <ion-select-option *ngFor="let item of insumos" [value]="item">
-        {{ item.nome }}
+    <ion-select [(ngModel)]="novoInsumo.produto_id">
+      <ion-select-option *ngFor="let p of produtos" [value]="p.id">
+        {{ p.nome }}
       </ion-select-option>
     </ion-select>
   </ion-item>
