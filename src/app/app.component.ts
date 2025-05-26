@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SqliteService } from './services/sqlite.service';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -9,21 +10,38 @@ import { StatusBar, Style } from '@capacitor/status-bar';
   standalone: false,
 })
 export class AppComponent {
-  constructor(private sqlite: SqliteService) {
+  constructor(
+    private sqlite: SqliteService,
+    private platform: Platform
+  ) {
     this.initializeApp();
-    this.configureStatusBar();
   }
 
   async initializeApp() {
     await this.sqlite.initDb();
+
+    // Configura a status bar apenas em dispositivos móveis
+    if (this.platform.is('capacitor')) {
+      await this.configureStatusBar();
+    }
   }
 
   async configureStatusBar() {
     try {
-      await StatusBar.setStyle({ style: Style.Dark }); // ou Style.Light
-      await StatusBar.setBackgroundColor({ color: '#cc0000' }); // mesma cor do header
+      // Define o estilo da status bar
+      await StatusBar.setStyle({ style: Style.Light }); // Use Light se o header for escuro
+
+      // Define a cor de fundo da status bar (mesma cor do seu header)
+      await StatusBar.setBackgroundColor({ color: '#cc0000' });
+
+      // IMPORTANTE: Define que a status bar não deve sobrepor o conteúdo
+      await StatusBar.setOverlaysWebView({ overlay: false });
+
+      // Mostra a status bar caso esteja oculta
+      await StatusBar.show();
+
     } catch (error) {
-      console.warn('StatusBar not available on this platform.');
+      console.warn('StatusBar not available on this platform:', error);
     }
   }
 }

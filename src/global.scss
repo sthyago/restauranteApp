@@ -40,3 +40,11 @@ ion-header,
 ion-toolbar {
     padding-top: var(--ion-safe-area-top);
 }
+
+ion-content {
+    --padding-top: env(safe-area-inset-top);
+}
+
+.page-container {
+    padding-top: env(safe-area-inset-top);
+}
