@@ -23,7 +23,7 @@ export class NovoPedidoPage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT id, nome FROM produtos');
+    const res = await this.sqlite.db?.query('SELECT id, nome, foto_path FROM produtos');
     this.produtos = res?.values || [];
   }
 

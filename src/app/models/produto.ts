@@ -3,4 +3,5 @@ export interface Produto {
     nome: string;
     descricao?: string;
     valor_venda: number;
+    foto_path: string;
 }

@@ -14,7 +14,8 @@ export class CadastroProdutoPage {
   produto: Produto = {
     id: 0,
     nome: '',
-    valor_venda: 0
+    valor_venda: 0,
+    foto_path: ''
   };
   produtos: Produto[] = [];
 

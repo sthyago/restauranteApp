@@ -68,6 +68,10 @@ const routes: Routes = [
         loadChildren: () => import('../pages/financeiro/relatorios/relatorios.module').then(m => m.RelatoriosPageModule)
       },
       {
+        path: 'backup',
+        loadChildren: () => import('../pages/financeiro/backup/backup.module').then(m => m.BackupPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs/home',
         pathMatch: 'full'

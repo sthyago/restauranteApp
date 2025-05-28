@@ -27,6 +27,10 @@ const routes: Routes = [
   {
     path: 'relatorios',
     loadChildren: () => import('./relatorios/relatorios.module').then( m => m.RelatoriosPageModule)
+  },
+  {
+    path: 'backup',
+    loadChildren: () => import('./backup/backup.module').then( m => m.BackupPageModule)
   }
 
 ];
