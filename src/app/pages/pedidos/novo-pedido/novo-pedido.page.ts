@@ -24,12 +24,12 @@ export class NovoPedidoPage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT * FROM produtos');
+    const res = await this.sqlite.db?.query('SELECT * FROM produtos ORDER BY nome ASC');
     this.produtos = res?.values || [];
   }
 
-  adicionarItem(ev: any) {
-    const produtoId = ev.detail.value;
+  adicionarItem() {
+    const produtoId = this.itemPedidoId;
     if (!produtoId) return;
 
     const produtoSelecionado = this.produtos.find(p => p.id === produtoId);
@@ -40,18 +40,17 @@ export class NovoPedidoPage {
     if (index > -1) {
       this.pedidoSelecionado[index].qtd += 1;
     } else {
-      // Você precisará adicionar mais informações do produto aqui
       this.pedidoSelecionado.push({
         id: produtoSelecionado.id,
         nome: produtoSelecionado.nome,
-        valor_unitario: produtoSelecionado.valor_unitario || 0, // Adicione este campo aos produtos
+        valor_unitario: produtoSelecionado.valor_unitario || 0,
         foto_path: produtoSelecionado.foto_path,
         descricao: produtoSelecionado.descricao || '',
         qtd: 1
       });
     }
 
-    // Resetar a seleção para permitir nova seleção do mesmo produto
+    // Resetar a seleção
     this.itemPedidoId = 0;
   }
 

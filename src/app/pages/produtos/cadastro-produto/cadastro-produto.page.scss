@@ -1,3 +1,48 @@
 ion-button.add-btn {
     --background: red;
 }
+
+ion-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --inner-padding-end: 8px;
+    align-items: flex-start;
+
+    .produto-thumbnail {
+        min-width: 60px;
+        max-width: 60px;
+        margin-right: 12px;
+
+        img {
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    }
+
+    .produto-info {
+        flex: 1;
+        min-width: 0;
+        /* Crucial para text-overflow */
+        margin-right: 12px;
+
+        .produto-nome {
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .produto-valor-container {
+        min-width: 90px;
+        text-align: right;
+
+        .produto-valor {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--ion-color-primary);
+            margin: 0;
+        }
+    }
+}

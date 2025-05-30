@@ -23,6 +23,12 @@ export class CadastroProdutoPage {
 
   async ngOnInit() {
     this.produtos = await this.sqlite.listarProdutos();
+    this.produtos.push({
+      id: 1,
+      nome: 'Coxa e Sobrecoxa Assada',
+      valor_unitario: 12.50,
+      foto_path: 'assets/images/produtos/coxa-sobrecoxa-assada.jpg'
+    })
   }
 
   async salvar() {

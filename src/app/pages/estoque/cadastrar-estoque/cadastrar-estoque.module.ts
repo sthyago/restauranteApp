@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { CadastrarEstoquePageRoutingModule } from './cadastrar-estoque-routing.module';
 
 import { CadastrarEstoquePage } from './cadastrar-estoque.page';
+import { DirectivasModule } from 'src/app/directives/directivaes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CadastrarEstoquePageRoutingModule
+    CadastrarEstoquePageRoutingModule,
+    DirectivasModule
   ],
   declarations: [CadastrarEstoquePage]
 })
-export class CadastrarEstoquePageModule {}
+export class CadastrarEstoquePageModule { }

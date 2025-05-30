@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { NovoPedidoPageRoutingModule } from './novo-pedido-routing.module';
 
 import { NovoPedidoPage } from './novo-pedido.page';
+import { DirectivasModule } from 'src/app/directives/directivaes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    NovoPedidoPageRoutingModule
+    NovoPedidoPageRoutingModule,
+    DirectivasModule
   ],
   declarations: [NovoPedidoPage]
 })
-export class NovoPedidoPageModule {}
+export class NovoPedidoPageModule { }
