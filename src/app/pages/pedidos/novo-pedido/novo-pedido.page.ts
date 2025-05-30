@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -10,10 +11,10 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 })
 export class NovoPedidoPage {
 
-  novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
-  produtos: { id: number; nome: string }[] = [];
+  itemPedidoId = 0;
+  produtos: Produto[] = [];
   pedidoSelecionado: any[] = [];
-  tipoPedido: 'local' | 'levar' | 'entrega' = 'local';
+  tipoPedido: 'local' | 'entrega' = 'local';
   numeroDaMesa: any;
 
   constructor(private navCtrl: NavController, private sqlite: SqliteService) { }
@@ -23,22 +24,35 @@ export class NovoPedidoPage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT id, nome, foto_path FROM produtos');
+    const res = await this.sqlite.db?.query('SELECT * FROM produtos');
     this.produtos = res?.values || [];
   }
 
   adicionarItem(ev: any) {
-    const itemSelecionado = ev.detail.value;
-    const index = this.pedidoSelecionado.findIndex((i: any) => i.id === itemSelecionado.id);
+    const produtoId = ev.detail.value;
+    if (!produtoId) return;
+
+    const produtoSelecionado = this.produtos.find(p => p.id === produtoId);
+    if (!produtoSelecionado) return;
+
+    const index = this.pedidoSelecionado.findIndex((i: any) => i.id === produtoId);
 
     if (index > -1) {
       this.pedidoSelecionado[index].qtd += 1;
     } else {
+      // Você precisará adicionar mais informações do produto aqui
       this.pedidoSelecionado.push({
-        ...itemSelecionado,
+        id: produtoSelecionado.id,
+        nome: produtoSelecionado.nome,
+        valor_unitario: produtoSelecionado.valor_unitario || 0, // Adicione este campo aos produtos
+        foto_path: produtoSelecionado.foto_path,
+        descricao: produtoSelecionado.descricao || '',
         qtd: 1
       });
     }
+
+    // Resetar a seleção para permitir nova seleção do mesmo produto
+    this.itemPedidoId = 0;
   }
 
   alterarQtd(item: any, delta: number) {
@@ -64,8 +78,7 @@ export class NovoPedidoPage {
       total: this.calcularTotal(),
       tipo: this.tipoPedido,
       status: 'em_andamento',
-      data: new Date().toISOString(),
-      mesa_id: this.numeroDaMesa
+      data: new Date().toISOString()
     };
 
     this.navCtrl.navigateForward('/finalizar-pedido', {

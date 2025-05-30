@@ -21,7 +21,7 @@
 
   <ion-item>
     <ion-label position="floating">Valor de Venda</ion-label>
-    <ion-input type="number" [(ngModel)]="produto.valor_venda"></ion-input>
+    <ion-input type="number" [(ngModel)]="produto.valor_unitario"></ion-input>
   </ion-item>
 
   <ion-button expand="block" (click)="salvar()" class="add-btn">Salvar</ion-button>
@@ -30,7 +30,7 @@
   <div *ngIf="produtos.length > 0" style="max-height: 300px; overflow-y: auto; margin-top: 16px;">
     <ion-list>
       <ion-item *ngFor="let produto of produtos">
-        {{ produto.nome }} - R$ {{ produto.valor_venda | number:'1.2-2' }}
+        {{ produto.nome }} - R$ {{ produto.valor_unitario | number:'1.2-2' }}
       </ion-item>
     </ion-list>
   </div>

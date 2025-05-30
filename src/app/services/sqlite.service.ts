@@ -81,7 +81,7 @@ export class SqliteService {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 descricao TEXT,
-                valor_venda REAL NOT NULL,
+                valor_unitario REAL NOT NULL,
                 foto_path TEXT
             );
         `;
@@ -101,82 +101,82 @@ export class SqliteService {
             )
         `;
         const produtosPadrao = [
-            { nome: 'Gatorade (sabores)', descricao: 'Bebida isotonica saborizada', valor_venda: 8.00, foto_path: 'assets/images/produtos/gatorade-sabores.jpg' },
-            { nome: 'H2O limão', descricao: 'Bebida sabor limão', valor_venda: 7.00, foto_path: 'assets/images/produtos/h2o-limao.jpg' },
-            { nome: 'Red Bull Lt', descricao: 'Energetico em lata', valor_venda: 10.00, foto_path: 'assets/images/produtos/red-bull-lt.jpg' },
+            { nome: 'Gatorade (sabores)', descricao: 'Bebida isotonica saborizada', valor_unitario: 8.00, foto_path: 'assets/images/produtos/gatorade-sabores.jpg' },
+            { nome: 'H2O limão', descricao: 'Bebida sabor limão', valor_unitario: 7.00, foto_path: 'assets/images/produtos/h2o-limao.jpg' },
+            { nome: 'Red Bull Lt', descricao: 'Energetico em lata', valor_unitario: 10.00, foto_path: 'assets/images/produtos/red-bull-lt.jpg' },
 
-            { nome: 'Agua Tônica Lt 350ml', descricao: 'Agua Tônica em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/agua-tonica-lt-350ml.jpg' },
-            { nome: 'Agua Mineral 500ml', descricao: 'Agua mineral 500ml', valor_venda: 3.00, foto_path: 'assets/images/produtos/agua-mineral-500ml.jpg' },
-            { nome: 'Agua Mineral com gás 500ml', descricao: 'Agua mineral 500ml', valor_venda: 4.00, foto_path: 'assets/images/produtos/agua-mineral-com-gas-500ml.jpg' },
+            { nome: 'Agua Tônica Lt 350ml', descricao: 'Agua Tônica em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/agua-tonica-lt-350ml.jpg' },
+            { nome: 'Agua Mineral 500ml', descricao: 'Agua mineral 500ml', valor_unitario: 3.00, foto_path: 'assets/images/produtos/agua-mineral-500ml.jpg' },
+            { nome: 'Agua Mineral com gás 500ml', descricao: 'Agua mineral 500ml', valor_unitario: 4.00, foto_path: 'assets/images/produtos/agua-mineral-com-gas-500ml.jpg' },
 
-            { nome: 'Pepsi 2L', descricao: 'Refrigerante de sabor cola 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/pepsi-2l.jpg' },
-            { nome: 'Sukita laranja 2L', descricao: 'Refrigerante de sabor laranja 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/sukita-laranja-2l.jpg' },
+            { nome: 'Pepsi 2L', descricao: 'Refrigerante de sabor cola 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/pepsi-2l.jpg' },
+            { nome: 'Sukita laranja 2L', descricao: 'Refrigerante de sabor laranja 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/sukita-laranja-2l.jpg' },
 
-            { nome: 'Coca-Cola Lt 350ml', descricao: 'Refrigerante de sabor cola em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/coca-cola-lt-350ml.jpg' },
-            { nome: 'Coca-Cola 600ml', descricao: 'Refrigerante de sabor cola PET 600ml', valor_venda: 7.00, foto_path: 'assets/images/produtos/coca-cola-600ml.jpg' },
-            { nome: 'Coca-Cola 1L', descricao: 'Refrigerante de sabor cola em lata 350ml', valor_venda: 9.00, foto_path: 'assets/images/produtos/coca-cola-1l.jpg' },
-            { nome: 'Coca-Cola 2L', descricao: 'Refrigerante de sabor cola PET 2L', valor_venda: 12.00, foto_path: 'assets/images/produtos/coca-cola-2l.jpg' },
+            { nome: 'Coca-Cola Lt 350ml', descricao: 'Refrigerante de sabor cola em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/coca-cola-lt-350ml.jpg' },
+            { nome: 'Coca-Cola 600ml', descricao: 'Refrigerante de sabor cola PET 600ml', valor_unitario: 7.00, foto_path: 'assets/images/produtos/coca-cola-600ml.jpg' },
+            { nome: 'Coca-Cola 1L', descricao: 'Refrigerante de sabor cola em lata 350ml', valor_unitario: 9.00, foto_path: 'assets/images/produtos/coca-cola-1l.jpg' },
+            { nome: 'Coca-Cola 2L', descricao: 'Refrigerante de sabor cola PET 2L', valor_unitario: 12.00, foto_path: 'assets/images/produtos/coca-cola-2l.jpg' },
 
-            { nome: 'Guaraná Antártica Lt 350ml', descricao: 'Refrigerante de guaraná em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/guarana-antartica-lt-350ml.jpg' },
-            { nome: 'Guaraná Antártica zero Lt 350ml', descricao: 'Refrigerante de guaraná zero açucar em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/guarana-antartica-zero-lt-350ml.jpg' },
-            { nome: 'Guaraná Antártica 2L', descricao: 'Refrigerante de guaraná 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/guarana-antartica-2l.jpg' },
-            { nome: 'Guaraná Antártica  Zero 2L', descricao: 'Refrigerante de guaraná zero acucar 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/guarana-antartica-zero-2l.jpg' },
+            { nome: 'Guaraná Antártica Lt 350ml', descricao: 'Refrigerante de guaraná em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/guarana-antartica-lt-350ml.jpg' },
+            { nome: 'Guaraná Antártica zero Lt 350ml', descricao: 'Refrigerante de guaraná zero açucar em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/guarana-antartica-zero-lt-350ml.jpg' },
+            { nome: 'Guaraná Antártica 2L', descricao: 'Refrigerante de guaraná 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/guarana-antartica-2l.jpg' },
+            { nome: 'Guaraná Antártica  Zero 2L', descricao: 'Refrigerante de guaraná zero acucar 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/guarana-antartica-zero-2l.jpg' },
 
-            { nome: 'Mineiro Lt 350ml', descricao: 'Refrigerante de guaraná em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/mineiro-lt-350ml.jpg' },
-            { nome: 'Mineiro 600ml', descricao: 'Refrigerante de guaraná retornável', valor_venda: 7.00, foto_path: 'assets/images/produtos/mineiro-600ml.jpg' },
-            { nome: 'Mineiro 2L', descricao: 'Refrigerante de guaraná PET 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/mineiro-2l.jpg' },
+            { nome: 'Mineiro Lt 350ml', descricao: 'Refrigerante de guaraná em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/mineiro-lt-350ml.jpg' },
+            { nome: 'Mineiro 600ml', descricao: 'Refrigerante de guaraná retornável', valor_unitario: 7.00, foto_path: 'assets/images/produtos/mineiro-600ml.jpg' },
+            { nome: 'Mineiro 2L', descricao: 'Refrigerante de guaraná PET 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/mineiro-2l.jpg' },
 
-            { nome: 'Soda limonada 2L', descricao: 'Refrigerante de limão PET 2L', valor_venda: 10.00, foto_path: 'assets/images/produtos/soda-limonada-2l.jpg' },
+            { nome: 'Soda limonada 2L', descricao: 'Refrigerante de limão PET 2L', valor_unitario: 10.00, foto_path: 'assets/images/produtos/soda-limonada-2l.jpg' },
 
-            { nome: 'Budweiser Ln 330ml', descricao: 'Cerveja Budweiser long neck 330ml', valor_venda: 7.00, foto_path: 'assets/images/produtos/budweiser-ln-330ml.jpg' },
-            { nome: 'Budweiser 600ml', descricao: 'Cerveja Budweiser 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/budweiser-600ml.jpg' },
-            { nome: 'Budweiser 990ml', descricao: 'Cerveja Budweiser 990ml', valor_venda: 14.00, foto_path: 'assets/images/produtos/budweiser-990ml.jpg' },
+            { nome: 'Budweiser Ln 330ml', descricao: 'Cerveja Budweiser long neck 330ml', valor_unitario: 7.00, foto_path: 'assets/images/produtos/budweiser-ln-330ml.jpg' },
+            { nome: 'Budweiser 600ml', descricao: 'Cerveja Budweiser 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/budweiser-600ml.jpg' },
+            { nome: 'Budweiser 990ml', descricao: 'Cerveja Budweiser 990ml', valor_unitario: 14.00, foto_path: 'assets/images/produtos/budweiser-990ml.jpg' },
 
-            { nome: 'Stella Artois Ln 330ml', descricao: 'Cerveja Stella Artois long neck 330ml', valor_venda: 8.00, foto_path: 'assets/images/produtos/stella-artois-ln-330ml.jpg' },
-            { nome: 'Stella Artois 600ml', descricao: 'Cerveja Stella Artois 600ml', valor_venda: 18.00, foto_path: 'assets/images/produtos/stella-artois-600ml.jpg' },
+            { nome: 'Stella Artois Ln 330ml', descricao: 'Cerveja Stella Artois long neck 330ml', valor_unitario: 8.00, foto_path: 'assets/images/produtos/stella-artois-ln-330ml.jpg' },
+            { nome: 'Stella Artois 600ml', descricao: 'Cerveja Stella Artois 600ml', valor_unitario: 18.00, foto_path: 'assets/images/produtos/stella-artois-600ml.jpg' },
 
-            { nome: 'Original litrinho', descricao: 'Cerveja Antártica original em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/original-litrinho.jpg' },
-            { nome: 'Original 600ml', descricao: 'Cerveja Antártica original 600ml', valor_venda: 16.00, foto_path: 'assets/images/produtos/original-600ml.jpg' },
+            { nome: 'Original litrinho', descricao: 'Cerveja Antártica original em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/original-litrinho.jpg' },
+            { nome: 'Original 600ml', descricao: 'Cerveja Antártica original 600ml', valor_unitario: 16.00, foto_path: 'assets/images/produtos/original-600ml.jpg' },
 
-            { nome: 'Skol Lt 350ml', descricao: 'Cerveja Skol em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/skol-lt-350ml.jpg' },
-            { nome: 'Skol 600ml', descricao: 'Cerveja Skol retornável 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/skol-600ml.jpg' },
-            { nome: 'Skol 1L', descricao: 'Cerveja Skol retornável 1L', valor_venda: 14.00, foto_path: 'assets/images/produtos/skol-1l.jpg' },
+            { nome: 'Skol Lt 350ml', descricao: 'Cerveja Skol em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/skol-lt-350ml.jpg' },
+            { nome: 'Skol 600ml', descricao: 'Cerveja Skol retornável 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/skol-600ml.jpg' },
+            { nome: 'Skol 1L', descricao: 'Cerveja Skol retornável 1L', valor_unitario: 14.00, foto_path: 'assets/images/produtos/skol-1l.jpg' },
 
-            { nome: 'Skol Puro Malte Lt 350ml', descricao: 'Cerveja Skol puro malte em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/skol-puro-malte-lt-350ml.jpg' },
-            { nome: 'Skol Puro Malte 600ml', descricao: 'Cerveja Skol Puro Malte retornável 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/skol-puro-malte-600ml.jpg' },
-            { nome: 'Skol Puro Malte 1L', descricao: 'Cerveja Skol Puro Malte retornável 1L', valor_venda: 14.00, foto_path: 'assets/images/produtos/skol-puro-malte-1l.jpg' },
+            { nome: 'Skol Puro Malte Lt 350ml', descricao: 'Cerveja Skol puro malte em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/skol-puro-malte-lt-350ml.jpg' },
+            { nome: 'Skol Puro Malte 600ml', descricao: 'Cerveja Skol Puro Malte retornável 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/skol-puro-malte-600ml.jpg' },
+            { nome: 'Skol Puro Malte 1L', descricao: 'Cerveja Skol Puro Malte retornável 1L', valor_unitario: 14.00, foto_path: 'assets/images/produtos/skol-puro-malte-1l.jpg' },
 
-            { nome: 'Antártica Lt 350ml', descricao: 'Cerveja Antártica em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/antartica-lt-350ml.jpg' },
-            { nome: 'Antártica 600ml', descricao: 'Cerveja Antártica retornável 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/antartica-600ml.jpg' },
+            { nome: 'Antártica Lt 350ml', descricao: 'Cerveja Antártica em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/antartica-lt-350ml.jpg' },
+            { nome: 'Antártica 600ml', descricao: 'Cerveja Antártica retornável 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/antartica-600ml.jpg' },
 
-            { nome: 'Brahma Lt 350ml', descricao: 'Cerveja Brahma em lata 350ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/brahma-lt-350ml.jpg' },
-            { nome: 'Brahma 600ml', descricao: 'Cerveja Brahma retornável 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/brahma-600ml.jpg' },
-            { nome: 'Brahma 1L', descricao: 'Cerveja Brahma retornável 1L', valor_venda: 14.00, foto_path: 'assets/images/produtos/brahma-1l.jpg' },
+            { nome: 'Brahma Lt 350ml', descricao: 'Cerveja Brahma em lata 350ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/brahma-lt-350ml.jpg' },
+            { nome: 'Brahma 600ml', descricao: 'Cerveja Brahma retornável 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/brahma-600ml.jpg' },
+            { nome: 'Brahma 1L', descricao: 'Cerveja Brahma retornável 1L', valor_unitario: 14.00, foto_path: 'assets/images/produtos/brahma-1l.jpg' },
 
-            { nome: 'Brahma duplo malte 600ml', descricao: 'Cerveja Brahma duplo malte retornável 600ml', valor_venda: 13.00, foto_path: 'assets/images/produtos/brahma-duplo-malte-600ml.jpg' },
-            { nome: 'Brahma duplo malte 1L', descricao: 'Cerveja Brahma duplo malte retornável 1L', valor_venda: 14.00, foto_path: 'assets/images/produtos/brahma-duplo-malte-1l.jpg' },
+            { nome: 'Brahma duplo malte 600ml', descricao: 'Cerveja Brahma duplo malte retornável 600ml', valor_unitario: 13.00, foto_path: 'assets/images/produtos/brahma-duplo-malte-600ml.jpg' },
+            { nome: 'Brahma duplo malte 1L', descricao: 'Cerveja Brahma duplo malte retornável 1L', valor_unitario: 14.00, foto_path: 'assets/images/produtos/brahma-duplo-malte-1l.jpg' },
 
-            { nome: 'Bohemia litrinho', descricao: 'Cerveja Bohemia litrinho', valor_venda: 5.00, foto_path: 'assets/images/produtos/bohemia-litrinho.jpg' },
-            { nome: 'Bohemia 600ml', descricao: 'Cerveja Bohemia retornável 600ml', valor_venda: 12.00, foto_path: 'assets/images/produtos/bohemia-600ml.jpg' },
-            { nome: 'Bohemia 990ml', descricao: 'Cerveja Bohemia retornável 990ml', valor_venda: 14.00, foto_path: 'assets/images/produtos/bohemia-990ml.jpg' },
+            { nome: 'Bohemia litrinho', descricao: 'Cerveja Bohemia litrinho', valor_unitario: 5.00, foto_path: 'assets/images/produtos/bohemia-litrinho.jpg' },
+            { nome: 'Bohemia 600ml', descricao: 'Cerveja Bohemia retornável 600ml', valor_unitario: 12.00, foto_path: 'assets/images/produtos/bohemia-600ml.jpg' },
+            { nome: 'Bohemia 990ml', descricao: 'Cerveja Bohemia retornável 990ml', valor_unitario: 14.00, foto_path: 'assets/images/produtos/bohemia-990ml.jpg' },
 
-            { nome: 'Spaten 600ml', descricao: 'Cerveja Spaten retornável 600ml', valor_venda: 17.00, foto_path: 'assets/images/produtos/spaten-600ml.jpg' },
-            { nome: 'Amstel 269ml', descricao: 'Cerveja Amstel lata 269ml', valor_venda: 5.00, foto_path: 'assets/images/produtos/amstel-269ml.jpg' },
+            { nome: 'Spaten 600ml', descricao: 'Cerveja Spaten retornável 600ml', valor_unitario: 17.00, foto_path: 'assets/images/produtos/spaten-600ml.jpg' },
+            { nome: 'Amstel 269ml', descricao: 'Cerveja Amstel lata 269ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/amstel-269ml.jpg' },
 
-            { nome: 'Cigarro picado de 1', descricao: 'Cigarro picado varias marcas', valor_venda: 1.00, foto_path: 'assets/images/produtos/cigarro-picado-de-1.jpg' },
-            { nome: 'Cigarro picado de 2', descricao: 'Cigarro picado varias marcas', valor_venda: 2.00, foto_path: 'assets/images/produtos/cigarro-picado-de-2.jpg' },
-            { nome: 'Doce variado', descricao: 'Doces de varios sabores', valor_venda: 1.00, foto_path: 'assets/images/produtos/doce-variado.jpg' },
+            { nome: 'Cigarro picado de 1', descricao: 'Cigarro picado varias marcas', valor_unitario: 1.00, foto_path: 'assets/images/produtos/cigarro-picado-de-1.jpg' },
+            { nome: 'Cigarro picado de 2', descricao: 'Cigarro picado varias marcas', valor_unitario: 2.00, foto_path: 'assets/images/produtos/cigarro-picado-de-2.jpg' },
+            { nome: 'Doce variado', descricao: 'Doces de varios sabores', valor_unitario: 1.00, foto_path: 'assets/images/produtos/doce-variado.jpg' },
 
-            { nome: 'Marmitex Padrão', descricao: 'Self service no local + proteina', valor_venda: 25.00, foto_path: 'assets/images/produtos/marmitex-padrao.jpg' },
+            { nome: 'Marmitex Padrão', descricao: 'Self service no local + proteina', valor_unitario: 25.00, foto_path: 'assets/images/produtos/marmitex-padrao.jpg' },
 
-            { nome: 'Contra filé', descricao: 'Espetinho de contra filé bovino', valor_venda: 10.00, foto_path: 'assets/images/produtos/contra-file.jpg' },
-            { nome: 'Cupim', descricao: 'Espetinho de cupim bovino', valor_venda: 10.00, foto_path: 'assets/images/produtos/cupim.jpg' },
-            { nome: 'Picanha montada', descricao: 'Espetinho de carne bovina montada', valor_venda: 10.00, foto_path: 'assets/images/produtos/picanha-montada.jpg' },
-            { nome: 'Frango com bacon', descricao: 'Espetinho de file de frango com bacon', valor_venda: 10.00, foto_path: 'assets/images/produtos/frango-com-bacon.jpg' },
+            { nome: 'Contra filé', descricao: 'Espetinho de contra filé bovino', valor_unitario: 10.00, foto_path: 'assets/images/produtos/contra-file.jpg' },
+            { nome: 'Cupim', descricao: 'Espetinho de cupim bovino', valor_unitario: 10.00, foto_path: 'assets/images/produtos/cupim.jpg' },
+            { nome: 'Picanha montada', descricao: 'Espetinho de carne bovina montada', valor_unitario: 10.00, foto_path: 'assets/images/produtos/picanha-montada.jpg' },
+            { nome: 'Frango com bacon', descricao: 'Espetinho de file de frango com bacon', valor_unitario: 10.00, foto_path: 'assets/images/produtos/frango-com-bacon.jpg' },
 
-            { nome: 'Frango Assado', descricao: 'Frango assado inteiro com batatas', valor_venda: 50.00, foto_path: 'assets/images/produtos/frango-assado.jpg' },
-            { nome: 'Pernil Assado', descricao: 'Pedaço de pernil assado', valor_venda: 28.00, foto_path: 'assets/images/produtos/pernil-assado.jpg' },
-            { nome: 'Coxa e Sobrecoxa Assada', descricao: 'Coxa e sobrecoxa assada com batatas', valor_venda: 25.00, foto_path: 'assets/images/produtos/coxa-e-sobrecoxa-assada.jpg' }
+            { nome: 'Frango Assado', descricao: 'Frango assado inteiro com batatas', valor_unitario: 50.00, foto_path: 'assets/images/produtos/frango-assado.jpg' },
+            { nome: 'Pernil Assado', descricao: 'Pedaço de pernil assado', valor_unitario: 28.00, foto_path: 'assets/images/produtos/pernil-assado.jpg' },
+            { nome: 'Coxa e Sobrecoxa Assada', descricao: 'Coxa e sobrecoxa assada com batatas', valor_unitario: 25.00, foto_path: 'assets/images/produtos/coxa-e-sobrecoxa-assada.jpg' }
         ];
 
         const sqlSangria = `
@@ -200,12 +200,12 @@ export class SqliteService {
         await this.addProdutosPadrao(produtosPadrao);
     }
 
-    private async addProdutosPadrao(produtosPadrao: { nome: string; descricao: string; valor_venda: number, foto_path: string }[]) {
+    private async addProdutosPadrao(produtosPadrao: { nome: string; descricao: string; valor_unitario: number, foto_path: string }[]) {
         if (!this.db) return;
 
         for (const p of produtosPadrao) {
-            const sql = `INSERT INTO produtos (nome, descricao, valor_venda, foto_path) VALUES (?, ?, ?, ?)`;
-            await this.db.run(sql, [p.nome, p.descricao, p.valor_venda, p.foto_path]);
+            const sql = `INSERT INTO produtos (nome, descricao, valor_unitario, foto_path) VALUES (?, ?, ?, ?)`;
+            await this.db.run(sql, [p.nome, p.descricao, p.valor_unitario, p.foto_path]);
         }
     }
 

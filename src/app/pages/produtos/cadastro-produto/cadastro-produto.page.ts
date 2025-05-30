@@ -14,7 +14,7 @@ export class CadastroProdutoPage {
   produto: Produto = {
     id: 0,
     nome: '',
-    valor_venda: 0,
+    valor_unitario: 0,
     foto_path: ''
   };
   produtos: Produto[] = [];
@@ -26,13 +26,13 @@ export class CadastroProdutoPage {
   }
 
   async salvar() {
-    if (!this.produto!.nome || !this.produto!.valor_venda) {
+    if (!this.produto!.nome || !this.produto!.valor_unitario) {
       alert('Preencha todos os campos obrigatórios.');
       return;
     }
 
-    const insert = `INSERT INTO produtos (nome, descricao, valor_venda) VALUES (?, ?, ?)`;
-    const values = [this.produto!.nome, this.produto!.descricao, this.produto!.valor_venda];
+    const insert = `INSERT INTO produtos (nome, descricao, valor_unitario) VALUES (?, ?, ?)`;
+    const values = [this.produto!.nome, this.produto!.descricao, this.produto!.valor_unitario];
     await this.sqlite.db?.run(insert, values);
     this.navCtrl.back();
   }

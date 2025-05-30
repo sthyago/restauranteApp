@@ -12,8 +12,8 @@
   <h2>Escolha um produto</h2>
 
   <ion-item>
-    <ion-select [(ngModel)]="novoInsumo.produto_id">
-      <ion-select-option *ngFor="let p of produtos" [value]="p.id">
+    <ion-select [(ngModel)]="itemPedidoId">
+      <ion-select-option *ngFor="let p of produtos" [value]="p.id" (click)="adicionarItem($event)">
         {{ p.nome }}
       </ion-select-option>
     </ion-select>
@@ -58,9 +58,6 @@
   <ion-segment [(ngModel)]="tipoPedido" color="danger">
     <ion-segment-button value="local">
       <ion-label>🍽️ Local</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="levar">
-      <ion-label>🛍️ Levar</ion-label>
     </ion-segment-button>
     <ion-segment-button value="entrega">
       <ion-label>🚚 Entrega</ion-label>

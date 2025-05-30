@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { AlertController, ToastController } from '@ionic/angular';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: false,
 })
+
 export class HomePage {
 
   mesas: any[] = [];
@@ -21,44 +21,7 @@ export class HomePage {
     private router: Router) { }
 
   async ionViewWillEnter() {
-    this.carregarMesas();
     await this.verificarOuAbrirCaixa();
-  }
-
-  async carregarMesas() {
-    const result = await this.sqliteService.carregarMesasQuery();
-    this.mesas = result || [];
-  }
-
-  async aoClicarNaMesa(mesa: any) {
-    if (!mesa.confirmado) {
-      const alert = await this.alertController.create({
-        header: `Mesa ${mesa.mesa_id}`,
-        message: 'Deseja adicionar bebidas ou outros itens ao pedido?',
-        buttons: [
-          {
-            text: 'Sim, adicionar',
-            handler: () => {
-              this.router.navigate(['/novo-pedido'], {
-                state: { pedidoId: mesa.id }
-              });
-            }
-          },
-          {
-            text: 'Não, está tudo certo',
-            handler: () => {
-              mesa.confirmado = true;
-            }
-          }
-        ]
-      });
-
-      await alert.present();
-    } else {
-      this.router.navigate(['/finalizar-pedido'], {
-        state: { pedidoId: mesa.id }
-      });
-    }
   }
 
   async verificarOuAbrirCaixa() {

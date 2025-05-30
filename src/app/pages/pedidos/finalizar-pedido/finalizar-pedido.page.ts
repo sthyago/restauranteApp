@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cliente } from 'src/app/models/cliente';
-import { Pedido } from 'src/app/models/pedido';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -44,7 +43,7 @@ export class FinalizarPedidoPage {
 
   async confirmarFinalizacao() {
     if (!this.formaPagamento) {
-      alert('Selecione a forma de pagamento ou "Na conta".');
+      alert('Selecione a forma de pagamento.');
       return;
     }
 
