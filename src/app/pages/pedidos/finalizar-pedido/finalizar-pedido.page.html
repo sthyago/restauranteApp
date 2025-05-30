@@ -15,8 +15,8 @@
       <ion-label>
         <h3>{{ item.nome }} x {{ item.qtd }}</h3>
         <p>
-          R$ {{ item.valor_unitario | number:'1.2-2' }} →
-          <strong>R$ {{ item.valor_unitario * item.qtd | number:'1.2-2' }}</strong>
+          R$ <span appMoedaMask="display">{{ item.valor_unitario }}</span> →
+          <strong appMoedaMask="display">{{ item.valor_unitario * item.qtd }}</strong>
         </p>
       </ion-label>
     </ion-item>
@@ -24,7 +24,7 @@
 
   <ion-card>
     <ion-card-content>
-      <h2>Total: R$ {{ pedido!.total | number:'1.2-2' }}</h2>
+      <h2>Total: <span appMoedaMask="display"> {{ pedido!.total }}</span></h2>
     </ion-card-content>
   </ion-card>
 

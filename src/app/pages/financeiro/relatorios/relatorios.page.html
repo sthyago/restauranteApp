@@ -22,20 +22,19 @@
     <ion-card>
       <ion-card-header><ion-card-title>Totais</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Geral:</strong> R$ {{ relatorio.totalGeral | number:'1.2-2' }}</p>
-        <p><strong>Dinheiro:</strong> R$ {{ relatorio.porForma.dinheiro }}</p>
-        <p><strong>Pix:</strong> R$ {{ relatorio.porForma.pix }}</p>
-        <p><strong>Débito:</strong> R$ {{ relatorio.porForma.debito }}</p>
-        <p><strong>Crédito:</strong> R$ {{ relatorio.porForma.credito }}</p>
+        <p><strong>Geral:</strong> <span appMoedaMask="display">{{ relatorio.totalGeral }}</span></p>
+        <p><strong>Dinheiro:</strong> <span appMoedaMask="display">{{ relatorio.porForma.dinheiro }}</span></p>
+        <p><strong>Pix:</strong> <span appMoedaMask="display">{{ relatorio.porForma.pix }}</span></p>
+        <p><strong>Débito:</strong> <span appMoedaMask="display">{{ relatorio.porForma.debito }}</span></p>
+        <p><strong>Crédito:</strong> <span appMoedaMask="display">{{ relatorio.porForma.credito }}</span></p>
       </ion-card-content>
     </ion-card>
 
     <ion-card>
       <ion-card-header><ion-card-title>Por Tipo de Pedido</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Local:</strong> R$ {{ relatorio.porTipo.local }}</p>
-        <p><strong>Entrega:</strong> R$ {{ relatorio.porTipo.entrega }}</p>
-        <p><strong>Levar:</strong> R$ {{ relatorio.porTipo.levar }}</p>
+        <p><strong>Local:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.local }}</span> </p>
+        <p><strong>Entrega:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.entrega }}</span></p>
       </ion-card-content>
     </ion-card>
 
@@ -46,7 +45,7 @@
           <ion-label>
             {{ s.data | date:'shortDate' }} - {{ s.motivo }}
           </ion-label>
-          <ion-note slot="end">R$ {{ s.valor | number:'1.2-2' }}</ion-note>
+          <ion-note appMoedaMask="display" slot="end">{{ s.valor }}</ion-note>
         </ion-item>
       </ion-card-content>
     </ion-card>

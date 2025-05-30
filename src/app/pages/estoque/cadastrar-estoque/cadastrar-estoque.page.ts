@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 export class CadastrarEstoquePage {
 
   novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
-  produtos: { id: number; nome: string }[] = [];
+  produtos: Produto[] = [];
 
   constructor(private sqlite: SqliteService) { }
 
@@ -28,7 +29,7 @@ export class CadastrarEstoquePage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT id, nome FROM produtos');
+    const res = await this.sqlite.db?.query('SELECT * FROM produtos');
     this.produtos = res?.values || [];
   }
 }

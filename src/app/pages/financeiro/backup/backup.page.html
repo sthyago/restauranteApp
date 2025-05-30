@@ -1,23 +1,34 @@
-<ion-item>
-  <ion-label position="stacked">Data de Início</ion-label>
-  <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataInicio"></ion-datetime>
-</ion-item>
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/financeiro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Backup</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-<ion-item>
-  <ion-label position="stacked">Data de Fim</ion-label>
-  <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataFim"></ion-datetime>
-</ion-item>
+<ion-content fullscreen="true" class="ion-padding">
+  <ion-item>
+    <h1 position="stacked">Data de Início</h1>
+    <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataInicio"></ion-datetime>
+  </ion-item>
 
-<ion-button expand="block" (click)="gerarBackup()">
-  Gerar Backup
-</ion-button>
+  <ion-item>
+    <h1 position="stacked">Data de Fim</h1>
+    <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataFim"></ion-datetime>
+  </ion-item>
 
-<ion-item lines="none">
-  <ion-label>Compactar (ZIP)</ion-label>
-  <ion-checkbox [(ngModel)]="compactarZip"></ion-checkbox>
-</ion-item>
+  <ion-button expand="block" (click)="gerarBackup()">
+    Gerar Backup
+  </ion-button>
 
-<ion-item lines="none">
-  <ion-label>Compartilhar após salvar</ion-label>
-  <ion-checkbox [(ngModel)]="compartilharDepois"></ion-checkbox>
-</ion-item>
+  <ion-item lines="none">
+    <ion-label>Compactar (ZIP)</ion-label>
+    <ion-checkbox [(ngModel)]="compactarZip"></ion-checkbox>
+  </ion-item>
+
+  <ion-item lines="none">
+    <ion-label>Compartilhar após salvar</ion-label>
+    <ion-checkbox [(ngModel)]="compartilharDepois"></ion-checkbox>
+  </ion-item>
+</ion-content>

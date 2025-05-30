@@ -22,26 +22,27 @@ export class CadastrarClientePage {
   async salvarCliente() {
     const { nome, telefone, email } = this.cliente;
 
-    if (!nome.trim() || !telefone.trim() || !email.trim()) {
-      alert('Preencha todos os campos.');
+    if (!nome.trim()) {
+      alert('Preencha o nome do cliente.');
       return;
     }
 
-    const telRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
-    const emailRegex = /^[^ @]+@[^ @]+\.[^ @]+$/;
-
-    if (!telRegex.test(telefone)) {
-      alert('Telefone inválido. Use o formato (99) 99999-9999.');
+    // Validação de telefone
+    const telLimpo = telefone.replace(/\D/g, '');
+    if (telLimpo.length !== 10 && telLimpo.length !== 11) {
+      alert('Telefone inválido! Deve ter 10 ou 11 dígitos (DDD + número).');
       return;
     }
 
+    // Validação de email mais robusta
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
-      alert('Email inválido.');
+      alert('Email inválido! Use o formato: nome@exemplo.com');
       return;
     }
 
-    await this.sqliteService.adicionarCliente(nome.trim(), telefone.trim(), email.trim());
-    alert('Cliente salvo!');
-    this.router.navigateByUrl('/finalizar-pedido');
+    await this.sqliteService.adicionarCliente(nome.trim(), telefone, email.trim());
+    alert('Cliente salvo com sucesso!');
+    this.router.navigateByUrl('/tabs/listar-clientes');
   }
 }

@@ -17,19 +17,19 @@
         <ion-item *ngFor="let forma of formasPagamento">
           <ion-label>
             {{ forma | titlecase }}:
-            <strong>R$ {{ totaisPorForma[forma] | number: '1.2-2' }}</strong>
+            <strong appMoedaMask="display">R$ {{ totaisPorForma[forma] }}</strong>
           </ion-label>
         </ion-item>
         <ion-item>
           <ion-label color="dark">
-            <strong>Total Geral: R$ {{ totalGeral | number: '1.2-2' }}</strong>
+            <strong appMoedaMask="display">Total Geral: R$ {{ totalGeral }}</strong>
           </ion-label>
         </ion-item>
       </ion-list>
 
       <ion-item>
         <ion-label position="stacked">Valor de Fechamento</ion-label>
-        <ion-input type="number" [(ngModel)]="valorFechamento"></ion-input>
+        <ion-input appMoedaMask type="text" [(ngModel)]="valorFechamento"></ion-input>
       </ion-item>
 
       <ion-item>

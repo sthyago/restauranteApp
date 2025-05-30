@@ -31,8 +31,8 @@
         <h4>{{ item.nome }}</h4>
         <p>{{ item.descricao }}</p>
         <p>
-          R$ {{ item.valor_unitario | number:'1.2-2' }} x {{ item.qtd }} =
-          <strong>R$ {{ item.qtd * item.valor_unitario | number:'1.2-2' }}</strong>
+          <span appMoedaMask="display"> {{ item.valor_unitario }}</span> x {{ item.qtd }} =
+          <strong appMoedaMask="display"> {{ item.qtd * item.valor_unitario }}</strong>
         </p>
       </ion-label>
 
@@ -50,7 +50,7 @@
 
   <ion-card *ngIf="pedidoSelecionado.length > 0">
     <ion-card-content>
-      <h2>Total do Pedido: R$ {{ calcularTotal() | number:'1.2-2' }}</h2>
+      <h2>Total do Pedido: R$ <span appMoedaMask="display">{{ calcularTotal() }}</span></h2>
     </ion-card-content>
   </ion-card>
 

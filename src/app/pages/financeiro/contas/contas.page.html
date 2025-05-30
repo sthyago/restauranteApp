@@ -17,8 +17,8 @@
     <ion-item *ngFor="let conta of contasFiltradas">
       <ion-label>
         <h3>{{ conta.cliente_nome }}</h3>
-        <p>Valor: R$ {{ conta.total | number:'1.2-2' }}</p>
-        <p>Data: {{ conta.data | date:'shortDate' }}</p>
+        <ion-label appMoedaMask="display">Valor: R$ {{ conta.total }}</ion-label>
+        <ion-label>Data: {{ conta.data | date:'shortDate' }}</ion-label>
       </ion-label>
       <ion-button fill="clear" color="success" (click)="marcarComoPago(conta.id)">
         Marcar como pago

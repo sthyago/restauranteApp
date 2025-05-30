@@ -13,6 +13,9 @@
     <ion-label position="floating">Produto</ion-label>
     <ion-select [(ngModel)]="novoInsumo.produto_id">
       <ion-select-option *ngFor="let p of produtos" [value]="p.id">
+        <ion-thumbnail slot="start">
+          <img [src]="p.foto_path" />
+        </ion-thumbnail>
         {{ p.nome }}
       </ion-select-option>
     </ion-select>
@@ -25,7 +28,7 @@
 
   <ion-item>
     <ion-label position="floating">Valor Pago (total)</ion-label>
-    <ion-input type="number" [(ngModel)]="novoInsumo.valor_pago"></ion-input>
+    <ion-input type="text" appMoedaMask [(ngModel)]="novoInsumo.valor_pago"></ion-input>
   </ion-item>
 
   <ion-button class="add-btn" expand="block" (click)="salvar()">Salvar</ion-button>

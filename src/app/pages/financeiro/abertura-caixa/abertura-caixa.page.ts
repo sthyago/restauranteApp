@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { ToastController } from '@ionic/angular';
-//import { formatISO } from 'date-fns';
 
 @Component({
   selector: 'app-abertura-caixa',
@@ -12,7 +11,7 @@ import { ToastController } from '@ionic/angular';
 
 export class AberturaCaixaPage implements OnInit {
 
-  valorAbertura: number = 0;
+  valorAbertura: string = '';
   observacoes: string = '';
   dataHoje: string = '';
   caixaAbertoHoje: boolean = false;
@@ -31,13 +30,19 @@ export class AberturaCaixaPage implements OnInit {
   }
 
   async abrirCaixa() {
-    if (this.caixaAbertoHoje || !this.valorAbertura) return;
+    // Converter para número
+    const valorNumerico = this.converterParaNumero(this.valorAbertura);
+
+    if (isNaN(valorNumerico) || valorNumerico <= 0) {
+      alert('Informe um valor válido para abertura do caixa');
+      return;
+    }
 
     const insert = `
       INSERT INTO caixa (data_abertura, valor_abertura, observacoes)
       VALUES (?, ?, ?)
     `;
-    await this.dbService.db?.run(insert, [this.dataHoje, this.valorAbertura, this.observacoes]);
+    await this.dbService.db?.run(insert, [this.dataHoje, valorNumerico, this.observacoes]);
 
     const toast = await this.toastCtrl.create({
       message: 'Caixa aberto com sucesso!',
@@ -46,6 +51,16 @@ export class AberturaCaixaPage implements OnInit {
     });
     await toast.present();
     this.caixaAbertoHoje = true;
+  }
+  private converterParaNumero(valorFormatado: string): number {
+    // Remove R$, pontos e espaços
+    const valorLimpo = valorFormatado
+      .replace('R$', '')
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .trim();
+
+    return parseFloat(valorLimpo) || 0;
   }
 
 }

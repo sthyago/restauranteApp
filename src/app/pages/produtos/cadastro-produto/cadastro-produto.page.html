@@ -8,7 +8,6 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <!-- Formulário -->
   <ion-item>
     <ion-label position="floating">Nome</ion-label>
     <ion-input [(ngModel)]="produto.nome"></ion-input>
@@ -30,7 +29,10 @@
   <div *ngIf="produtos.length > 0" style="max-height: 300px; overflow-y: auto; margin-top: 16px;">
     <ion-list>
       <ion-item *ngFor="let produto of produtos">
-        {{ produto.nome }} - R$ {{ produto.valor_unitario | number:'1.2-2' }}
+        <ion-thumbnail slot="start">
+          <img [src]="produto.foto_path" />
+        </ion-thumbnail>
+        {{ produto.nome }} - <span appMoedaMask="display">{{ produto.valor_unitario }}</span>
       </ion-item>
     </ion-list>
   </div>
