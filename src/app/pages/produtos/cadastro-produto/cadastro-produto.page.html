@@ -35,7 +35,7 @@
           <h2 class="produto-nome">{{ produto.nome }}</h2>
         </div>
         <div class="produto-valor-container">
-          <h2 appMoedaMask="display">{{ produto.valor_unitario }}</h2>
+          <h2 [appMoedaMask]="'display'" [valor]="produto.valor_unitario"></h2>
         </div>
       </ion-item>
     </ion-list>

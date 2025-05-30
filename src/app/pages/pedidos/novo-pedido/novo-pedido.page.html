@@ -31,8 +31,8 @@
         <h4>{{ item.nome }}</h4>
         <p>{{ item.descricao }}</p>
         <p>
-          <span appMoedaMask="display"> {{ item.valor_unitario }}</span> x {{ item.qtd }} =
-          <strong appMoedaMask="display"> {{ item.qtd * item.valor_unitario }}</strong>
+          <span [appMoedaMask]="'display'" [valor]="item.valor_unitario"></span> x {{ item.qtd }} =
+          <strong [appMoedaMask]="'display'" [valor]="item.valor_unitario * item.qtd"></strong>
         </p>
       </ion-label>
 

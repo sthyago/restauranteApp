@@ -23,12 +23,27 @@ export class CadastroProdutoPage {
 
   async ngOnInit() {
     this.produtos = await this.sqlite.listarProdutos();
-    this.produtos.push({
-      id: 1,
-      nome: 'Coxa e Sobrecoxa Assada',
-      valor_unitario: 12.50,
-      foto_path: 'assets/images/produtos/coxa-sobrecoxa-assada.jpg'
-    })
+    this.prepararProdutos();
+  }
+
+  prepararProdutos() {
+    this.produtos.forEach(p => {
+      try {
+        // Converte qualquer tipo para string
+        const valorString = String(p.valor_unitario);
+
+        // Remove caracteres não numéricos exceto ponto e vírgula
+        const numericString = valorString
+          .replace(/[^0-9,.]/g, '')
+          .replace(',', '.');
+
+        // Converte para número
+        p.valor_unitario = parseFloat(numericString) || 0;
+      } catch (e) {
+        console.error('Erro ao converter valor:', p.valor_unitario, e);
+        p.valor_unitario = 0;
+      }
+    });
   }
 
   async salvar() {

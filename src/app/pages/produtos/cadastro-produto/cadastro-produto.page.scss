@@ -22,8 +22,7 @@ ion-item {
     .produto-info {
         flex: 1;
         min-width: 0;
-        /* Crucial para text-overflow */
-        margin-right: 12px;
+        margin: auto;
 
         .produto-nome {
             font-size: 1rem;

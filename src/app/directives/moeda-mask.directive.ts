@@ -59,11 +59,11 @@ export class MoedaMaskDirective implements OnInit, OnChanges {
     }
 
     private formatarExibicao() {
-        let valorNumerico: number;
+        let valorNumerico = 0;
 
         // Obtém o valor a ser formatado
         if (this.valor !== null && this.valor !== undefined) {
-            valorNumerico = this.converterParaNumero(this.valor.toString());
+            valorNumerico = this.converterParaNumero(this.valor);
         } else {
             const conteudo = this.el.nativeElement.textContent || '0';
             valorNumerico = this.converterParaNumero(conteudo);
@@ -81,35 +81,25 @@ export class MoedaMaskDirective implements OnInit, OnChanges {
         this.renderer.setProperty(this.el.nativeElement, 'textContent', valorFormatado);
     }
 
-    private converterParaNumero(valor: string): number {
-        // Se o valor estiver vazio ou só conter caracteres não numéricos
-        if (!valor || /^\D*$/.test(valor)) return 0;
-
-        // Tenta converter de várias formas
-        let valorNumerico: number;
-
-        // Se já estiver formatado (contém R$)
-        if (valor.includes('R$')) {
-            valorNumerico = parseFloat(
-                valor.replace('R$', '')
-                    .replace(/\./g, '')
-                    .replace(',', '.')
-                    .trim()
-            );
-        }
-        // Se contém vírgula (formato brasileiro)
-        else if (valor.includes(',')) {
-            valorNumerico = parseFloat(
-                valor.replace(/\./g, '')
-                    .replace(',', '.')
-            );
-        }
-        // Valor simples (apenas números)
-        else {
-            valorNumerico = parseFloat(valor) / 100;
+    private converterParaNumero(valor: any): number {
+        // Se já for número, retorna diretamente
+        if (typeof valor === 'number') {
+            return valor;
         }
 
-        return isNaN(valorNumerico) ? 0 : valorNumerico;
+        // Se for string, converte
+        if (typeof valor === 'string') {
+            // Remove formatação existente se houver
+            const valorLimpo = valor
+                .replace('R$', '')
+                .replace(/\./g, '')
+                .replace(',', '.')
+                .trim();
+
+            return parseFloat(valorLimpo) || 0;
+        }
+        // Para outros tipos, converte para número
+        return Number(valor) || 0;
     }
 
     private formatarMoeda(valor: number): string {

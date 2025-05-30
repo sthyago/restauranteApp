@@ -8,29 +8,32 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <ion-button expand="block" color="warning" routerLink="/tabs/contas">
-    Contas (Clientes Mensalistas)
-  </ion-button>
+  <div class="menu-grid">
+    <ion-button expand="block" color="warning" routerLink="/tabs/contas">
+      Contas (Clientes Mensalistas)
+    </ion-button>
 
-  <ion-button expand="block" color="warning" routerLink="/tabs/abertura-caixa">
-    Abertura de Caixa
-  </ion-button>
+    <ion-button expand="block" color="warning" routerLink="/tabs/abertura-caixa">
+      Abertura de Caixa
+    </ion-button>
 
-  <ion-button expand="block" color="warning" routerLink="/tabs/fechamento">
-    Fechamento do Dia
-  </ion-button>
+    <ion-button expand="block" color="warning" routerLink="/tabs/fechamento">
+      Fechamento do Dia
+    </ion-button>
 
-  <ion-button expand="block" color="warning" routerLink="/tabs/sangrias">
-    Sangrias
-  </ion-button>
+    <ion-button expand="block" color="warning" routerLink="/tabs/sangrias">
+      Sangrias
+    </ion-button>
 
-  <ion-button expand="block" color="warning" routerLink="/tabs/relatorio">
-    Relatório
-  </ion-button>
+    <ion-button expand="block" color="warning" routerLink="/tabs/relatorio">
+      Relatório
+    </ion-button>
 
-  <ion-button expand="block" color="warning" routerLink="/tabs/backup">
-    Backup
-  </ion-button>
+    <ion-button expand="block" color="warning" routerLink="/tabs/backup">
+      Backup
+    </ion-button>
+  </div>
+
 
   <ng-container *ngIf="caixa">
     <ion-card>
