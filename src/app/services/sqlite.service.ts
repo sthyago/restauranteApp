@@ -82,7 +82,8 @@ export class SqliteService {
                 nome TEXT NOT NULL,
                 descricao TEXT,
                 valor_unitario REAL NOT NULL,
-                foto_path TEXT
+                foto_path TEXT,
+                alerta_minimo INTEGER DEFAULT 0
             );
         `;
         const sqlCaixa = `
@@ -204,14 +205,14 @@ export class SqliteService {
         if (!this.db) return;
 
         for (const p of produtosPadrao) {
-            const sql = `INSERT INTO produtos (nome, descricao, valor_unitario, foto_path) VALUES (?, ?, ?, ?)`;
-            await this.db.run(sql, [p.nome, p.descricao, p.valor_unitario, p.foto_path]);
+            const sql = `INSERT INTO produtos (nome, descricao, valor_unitario, foto_path, alerta_minimo) VALUES (?, ?, ?, ?, ?)`;
+            await this.db.run(sql, [p.nome, p.descricao, p.valor_unitario, p.foto_path, 0]);
         }
     }
 
     async addInsumo(produtoId: number, quantidade: number, valorPago: number) {
         if (!this.db) return;
-        const sql = `INSERT INTO estoque (nome, quantidade, alerta_minimo) VALUES (?, ?, ?)`;
+        const sql = `INSERT INTO estoque (produto_id, quantidade, valor_pago) VALUES (?, ?, ?)`;
         await this.db.run(sql, [produtoId, quantidade, valorPago]);
     }
 

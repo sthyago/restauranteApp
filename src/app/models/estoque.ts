@@ -4,4 +4,5 @@ export interface Estoque {
     nome: string;
     quantidade: number;
     valor_pago: number;
+    alerta_minimo: number;
 }

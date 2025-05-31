@@ -13,6 +13,19 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
+  <ion-card *ngIf="mostrarAlerta" color="danger">
+    <ion-card-header>
+      <ion-card-title>Produtos para Reposição</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let produto of produtosReposicao" color="danger">
+          <ion-label>{{ produto.nome }} ({{ produto.quantidade }}/{{ produto.alerta_minimo }})</ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" color="light" (click)="fecharAlerta()">Fechar</ion-button>
+    </ion-card-content>
+  </ion-card>
   <ion-card>
     <ion-card-header>
       <ion-card-title>Insumos cadastrados</ion-card-title>
@@ -20,14 +33,16 @@
     <ion-card-content>
       <ion-grid>
         <ion-row class="header-row">
-          <ion-col size="6"><strong>Nome</strong></ion-col>
-          <ion-col size="4"><strong>Qtd</strong></ion-col>
+          <ion-col size="5"><strong>Nome</strong></ion-col>
+          <ion-col size="3"><strong>Qtd</strong></ion-col>
+          <ion-col size="2"><strong>Mínimo</strong></ion-col>
           <ion-col size="2"></ion-col>
         </ion-row>
 
-        <ion-row *ngFor="let insumo of insumos" [class.alerta]="insumo.quantidade <= (insumo.quantidade / 2)">
-          <ion-col size="6">{{ insumo.nome }}</ion-col>
-          <ion-col size="4">{{ insumo.quantidade }}</ion-col>
+        <ion-row *ngFor="let insumo of insumos" [class.necessita-reposicao]="insumo.quantidade <= insumo.alerta_minimo">
+          <ion-col size="5">{{ insumo.nome }}</ion-col>
+          <ion-col size="3">{{ insumo.quantidade }}</ion-col>
+          <ion-col size="2">{{ insumo.alerta_minimo }}</ion-col>
           <ion-col size="2">
             <ion-button color="danger" fill="clear" size="small" (click)="remover(insumo.id)">
               <ion-icon name="trash-outline" slot="icon-only"></ion-icon>

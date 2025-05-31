@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { Estoque } from 'src/app/models/estoque';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
@@ -11,12 +12,12 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 
 export class EstoquePage {
   insumos: Estoque[] = [];
-  produtos: { id: number; nome: string }[] = [];
+  produtosReposicao: any[] = [];
 
 
-  mostrarFormulario = false;
+  mostrarAlerta = false;
 
-  constructor(private sqlite: SqliteService) { }
+  constructor(private sqlite: SqliteService, private alertController: AlertController) { }
 
   ionViewWillEnter() {
     this.carregarInsumos();
@@ -24,6 +25,21 @@ export class EstoquePage {
 
   async carregarInsumos() {
     this.insumos = await this.sqlite.carregarEstoqueQuery();
+
+    // Filtrar produtos que precisam de reposição
+    this.produtosReposicao = this.insumos.filter(insumo =>
+      insumo.quantidade <= insumo.alerta_minimo
+    );
+
+    // Mostrar alerta se houver produtos para repor
+    if (this.produtosReposicao.length > 0 && !localStorage.getItem('alertaReposicaoFechado')) {
+      this.mostrarAlerta = true;
+    }
+  }
+
+  fecharAlerta() {
+    this.mostrarAlerta = false;
+    localStorage.setItem('alertaReposicaoFechado', 'true');
   }
 
   async remover(id: number) {
