@@ -50,7 +50,7 @@
 
   <ion-card *ngIf="pedidoSelecionado.length > 0">
     <ion-card-content>
-      <h2>Total do Pedido: R$ <span appMoedaMask="display">{{ calcularTotal() }}</span></h2>
+      <h2>Total do Pedido: <span [appMoedaMask]="'display'" [valor]="calcularTotal()"></span></h2>
     </ion-card-content>
   </ion-card>
 

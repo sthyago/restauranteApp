@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
@@ -18,9 +18,9 @@ export class NovoPedidoPage {
   numeroDaMesa: any;
 
   constructor(
-    private navCtrl: NavController,
     private cdr: ChangeDetectorRef,
-    private sqlite: SqliteService) { }
+    private sqlite: SqliteService,
+    private router: Router) { }
 
   ionViewWillEnter() {
     this.carregarProdutos();
@@ -116,7 +116,7 @@ export class NovoPedidoPage {
       data: new Date().toISOString()
     };
 
-    this.navCtrl.navigateForward('/finalizar-pedido', {
+    this.router.navigateByUrl('/finalizar-pedido', {
       state: { pedido }
     });
   }
