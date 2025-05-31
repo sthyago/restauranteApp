@@ -297,7 +297,8 @@ export class SqliteService {
             estoque.produto_id,
             produtos.nome AS nome,
             estoque.quantidade,
-            estoque.valor_pago
+            estoque.valor_pago,
+            produtos.alerta_minimo
             FROM estoque
             JOIN produtos ON estoque.produto_id = produtos.id
             ORDER BY produtos.nome
