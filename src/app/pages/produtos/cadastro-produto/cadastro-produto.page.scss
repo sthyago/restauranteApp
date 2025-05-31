@@ -7,6 +7,12 @@ ion-item {
     --padding-end: 8px;
     --inner-padding-end: 8px;
     align-items: flex-start;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: var(--ion-color-light);
+    }
 
     .produto-thumbnail {
         min-width: 60px;

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { Produto } from 'src/app/models/produto';
+import { EditarProdutoPage } from '../editar-produto/editar-produto.page';
 
 @Component({
   selector: 'app-cadastro-produto',
@@ -15,14 +16,18 @@ export class CadastroProdutoPage {
     id: 0,
     nome: '',
     valor_unitario: 0,
-    foto_path: ''
+    foto_path: '',
+    alerta_minimo: 0
   };
   produtos: Produto[] = [];
 
-  constructor(private sqlite: SqliteService, private navCtrl: NavController) { }
+  constructor(
+    private sqlite: SqliteService,
+    private navCtrl: NavController,
+    private modalCtrl: ModalController) { }
 
   async ngOnInit() {
-    this.produtos = await this.sqlite.listarProdutos();
+    await this.carregarProdutos();
     this.prepararProdutos();
   }
 
@@ -56,5 +61,26 @@ export class CadastroProdutoPage {
     const values = [this.produto!.nome, this.produto!.descricao, this.produto!.valor_unitario];
     await this.sqlite.db?.run(insert, values);
     this.navCtrl.back();
+  }
+
+  async abrirModalEdicao(produto: Produto) {
+    const modal = await this.modalCtrl.create({
+      component: EditarProdutoPage,
+      componentProps: {
+        produto: produto
+      }
+    });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data && data.data.atualizado) {
+        this.carregarProdutos(); // Recarrega a lista se houve atualização
+      }
+    });
+
+    await modal.present();
+  }
+
+  async carregarProdutos() {
+    this.produtos = await this.sqlite.listarProdutos() || [];
   }
 }
