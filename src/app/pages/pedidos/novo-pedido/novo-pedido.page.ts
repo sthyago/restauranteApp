@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
@@ -17,7 +17,10 @@ export class NovoPedidoPage {
   tipoPedido: 'local' | 'entrega' = 'local';
   numeroDaMesa: any;
 
-  constructor(private navCtrl: NavController, private sqlite: SqliteService) { }
+  constructor(
+    private navCtrl: NavController,
+    private cdr: ChangeDetectorRef,
+    private sqlite: SqliteService) { }
 
   ionViewWillEnter() {
     this.carregarProdutos();
@@ -79,11 +82,23 @@ export class NovoPedidoPage {
     const index = this.pedidoSelecionado.findIndex((i: any) => i.id === item.id);
 
     if (index > -1) {
-      this.pedidoSelecionado[index].qtd += delta;
+      // Cria uma cópia do array para forçar detecção de mudanças
+      const updatedItems = [...this.pedidoSelecionado];
 
-      if (this.pedidoSelecionado[index].qtd <= 0) {
-        this.pedidoSelecionado.splice(index, 1);
+      // Atualiza a quantidade
+      updatedItems[index] = {
+        ...updatedItems[index],
+        qtd: updatedItems[index].qtd + delta
+      };
+
+      // Remove item se quantidade <= 0
+      if (updatedItems[index].qtd <= 0) {
+        updatedItems.splice(index, 1);
       }
+
+      // Atualiza o array principal
+      this.pedidoSelecionado = updatedItems;
+      this.cdr.detectChanges();
     }
   }
 
