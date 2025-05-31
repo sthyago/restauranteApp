@@ -355,4 +355,26 @@ export class SqliteService {
         }
     }
 
+    async atualizarProduto(produto: Produto) {
+        if (!this.db) return;
+
+        const sql = `
+            UPDATE produtos 
+            SET 
+            nome = ?, 
+            descricao = ?, 
+            valor_unitario = ?,
+            alerta_minimo = ?
+            WHERE id = ?
+        `;
+
+        await this.db.run(sql, [
+            produto.nome,
+            produto.descricao,
+            produto.valor_unitario,
+            produto.alerta_minimo,
+            produto.id
+        ]);
+    }
+
 }
