@@ -26,20 +26,29 @@ export class HomePage {
 
   async verificarOuAbrirCaixa() {
     const hoje = new Date().toISOString().slice(0, 10);
-
     const res = await this.sqliteService.db?.query(
       `SELECT id FROM caixa WHERE DATE(data_abertura) = ? LIMIT 1`,
       [hoje]
     );
 
     if (!res?.values?.length) {
+      // Elemento temporário para formatação
+      const tempInput = document.createElement('input');
+
       const alert = await this.alertController.create({
         header: 'Abertura de Caixa',
+        cssClass: 'custom-alert',
         inputs: [
           {
             name: 'valor',
-            type: 'number',
-            placeholder: 'Valor inicial em caixa',
+            type: 'text',
+            placeholder: 'R$ 0,00',
+            id: 'valorAberturaInput',
+            cssClass: 'alert-input',
+            attributes: {
+              inputmode: 'decimal',
+              autofocus: true
+            }
           },
           {
             name: 'observacoes',
@@ -55,10 +64,13 @@ export class HomePage {
           {
             text: 'Abrir Caixa',
             handler: async (data) => {
-              const valor = parseFloat(data.valor);
-              if (isNaN(valor) || valor < 0) {
+              // Converte o valor formatado para número
+              const valorNumerico = this.converterMoedaParaNumero(data.valor);
+
+              // Validação melhorada
+              if (valorNumerico <= 0) {
                 const toast = await this.toastCtrl.create({
-                  message: 'Informe um valor válido.',
+                  message: 'Informe um valor válido maior que zero.',
                   duration: 2000,
                   color: 'danger'
                 });
@@ -66,9 +78,12 @@ export class HomePage {
                 return false;
               }
 
+              // Formata o valor com 2 casas decimais para o banco de dados
+              const valorAbertura = parseFloat(valorNumerico.toFixed(2));
+
               await this.sqliteService.db?.run(
                 `INSERT INTO caixa (data_abertura, valor_abertura, observacoes) VALUES (?, ?, ?)`,
-                [new Date().toISOString(), valor, data.observacoes || null]
+                [new Date().toISOString(), valorAbertura, data.observacoes || null]
               );
 
               const toast = await this.toastCtrl.create({
@@ -84,7 +99,48 @@ export class HomePage {
       });
 
       await alert.present();
+
+      // Adiciona máscara monetária ao input
+      const inputEl = document.getElementById('valorAberturaInput') as HTMLInputElement;
+      if (inputEl) {
+        inputEl.addEventListener('input', (event) => {
+          this.aplicarMascaraMonetariaInput(event.target as HTMLInputElement);
+        });
+      }
     }
   }
 
+  private aplicarMascaraMonetariaInput(input: HTMLInputElement) {
+    // Mantém apenas números e vírgulas
+    let valor = input.value.replace(/[^0-9,]/g, '');
+
+    // Remove múltiplas vírgulas
+    const partes = valor.split(',');
+    if (partes.length > 2) {
+      valor = partes[0] + ',' + partes.slice(1).join('');
+    }
+
+    // Atualiza o valor mantendo a vírgula
+    input.value = 'R$ ' + valor;
+  }
+
+  private converterMoedaParaNumero(valorFormatado: string): number {
+    // Se for número, retorna diretamente
+    if (typeof valorFormatado === 'number') return valorFormatado;
+
+    // Se for string vazia, retorna 0
+    if (!valorFormatado) return 0;
+
+    // Mantém apenas números, pontos e vírgulas
+    const valorLimpo = valorFormatado
+      .replace('R$', '')
+      .replace(/[^0-9,.]/g, '')
+      .trim();
+
+    // Substitui vírgulas por pontos para conversão decimal
+    const valorNumerico = valorLimpo.replace(',', '.');
+
+    // Converte para float
+    return parseFloat(valorNumerico) || 0;
+  }
 }

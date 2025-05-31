@@ -48,3 +48,14 @@ ion-content {
 .page-container {
     padding-top: env(safe-area-inset-top);
 }
+
+.alert-input {
+    text-align: right !important;
+    font-size: 1.2em !important;
+    padding: 10px !important;
+}
+
+.alert-title {
+    font-size: 1.4em !important;
+    font-weight: bold !important;
+}
