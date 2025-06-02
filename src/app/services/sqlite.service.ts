@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import {
     CapacitorSQLite,
     SQLiteConnection,
@@ -13,7 +13,7 @@ import { Produto } from '../models/produto';
     providedIn: 'root'
 })
 export class SqliteService {
-
+    atualizarEstoquePosInclusao = new EventEmitter<void>();
     sqliteConnection: SQLiteConnection;
     db: SQLiteDBConnection | null = null;
 
@@ -290,15 +290,13 @@ export class SqliteService {
             produtos.id,
             produtos.nome,
             produtos.foto_path,
-            produtos.preco_venda,
             COALESCE(SUM(estoque.quantidade), 0) AS quantidade_total,
             produtos.alerta_minimo
         FROM produtos
         LEFT JOIN estoque ON produtos.id = estoque.produto_id
         GROUP BY produtos.id
-        HAVING quantidade_total > 0
         ORDER BY produtos.nome
-    `;
+        `;
         const result = await this.db.query(sql);
         return result.values || [];
     }

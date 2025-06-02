@@ -46,11 +46,23 @@ export class EstoquePage {
   }
 
   async remover(id: number) {
-    if (!confirm('Deseja realmente excluir este item?')) return;
+    const alert = await this.alertController.create({
+      header: 'Confirmar',
+      message: 'Deseja realmente excluir este item?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Excluir',
+          handler: async () => {
+            if (this.sqlite.db) {
+              await this.sqlite.db.run(`DELETE FROM estoque WHERE id = ?`, [id]);
+              this.carregarInsumos();
+            }
+          }
+        }
+      ]
+    });
 
-    if (this.sqlite.db) {
-      await this.sqlite.db.run(`DELETE FROM estoque WHERE id = ?`, [id]);
-      this.carregarInsumos();
-    }
+    await alert.present();
   }
 }
