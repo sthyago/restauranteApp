@@ -22,7 +22,6 @@ ion-item {
 .produto-info {
     flex: 1;
     min-width: 0;
-    /* Para permitir que o texto quebre corretamente */
 }
 
 .produto-nome {
@@ -30,7 +29,6 @@ ion-item {
     font-weight: normal;
     margin: 0 0 4px 0;
     color: #000;
-    /* Quebra de linha */
     white-space: normal;
 }
 
@@ -71,7 +69,11 @@ ion-item {
     }
 }
 
-/* Estilo para quando não houver produtos */
+ion-item.estoque-ok {
+    --color: green;
+    --background: #e6ffed;
+}
+
 .ion-text-center {
     text-align: center;
 }

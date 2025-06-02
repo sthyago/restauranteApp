@@ -60,7 +60,7 @@ export class CadastroProdutoPage {
     const insert = `INSERT INTO produtos (nome, descricao, valor_unitario) VALUES (?, ?, ?)`;
     const values = [this.produto!.nome, this.produto!.descricao, this.produto!.valor_unitario];
     await this.sqlite.db?.run(insert, values);
-    this.navCtrl.back();
+    this.carregarProdutos();
   }
 
   async abrirModalEdicao(produto: Produto) {
