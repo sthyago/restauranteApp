@@ -28,7 +28,7 @@ export class EstoquePage {
 
     // Filtrar produtos que precisam de reposição
     this.produtosReposicao = this.insumos.filter(insumo =>
-      insumo.quantidade <= insumo.alerta_minimo
+      insumo.quantidade_total <= insumo.alerta_minimo
     );
 
     // Mostrar alerta se houver produtos para repor

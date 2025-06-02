@@ -286,18 +286,17 @@ export class SqliteService {
         if (!this.db) return [];
 
         const sql = `
-            SELECT 
-            estoque.id, 
-            estoque.produto_id,
-            produtos.nome AS nome,
-            estoque.quantidade,
-            estoque.valor_pago,
+        SELECT 
+            produtos.id,
+            produtos.nome,
+            COALESCE(SUM(estoque.quantidade), 0) AS quantidade_total,
             produtos.alerta_minimo
-            FROM estoque
-            JOIN produtos ON estoque.produto_id = produtos.id
-            ORDER BY produtos.nome
-        `;
-
+        FROM produtos
+        LEFT JOIN estoque ON produtos.id = estoque.produto_id
+        GROUP BY produtos.id
+        HAVING quantidade_total > 0
+        ORDER BY produtos.nome
+    `;
         const result = await this.db.query(sql);
         return result.values || [];
     }

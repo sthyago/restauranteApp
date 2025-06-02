@@ -29,8 +29,7 @@ export class NovoPedidoPage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT * FROM produtos WHERE estoque > 0 ORDER BY nome ASC');
-    this.produtos = res?.values || [];
+    this.produtos = await this.sqlite.carregarEstoqueQuery();
     this.prepararProdutos();
   }
 

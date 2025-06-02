@@ -39,9 +39,10 @@
           <ion-col size="2"></ion-col>
         </ion-row>
 
-        <ion-row *ngFor="let insumo of insumos" [class.necessita-reposicao]="insumo.quantidade <= insumo.alerta_minimo">
+        <ion-row *ngFor="let insumo of insumos"
+          [class.necessita-reposicao]="insumo.quantidade_total <= insumo.alerta_minimo">
           <ion-col size="5">{{ insumo.nome }}</ion-col>
-          <ion-col size="3">{{ insumo.quantidade }}</ion-col>
+          <ion-col size="3">{{ insumo.quantidade_total }}</ion-col>
           <ion-col size="2">{{ insumo.alerta_minimo }}</ion-col>
           <ion-col size="2">
             <ion-button color="danger" fill="clear" size="small" (click)="remover(insumo.id)">
