@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="danger">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/novo-pedido"></ion-back-button>
+      <ion-back-button defaultHref="tabs/novo-pedido"></ion-back-button>
     </ion-buttons>
     <ion-title>Finalizar Pedido</ion-title>
   </ion-toolbar>
@@ -24,7 +24,7 @@
 
   <ion-card>
     <ion-card-content>
-      <h2>Total: <span appMoedaMask="display"> {{ pedido!.total }}</span></h2>
+      <h2>Total: <span [appMoedaMask]="'display'" [valor]="getTotal()"></span></h2>
     </ion-card-content>
   </ion-card>
 
@@ -38,7 +38,7 @@
     </ion-select>
   </ion-item>
 
-  <ion-item *ngIf="formaPagamento === 'na_conta'">
+  <ion-item *ngIf="formaPagamento?.toString() === 'na_conta'">
     <ion-label position="stacked">Nome do cliente</ion-label>
 
     <ion-select [(ngModel)]="clienteSelecionadoId" interface="popover" placeholder="Selecione um cliente">

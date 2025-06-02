@@ -17,7 +17,7 @@ export class NovoPedidoPage {
   pedidoSelecionado: any[] = [];
   tipoPedido: 'local' | 'entrega' = 'local';
   numeroDaMesa: any;
-  pedido: Pedido | undefined;
+  pedido?: Pedido;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -29,7 +29,7 @@ export class NovoPedidoPage {
   }
 
   async carregarProdutos() {
-    const res = await this.sqlite.db?.query('SELECT * FROM produtos ORDER BY nome ASC');
+    const res = await this.sqlite.db?.query('SELECT * FROM produtos WHERE estoque > 0 ORDER BY nome ASC');
     this.produtos = res?.values || [];
     this.prepararProdutos();
   }
@@ -105,21 +105,29 @@ export class NovoPedidoPage {
   }
 
   confirmarPedido() {
-    // if (this.pedidoSelecionado.length === 0) {
-    //   alert('Adicione pelo menos um item.');
-    //   return;
-    // }
+    if (this.pedidoSelecionado.length === 0) {
+      alert('Adicione pelo menos um item.');
+      return;
+    }
 
-    this.pedido = {
-      itens: this.pedidoSelecionado,
+    // Criar cópia simplificada dos itens
+    const itensSimplificados = this.pedidoSelecionado.map(item => ({
+      id: item.id,
+      qtd: item.qtd
+    }));
+
+    const pedido: Pedido = {
+      itens: itensSimplificados,
       total: this.calcularTotal(),
       tipo: this.tipoPedido,
       status: 'em_andamento',
-      data: new Date().toISOString()
+      data: new Date().toISOString(),
+      forma_pagamento: undefined,
+      cliente_id: undefined
     };
 
     this.router.navigateByUrl('/tabs/finalizar-pedido', {
-      state: { pedido: this.pedido }
+      state: { pedido }
     });
   }
 
@@ -128,5 +136,4 @@ export class NovoPedidoPage {
       return total + (item.valor_unitario * item.qtd);
     }, 0);
   }
-
 }

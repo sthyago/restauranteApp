@@ -179,7 +179,6 @@ export class SqliteService {
             { nome: 'Pernil Assado', descricao: 'Pedaço de pernil assado', valor_unitario: 28.00, foto_path: 'assets/images/produtos/pernil-assado.jpg' },
             { nome: 'Coxa e Sobrecoxa Assada', descricao: 'Coxa e sobrecoxa assada com batatas', valor_unitario: 25.00, foto_path: 'assets/images/produtos/coxa-sobrecoxa-assada.jpg' }
         ];
-
         const sqlSangria = `
         CREATE TABLE IF NOT EXISTS sangrias (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -198,7 +197,11 @@ export class SqliteService {
         await this.db.execute(sqlCaixa);
         await this.db.execute(sqlSangria);
 
-        await this.addProdutosPadrao(produtosPadrao);
+        const produtosExistentes = await this.listarProdutos();
+
+        if (produtosExistentes.length === 0) {
+            await this.addProdutosPadrao(produtosPadrao);
+        }
     }
 
     private async addProdutosPadrao(produtosPadrao: { nome: string; descricao: string; valor_unitario: number, foto_path: string }[]) {
@@ -209,19 +212,16 @@ export class SqliteService {
             await this.db.run(sql, [p.nome, p.descricao, p.valor_unitario, p.foto_path, 0]);
         }
     }
-
     async addInsumo(produtoId: number, quantidade: number, valorPago: number) {
         if (!this.db) return;
         const sql = `INSERT INTO estoque (produto_id, quantidade, valor_pago) VALUES (?, ?, ?)`;
         await this.db.run(sql, [produtoId, quantidade, valorPago]);
     }
-
     async getInsumos() {
         if (!this.db) return [];
         const res = await this.db.query(`SELECT * FROM estoque`);
         return res.values || [];
     }
-
     async salvarPedido(pedido: Pedido): Promise<number> {
         if (!this.db) return 0;
 
@@ -247,21 +247,18 @@ export class SqliteService {
         const result = await this.db!.run(insert, values);
         return result.changes?.lastId || 0;
     }
-
     async listarPedidos(): Promise<Pedido[]> {
         if (!this.db) [];
 
         const result = await this.db!.query('SELECT * FROM pedidos ORDER BY data DESC');
         return result.values as Pedido[];
     }
-
     async listarClientes(): Promise<Cliente[]> {
         if (!this.db) return [];
 
         const result = await this.db!.query('SELECT * FROM clientes ORDER BY nome ASC');
         return result.values || [];
     }
-
     async listarClientesDetalhados(): Promise<{ id: number; nome: string; telefone?: string; email?: string }[]> {
         if (!this.db) return [];
 
@@ -269,7 +266,6 @@ export class SqliteService {
 
         return result.values || [];
     }
-
     async adicionarCliente(nome: string, telefone: string, email: string) {
         if (!this.db) return;
 
@@ -279,7 +275,6 @@ export class SqliteService {
         `;
         await this.db!.run(sql, [nome, telefone, email]);
     }
-
     async listarProdutos(): Promise<Produto[]> {
         if (!this.db) return [];
 
@@ -287,7 +282,6 @@ export class SqliteService {
 
         return result.values || [];
     }
-
     async carregarEstoqueQuery() {
         if (!this.db) return [];
 
@@ -307,7 +301,6 @@ export class SqliteService {
         const result = await this.db.query(sql);
         return result.values || [];
     }
-
     async carregarPedidosQuery() {
         if (!this.db) return [];
 
@@ -315,7 +308,6 @@ export class SqliteService {
 
         return result.values || [];
     }
-
     async carregarMesasQuery() {
         if (!this.db) return [];
 
@@ -354,7 +346,6 @@ export class SqliteService {
             await this.db?.run(`DELETE FROM ${t}`);
         }
     }
-
     async atualizarProduto(produto: Produto) {
         if (!this.db) return;
 
@@ -376,5 +367,16 @@ export class SqliteService {
             produto.id
         ]);
     }
-
+    async atualizarEstoque(produtoId: number, quantidade: number) {
+        try {
+            await this.db?.query(
+                `UPDATE produtos SET estoque = estoque + ? WHERE id = ?`,
+                [quantidade, produtoId]
+            );
+            return true;
+        } catch (e) {
+            console.error('Erro ao atualizar estoque:', e);
+            return false;
+        }
+    }
 }

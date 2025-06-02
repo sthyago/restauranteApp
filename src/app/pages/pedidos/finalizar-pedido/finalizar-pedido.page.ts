@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cliente } from 'src/app/models/cliente';
 import { Pedido } from 'src/app/models/pedido';
+import { FormaPagamento } from 'src/app/models/tipos';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class FinalizarPedidoPage {
   pedido?: Pedido;
   itensDetalhados: any[] = [];
   clientes: Cliente[] = [];
-  formaPagamento: string = '';
+  formaPagamento?: FormaPagamento;
   clienteSelecionadoId?: number;
 
 
@@ -51,31 +52,35 @@ export class FinalizarPedidoPage {
       return;
     }
 
-    if (this.formaPagamento === 'na_conta' && !this.clienteSelecionadoId) {
-      alert('Informe o nome do cliente.');
+    if (this.formaPagamento.toString() === 'na_conta' && !this.clienteSelecionadoId) {
+      alert('Selecione um cliente.');
       return;
     }
 
-    // Atualiza status
-    this.pedido!.status = this.formaPagamento === 'na_conta' ? 'na_conta' : 'finalizado';
-    this.pedido!.cliente_id = this.clienteSelecionadoId;
+    // Atualizar informações do pedido
+    if (this.pedido) {
+      this.pedido.status = this.formaPagamento.toString() === 'na_conta' ? 'na_conta' : 'finalizado';
+      this.pedido.forma_pagamento = this.formaPagamento;
+      this.pedido.cliente_id = this.clienteSelecionadoId;
 
-    // Atualiza itens
-    const itensFormatados = this.pedido!.itens.map((i: any) => ({
-      id: i.id,
-      qtd: i.qtd
-    }));
+      try {
+        // Atualizar estoque dos produtos
+        for (const item of this.pedido.itens) {
+          await this.sqliteService.atualizarEstoque(item.id, -item.qtd);
+        }
 
-    this.pedido!.itens = itensFormatados;
-
-    // Salvar no SQLite
-    try {
-      await this.sqliteService.salvarPedido(this.pedido!);
-      alert('Pedido salvo com sucesso!');
-      this.router.navigateByUrl('/tabs/pedidos');
-    } catch (e) {
-      console.error('Erro ao salvar pedido:', e);
-      alert('Erro ao salvar pedido.');
+        // Salvar pedido
+        await this.sqliteService.salvarPedido(this.pedido);
+        alert('Pedido finalizado com sucesso!');
+        this.router.navigateByUrl('/tabs/pedidos');
+      } catch (e) {
+        console.error('Erro ao finalizar pedido:', e);
+        alert('Erro ao finalizar pedido. Verifique o console.');
+      }
     }
+  }
+
+  getTotal(): number | null {
+    return this.pedido?.total ?? null;
   }
 }
