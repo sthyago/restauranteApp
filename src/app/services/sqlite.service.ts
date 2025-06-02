@@ -289,6 +289,8 @@ export class SqliteService {
         SELECT 
             produtos.id,
             produtos.nome,
+            produtos.foto_path,
+            produtos.preco_venda,
             COALESCE(SUM(estoque.quantidade), 0) AS quantidade_total,
             produtos.alerta_minimo
         FROM produtos

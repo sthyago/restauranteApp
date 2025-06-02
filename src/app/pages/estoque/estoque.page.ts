@@ -13,9 +13,8 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 export class EstoquePage {
   insumos: Estoque[] = [];
   produtosReposicao: any[] = [];
-
-
   mostrarAlerta = false;
+  isLoading = true;
 
   constructor(private sqlite: SqliteService, private alertController: AlertController) { }
 
@@ -24,16 +23,20 @@ export class EstoquePage {
   }
 
   async carregarInsumos() {
-    this.insumos = await this.sqlite.carregarEstoqueQuery();
+    this.isLoading = true;
+    try {
+      this.insumos = await this.sqlite.carregarEstoqueQuery();
+      this.produtosReposicao = this.insumos.filter(insumo =>
+        insumo.quantidade_total <= insumo.alerta_minimo
+      );
 
-    // Filtrar produtos que precisam de reposição
-    this.produtosReposicao = this.insumos.filter(insumo =>
-      insumo.quantidade_total <= insumo.alerta_minimo
-    );
-
-    // Mostrar alerta se houver produtos para repor
-    if (this.produtosReposicao.length > 0 && !localStorage.getItem('alertaReposicaoFechado')) {
-      this.mostrarAlerta = true;
+      if (this.produtosReposicao.length > 0 && !localStorage.getItem('alertaReposicaoFechado')) {
+        this.mostrarAlerta = true;
+      }
+    } catch (error) {
+      console.error('Erro ao carregar estoque', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -50,5 +53,4 @@ export class EstoquePage {
       this.carregarInsumos();
     }
   }
-
 }

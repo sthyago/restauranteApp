@@ -5,4 +5,6 @@ export interface Estoque {
     quantidade_total: number;
     valor_pago: number;
     alerta_minimo: number;
+    foto_path?: string;
+    preco_venda?: number;
 }

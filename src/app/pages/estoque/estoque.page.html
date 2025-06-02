@@ -30,27 +30,33 @@
     <ion-card-header>
       <ion-card-title>Insumos cadastrados</ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      <ion-grid>
-        <ion-row class="header-row">
-          <ion-col size="5"><strong>Nome</strong></ion-col>
-          <ion-col size="3"><strong>Qtd</strong></ion-col>
-          <ion-col size="2"><strong>Mínimo</strong></ion-col>
-          <ion-col size="2"></ion-col>
-        </ion-row>
 
-        <ion-row *ngFor="let insumo of insumos"
-          [class.necessita-reposicao]="insumo.quantidade_total <= insumo.alerta_minimo">
-          <ion-col size="5">{{ insumo.nome }}</ion-col>
-          <ion-col size="3">{{ insumo.quantidade_total }}</ion-col>
-          <ion-col size="2">{{ insumo.alerta_minimo }}</ion-col>
-          <ion-col size="2">
-            <ion-button color="danger" fill="clear" size="small" (click)="remover(insumo.id)">
-              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+    <ion-card-content>
+      <div class="list-wrap">
+        <ion-list>
+          <ion-item *ngFor="let insumo of insumos"
+            [class.necessita-reposicao]="insumo.quantidade_total <= insumo.alerta_minimo">
+            <ion-thumbnail slot="start" class="produto-thumbnail">
+              <img [src]="insumo.foto_path" />
+            </ion-thumbnail>
+            <div class="produto-info">
+              <h2 class="produto-nome">{{ insumo.nome }}</h2>
+            </div>
+            <div class="produto-valor-container">
+              <h2 class="produto-quantidade">{{ insumo.quantidade_total }}</h2>
+            </div>
+            <div class="row-action">
+              <ion-button color="danger" fill="clear" size="small" (click)="remover(insumo.id)">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div *ngIf="insumos.length === 0" class="ion-text-center ion-margin-top">
+        Nenhum produto encontrado
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>
