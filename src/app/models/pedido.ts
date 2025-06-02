@@ -1,8 +1,8 @@
 import { FormaPagamento, StatusPedido, TipoPedido } from "./tipos";
 
 export interface Pedido {
-    id: number;
-    itens: string;
+    id?: number;
+    itens: any[];
     total: number;
     tipo: TipoPedido;
     status: StatusPedido;

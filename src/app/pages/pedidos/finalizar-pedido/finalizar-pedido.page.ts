@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cliente } from 'src/app/models/cliente';
+import { Pedido } from 'src/app/models/pedido';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false,
 })
 export class FinalizarPedidoPage {
-  pedido?: any;
+  pedido?: Pedido;
   itensDetalhados: any[] = [];
   clientes: Cliente[] = [];
   formaPagamento: string = '';
@@ -27,9 +28,12 @@ export class FinalizarPedidoPage {
   }
 
   async ionViewWillEnter() {
+    if (!this.pedido)
+      return
+
     this.clientes = await this.sqliteService.listarClientes();
 
-    const itens: { id: number, qtd: number }[] = JSON.parse(this.pedido.itens);
+    const itens = this.pedido.itens;
     const produtos = await this.sqliteService.listarProdutos();
 
     this.itensDetalhados = itens.map(i => {
@@ -54,11 +58,10 @@ export class FinalizarPedidoPage {
 
     // Atualiza status
     this.pedido!.status = this.formaPagamento === 'na_conta' ? 'na_conta' : 'finalizado';
-    this.pedido!.forma_pagamento = this.formaPagamento;
     this.pedido!.cliente_id = this.clienteSelecionadoId;
 
     // Atualiza itens
-    const itensFormatados = JSON.parse(this.pedido!.itens).map((i: any) => ({
+    const itensFormatados = this.pedido!.itens.map((i: any) => ({
       id: i.id,
       qtd: i.qtd
     }));

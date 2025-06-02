@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Pedido } from 'src/app/models/pedido';
 import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
@@ -16,6 +17,7 @@ export class NovoPedidoPage {
   pedidoSelecionado: any[] = [];
   tipoPedido: 'local' | 'entrega' = 'local';
   numeroDaMesa: any;
+  pedido: Pedido | undefined;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -103,12 +105,12 @@ export class NovoPedidoPage {
   }
 
   confirmarPedido() {
-    if (this.pedidoSelecionado.length === 0) {
-      alert('Adicione pelo menos um item.');
-      return;
-    }
+    // if (this.pedidoSelecionado.length === 0) {
+    //   alert('Adicione pelo menos um item.');
+    //   return;
+    // }
 
-    const pedido = {
+    this.pedido = {
       itens: this.pedidoSelecionado,
       total: this.calcularTotal(),
       tipo: this.tipoPedido,
@@ -116,8 +118,8 @@ export class NovoPedidoPage {
       data: new Date().toISOString()
     };
 
-    this.router.navigateByUrl('/finalizar-pedido', {
-      state: { pedido }
+    this.router.navigateByUrl('/tabs/finalizar-pedido', {
+      state: { pedido: this.pedido }
     });
   }
 
