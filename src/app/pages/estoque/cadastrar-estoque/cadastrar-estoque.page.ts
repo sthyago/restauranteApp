@@ -13,8 +13,6 @@ export class CadastrarEstoquePage {
 
   novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
   produtos: Produto[] = [];
-  salvando = false;
-  sucesso = false;
 
   constructor(private sqlite: SqliteService, private alertController: AlertController) { }
 
@@ -23,8 +21,6 @@ export class CadastrarEstoquePage {
   }
 
   async salvar() {
-    this.salvando = true;
-    this.sucesso = false;
 
     if (!this.novoInsumo.produto_id || this.novoInsumo.quantidade <= 0 || this.novoInsumo.valor_pago <= 0) {
       this.mostrarAlerta('Atenção', 'Preencha todos os campos corretamente.');
@@ -38,15 +34,10 @@ export class CadastrarEstoquePage {
         this.novoInsumo.valor_pago
       );
 
-      // Feedback de sucesso e reset do formulário
       this.mostrarAlerta('Sucesso', 'Insumo cadastrado com sucesso!');
       this.novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
-      this.sucesso = true;
     } catch (error) {
       console.error('Erro ao salvar insumo:', error);
-      this.mostrarAlerta('Erro', 'Falha ao cadastrar insumo. Tente novamente.');
-    } finally {
-      this.salvando = false;
     }
   }
 

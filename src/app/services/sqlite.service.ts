@@ -288,14 +288,14 @@ export class SqliteService {
 
         const sql = `
             SELECT 
-                produtos.id,
+                produtos.id as produto_id,
                 produtos.nome,
                 produtos.foto_path,
                 produto.valor_unitario,
                 COALESCE(SUM(estoque.quantidade), 0) AS quantidade_total,
                 produtos.alerta_minimo
             FROM produtos
-            LEFT JOIN estoque ON produtos.id = estoque.produto_id
+            JOIN estoque ON produtos.id = estoque.produto_id
             GROUP BY produtos.id
             ORDER BY produtos.nome
         `;

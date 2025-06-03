@@ -31,13 +31,5 @@
     <ion-input type="text" appMoedaMask [(ngModel)]="novoInsumo.valor_pago"></ion-input>
   </ion-item>
 
-  <ion-button expand="block" (click)="salvar()" [disabled]="salvando">
-    <ion-spinner *ngIf="salvando"></ion-spinner>
-    {{ salvando ? 'Salvando...' : 'Salvar' }}
-  </ion-button>
-
-  <ion-note *ngIf="sucesso" color="success">
-    Insumo cadastrado com sucesso!
-  </ion-note>
-
+  <ion-button expand="block" (click)="salvar()" [disabled]="salvando"></ion-button>
 </ion-content>

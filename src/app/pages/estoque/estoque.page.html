@@ -13,19 +13,6 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <ion-card *ngIf="mostrarAlerta" color="danger">
-    <ion-card-header>
-      <ion-card-title>Produtos para Reposição</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let produto of produtosReposicao" color="danger">
-          <ion-label>{{ produto.nome }} ({{ produto.quantidade }}/{{ produto.alerta_minimo }})</ion-label>
-        </ion-item>
-      </ion-list>
-      <ion-button expand="block" color="light" (click)="fecharAlerta()">Fechar</ion-button>
-    </ion-card-content>
-  </ion-card>
   <ion-card>
     <ion-card-header>
       <ion-card-title>Insumos cadastrados</ion-card-title>
