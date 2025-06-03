@@ -57,16 +57,20 @@ export class FinalizarPedidoPage {
       return;
     }
 
-    // Atualizar informações do pedido
     if (this.pedido) {
       this.pedido.status = this.formaPagamento.toString() === 'na_conta' ? 'na_conta' : 'finalizado';
       this.pedido.forma_pagamento = this.formaPagamento;
       this.pedido.cliente_id = this.clienteSelecionadoId;
 
       try {
-        // Atualizar estoque dos produtos
+        // Dar baixa no estoque para cada item do pedido
         for (const item of this.pedido.itens) {
-          await this.sqliteService.atualizarEstoque(item.id, -item.qtd);
+          const sucesso = await this.sqliteService.darBaixaEstoque(item.id, item.qtd);
+
+          if (!sucesso) {
+            alert(`Estoque insuficiente para o produto ID ${item.id}. Pedido não finalizado.`);
+            return;
+          }
         }
 
         // Salvar pedido

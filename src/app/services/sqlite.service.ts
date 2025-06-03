@@ -369,15 +369,54 @@ export class SqliteService {
             produto.id
         ]);
     }
-    async atualizarEstoque(produtoId: number, quantidade: number) {
+    async darBaixaEstoque(produtoId: number, quantidade: number): Promise<boolean> {
+        if (!this.db) return false;
+
         try {
-            await this.db?.query(
-                `UPDATE produtos SET estoque = estoque + ? WHERE id = ?`,
-                [quantidade, produtoId]
+            // Buscar as entradas de estoque para o produto (ordem FIFO)
+            const entradas = await this.db.query(
+                `SELECT id, quantidade FROM estoque WHERE produto_id = ? AND quantidade > 0 ORDER BY id ASC`,
+                [produtoId]
             );
+
+            if (!entradas.values || entradas.values.length === 0) {
+                console.error(`Nenhuma entrada de estoque encontrada para o produto ${produtoId}`);
+                return false;
+            }
+
+            let qtdRestante = quantidade;
+
+            for (const entrada of entradas.values) {
+                if (qtdRestante <= 0) break;
+
+                const entradaId = entrada.id;
+                const qtdDisponivel = entrada.quantidade;
+
+                if (qtdDisponivel > qtdRestante) {
+                    // Atualizar a entrada com a quantidade restante
+                    await this.db.run(
+                        `UPDATE estoque SET quantidade = quantidade - ? WHERE id = ?`,
+                        [qtdRestante, entradaId]
+                    );
+                    qtdRestante = 0;
+                } else {
+                    // Consumir toda a entrada
+                    await this.db.run(
+                        `DELETE FROM estoque WHERE id = ?`,
+                        [entradaId]
+                    );
+                    qtdRestante -= qtdDisponivel;
+                }
+            }
+
+            if (qtdRestante > 0) {
+                console.error(`Estoque insuficiente para o produto ${produtoId}. Faltaram ${qtdRestante} unidades.`);
+                return false;
+            }
+
             return true;
         } catch (e) {
-            console.error('Erro ao atualizar estoque:', e);
+            console.error('Erro ao dar baixa no estoque:', e);
             return false;
         }
     }
