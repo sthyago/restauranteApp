@@ -35,17 +35,33 @@ export class NovoPedidoPage {
 
   prepararProdutos() {
     this.produtos.forEach(p => {
+      // Se já for número válido, mantém o valor
+      if (typeof p.valor_unitario === 'number' && !isNaN(p.valor_unitario)) {
+        return;
+      }
+
       try {
-        // Converte qualquer tipo para string
-        const valorString = String(p.valor_unitario);
+        const valorString = String(p.valor_unitario).trim();
 
-        // Remove caracteres não numéricos exceto ponto e vírgula
-        const numericString = valorString
-          .replace(/[^0-9,.]/g, '')
-          .replace(',', '.');
+        // Verifica se já é um número válido (incluindo decimais)
+        if (/^-?\d+(\.\d+)?$/.test(valorString)) {
+          p.valor_unitario = parseFloat(valorString);
+          return;
+        }
 
-        // Converte para número
-        p.valor_unitario = parseFloat(numericString) || 0;
+        // Trata valores com vírgula como separador decimal
+        if (/^-?\d+,\d+$/.test(valorString)) {
+          p.valor_unitario = parseFloat(valorString.replace(',', '.'));
+          return;
+        }
+
+        // Trata valores com símbolos de moeda
+        const numericValue = valorString
+          .replace(/[^\d,.-]/g, '')  // Remove não numéricos exceto ,.-
+          .replace(/\./g, '')         // Remove pontos de milhares
+          .replace(',', '.');         // Substitui vírgula decimal por ponto
+
+        p.valor_unitario = parseFloat(numericValue) || 0;
       } catch (e) {
         console.error('Erro ao converter valor:', p.valor_unitario, e);
         p.valor_unitario = 0;

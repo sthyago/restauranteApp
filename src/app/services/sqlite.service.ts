@@ -83,7 +83,8 @@ export class SqliteService {
                 descricao TEXT,
                 valor_unitario REAL NOT NULL,
                 foto_path TEXT,
-                alerta_minimo INTEGER DEFAULT 0
+                alerta_minimo INTEGER DEFAULT 0,
+                estoque REAL DEFAULT 0
             );
         `;
         const sqlCaixa = `
