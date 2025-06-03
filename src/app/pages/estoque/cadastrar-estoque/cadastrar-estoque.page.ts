@@ -54,4 +54,8 @@ export class CadastrarEstoquePage {
 
     await alert.present();
   }
+
+  areAllFieldValid() {
+    return this.novoInsumo.produto_id && this.novoInsumo.quantidade && this.novoInsumo.produto_id;
+  }
 }
