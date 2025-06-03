@@ -56,6 +56,7 @@ export class CadastrarEstoquePage {
   }
 
   areAllFieldValid() {
-    return this.novoInsumo.produto_id && this.novoInsumo.quantidade && this.novoInsumo.produto_id;
+    return (this.novoInsumo.produto_id != null || this.novoInsumo.produto_id != 0)
+      && (this.novoInsumo.quantidade != null || this.novoInsumo.quantidade != 0)
   }
 }
