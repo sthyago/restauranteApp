@@ -226,6 +226,8 @@ export class SqliteService {
     async salvarPedido(pedido: Pedido): Promise<number> {
         if (!this.db) return 0;
 
+        const itensString = JSON.stringify(pedido.itens);
+
         const insert = `
         INSERT INTO pedidos (
             itens, total, tipo, status, forma_pagamento,
@@ -234,7 +236,7 @@ export class SqliteService {
         `;
 
         const values = [
-            pedido.itens, // JSON.stringify dos produtos com id e qtd
+            itensString, // JSON.stringify dos produtos com id e qtd
             pedido.total,
             pedido.tipo,
             pedido.status,
