@@ -22,7 +22,7 @@ export class CadastrarEstoquePage {
 
   async salvar() {
 
-    if (!this.novoInsumo.produto_id || this.novoInsumo.quantidade <= 0 || this.novoInsumo.valor_pago <= 0) {
+    if (!this.novoInsumo.produto_id || this.novoInsumo.quantidade <= 0) {
       this.mostrarAlerta('Atenção', 'Preencha todos os campos corretamente.');
       return;
     }
@@ -56,7 +56,7 @@ export class CadastrarEstoquePage {
   }
 
   areAllFieldValid() {
-    return (this.novoInsumo.produto_id != null || this.novoInsumo.produto_id != 0)
+    return (!this.novoInsumo.produto_id != null || this.novoInsumo.produto_id != 0)
       && (this.novoInsumo.quantidade != null || this.novoInsumo.quantidade != 0)
   }
 }
