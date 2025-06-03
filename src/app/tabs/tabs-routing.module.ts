@@ -12,7 +12,7 @@ const routes: Routes = [
         loadChildren: () => import('../pages/produtos/cadastro-produto/cadastro-produto.module').then(m => m.CadastroProdutoPageModule)
       },
       {
-        path: 'cadastrar-estoque',
+        path: 'cadastrar-estoque/:id',
         loadChildren: () => import('../pages/estoque/cadastrar-estoque/cadastrar-estoque.module').then(m => m.CadastrarEstoquePageModule)
       },
       {

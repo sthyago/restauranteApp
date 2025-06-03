@@ -165,8 +165,8 @@ export class SqliteService {
             { nome: 'Spaten 600ml', descricao: 'Cerveja Spaten retornável 600ml', valor_unitario: 17.00, foto_path: 'assets/images/produtos/spaten-600ml.jpg' },
             { nome: 'Amstel 269ml', descricao: 'Cerveja Amstel lata 269ml', valor_unitario: 5.00, foto_path: 'assets/images/produtos/amstel-269ml.jpg' },
 
-            { nome: 'Cigarro picado de 1', descricao: 'Cigarro picado varias marcas', valor_unitario: 1.00, foto_path: 'assets/images/produtos/cigarro-picado-1.jpg' },
-            { nome: 'Cigarro picado de 2', descricao: 'Cigarro picado varias marcas', valor_unitario: 2.00, foto_path: 'assets/images/produtos/cigarro-picado-2.jpg' },
+            { nome: 'Cigarro picado R$ 1,00', descricao: 'Cigarro picado varias marcas', valor_unitario: 1.00, foto_path: 'assets/images/produtos/cigarro-picado-1.jpg' },
+            { nome: 'Cigarro picado R$ 2,00', descricao: 'Cigarro picado varias marcas', valor_unitario: 2.00, foto_path: 'assets/images/produtos/cigarro-picado-2.jpg' },
             { nome: 'Doce variado', descricao: 'Doces de varios sabores', valor_unitario: 1.00, foto_path: 'assets/images/produtos/doce-variado.jpg' },
 
             { nome: 'Marmitex Padrão', descricao: 'Self service no local + proteina', valor_unitario: 25.00, foto_path: 'assets/images/produtos/marmitex-padrao.jpg' },
