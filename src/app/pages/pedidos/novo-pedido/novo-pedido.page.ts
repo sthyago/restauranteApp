@@ -139,6 +139,7 @@ export class NovoPedidoPage {
       status: 'em_andamento',
       data: new Date().toISOString(),
       forma_pagamento: undefined,
+      mesa_identificacao: this.tipoPedido === 'na mesa' ? this.mesa_identificacao : undefined,
       cliente_id: undefined
     };
 

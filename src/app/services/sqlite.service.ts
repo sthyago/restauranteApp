@@ -253,7 +253,7 @@ export class SqliteService {
             const result = await this.db.run(
                 `INSERT INTO pedidos (
                     itens, total, tipo, status, data, forma_pagamento, cliente_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     JSON.stringify(pedido.itens),
                     pedido.total,
