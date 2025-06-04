@@ -11,7 +11,7 @@ import { ToastController } from '@ionic/angular';
 
 export class AberturaCaixaPage implements OnInit {
 
-  valorAbertura: string = '';
+  valorAbertura?: number;
   observacoes: string = '';
   dataHoje: string = '';
   caixaAbertoHoje: boolean = false;
@@ -30,11 +30,14 @@ export class AberturaCaixaPage implements OnInit {
   }
 
   async abrirCaixa() {
-    // Converter para número
-    const valorNumerico = this.converterParaNumero(this.valorAbertura);
 
-    if (isNaN(valorNumerico) || valorNumerico <= 0) {
-      alert('Informe um valor válido para abertura do caixa');
+    if (this.caixaAbertoHoje) {
+      alert('Já existe um caixa aberta hoje');
+      return;
+    }
+
+    if (!this.valorAbertura) {
+      alert('Informe valor de abertura');
       return;
     }
 
@@ -42,7 +45,8 @@ export class AberturaCaixaPage implements OnInit {
       INSERT INTO caixa (data_abertura, valor_abertura, observacoes)
       VALUES (?, ?, ?)
     `;
-    await this.dbService.db?.run(insert, [this.dataHoje, valorNumerico, this.observacoes]);
+
+    await this.dbService.db?.run(insert, [this.dataHoje, this.valorAbertura, this.observacoes]);
 
     const toast = await this.toastCtrl.create({
       message: 'Caixa aberto com sucesso!',
@@ -52,16 +56,5 @@ export class AberturaCaixaPage implements OnInit {
     await toast.present();
     this.caixaAbertoHoje = true;
   }
-  private converterParaNumero(valorFormatado: string): number {
-    // Remove R$, pontos e espaços
-    const valorLimpo = valorFormatado
-      .replace('R$', '')
-      .replace(/\./g, '')
-      .replace(',', '.')
-      .trim();
-
-    return parseFloat(valorLimpo) || 0;
-  }
-
 }
 

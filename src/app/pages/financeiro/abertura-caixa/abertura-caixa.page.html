@@ -26,8 +26,4 @@
   <ion-button expand="block" color="success" [disabled]="!valorAbertura || caixaAbertoHoje" (click)="abrirCaixa()">
     Abrir Caixa
   </ion-button>
-
-  <ion-text color="danger" *ngIf="caixaAbertoHoje">
-    Caixa já foi aberto hoje.
-  </ion-text>
 </ion-content>
