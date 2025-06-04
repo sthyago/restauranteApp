@@ -10,5 +10,5 @@ export interface Pedido {
     valor_pago?: number;
     cliente_id?: number;
     data: string; // ISO string
-    mesa_id?: number;
+    mesa_identificacao?: string;
 }

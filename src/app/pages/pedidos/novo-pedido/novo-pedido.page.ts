@@ -15,9 +15,10 @@ export class NovoPedidoPage {
   itemPedidoId = 0;
   produtos: Produto[] = [];
   pedidoSelecionado: any[] = [];
-  tipoPedido: 'local' | 'entrega' = 'local';
+  tipoPedido: 'retirar' | 'entregar' | 'na mesa' = 'retirar';
   numeroDaMesa: any;
   pedido?: Pedido;
+  mesa_identificacao?: string;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -119,7 +120,7 @@ export class NovoPedidoPage {
     }
   }
 
-  confirmarPedido() {
+  async confirmarPedido() {
     if (this.pedidoSelecionado.length === 0) {
       alert('Adicione pelo menos um item.');
       return;
@@ -140,6 +141,17 @@ export class NovoPedidoPage {
       forma_pagamento: undefined,
       cliente_id: undefined
     };
+
+    if (this.tipoPedido == 'na mesa') {
+      try {
+        await this.sqlite.salvarPedido(pedido);
+      } catch (error) {
+        alert('Falha ao salvar pedido.');
+        console.error(error);
+      }
+
+      this.router.navigateByUrl('/tabs/finalizar-pedido');
+    }
 
     this.router.navigateByUrl('/tabs/finalizar-pedido', {
       state: { pedido }

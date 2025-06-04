@@ -55,16 +55,26 @@
   </ion-card>
 
   <ion-segment [(ngModel)]="tipoPedido" color="danger">
-    <ion-segment-button value="local">
-      <ion-label>🍽️ Local</ion-label>
+    <ion-segment-button value="na mesa">
+      <ion-label>🍽️ Na mesa</ion-label>
     </ion-segment-button>
     <ion-segment-button value="entrega">
       <ion-label>🚚 Entrega</ion-label>
     </ion-segment-button>
+    <ion-segment-button value="retirda">
+      <ion-label>🍴 Retirada</ion-label>
+    </ion-segment-button>
   </ion-segment>
 
-  <ion-button expand="block" class="ion-margin-top" (click)="confirmarPedido()">
-    Pagamento
-  </ion-button>
+  <ion-card>
+    <ion-card-content>
+      <ion-input [(ngModel)]="mesa_identificacao" name="mesa_identificacao"
+        placeholder="Identifique a mesa"></ion-input>
+    </ion-card-content>
+  </ion-card>
 
+  <ion-button [disabled]="tipoPedido == 'na mesa' && !mesa_identificacao" expand="block" class="ion-margin-top"
+    (click)="confirmarPedido()">
+    Avançar
+  </ion-button>
 </ion-content>

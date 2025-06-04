@@ -72,7 +72,7 @@ export class SqliteService {
                 valor_pago REAL,
                 cliente_id INTEGER,
                 data TEXT  NOT NULL,
-                mesa_id INTEGER,
+                mesa_identificacao TEXT,
                 FOREIGN KEY (cliente_id) REFERENCES clientes(id)
             );
         `;
@@ -231,7 +231,7 @@ export class SqliteService {
         const insert = `
         INSERT INTO pedidos (
             itens, total, tipo, status, forma_pagamento,
-            valor_pago, cliente_id, data, mesa_id
+            valor_pago, cliente_id, data, mesa_identificacao
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         `;
 
@@ -244,7 +244,7 @@ export class SqliteService {
             pedido.valor_pago || null,
             pedido.cliente_id || null,
             pedido.data,
-            pedido.mesa_id || null
+            pedido.mesa_identificacao || null
         ];
 
         const result = await this.db!.run(insert, values);
@@ -315,7 +315,7 @@ export class SqliteService {
     async carregarMesasQuery() {
         if (!this.db) return [];
 
-        const result = await this.db!.query(`SELECT id, mesa_id, status FROM pedidos WHERE tipo = 'local' AND status = 'em_andamento' AND mesa_id IS NOT NULL`);
+        const result = await this.db!.query(`SELECT id, mesa_identificacao, status FROM pedidos WHERE tipo = 'local' AND status = 'em_andamento' AND mesa_identificacao IS NOT NULL`);
 
         return result.values || [];
     }
