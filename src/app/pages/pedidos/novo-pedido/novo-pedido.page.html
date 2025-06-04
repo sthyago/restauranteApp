@@ -24,7 +24,7 @@
   <ion-list *ngIf="pedidoSelecionado.length > 0">
     <ion-item *ngFor="let item of pedidoSelecionado">
       <ion-thumbnail slot="start">
-        <img [src]="item.foto_path" />
+        <img [src]="'../../../../' + item.foto_path" />
       </ion-thumbnail>
 
       <ion-label>

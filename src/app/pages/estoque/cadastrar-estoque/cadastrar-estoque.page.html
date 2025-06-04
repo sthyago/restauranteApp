@@ -14,7 +14,7 @@
     <ion-select [(ngModel)]="novoInsumo.produto_id">
       <ion-select-option *ngFor="let p of produtos" [value]="p.id">
         <ion-thumbnail slot="start">
-          <img [src]="p.foto_path" />
+          <img [src]="'../../../../' + p.foto_path" />
         </ion-thumbnail>
         {{ p.nome }}
       </ion-select-option>
