@@ -34,8 +34,12 @@
       <ion-label>
         <h3>{{ pedido.tipo | titlecase }} • {{ pedido.data | date:'short' }}</h3>
         <p>Total: R$ <span appMoedaMask="display">{{ pedido.total }}</span></p>
-        <p *ngIf="pedido.status === 'na_conta'">Cliente: {{ pedido.cliente_nome }}</p>
+        <p *ngIf="pedido.status === 'na_conta'">Cliente ID: {{ pedido.cliente_id }}</p>
       </ion-label>
+
+      <ion-badge slot="end" [color]="getStatusColor(pedido.status)">
+        {{ getStatusText(pedido.status) }}
+      </ion-badge>
     </ion-item>
   </ion-list>
 
