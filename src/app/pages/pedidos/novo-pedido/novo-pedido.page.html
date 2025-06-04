@@ -58,15 +58,15 @@
     <ion-segment-button value="na mesa">
       <ion-label>🍽️ Na mesa</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="entrega">
+    <ion-segment-button value="entregar">
       <ion-label>🚚 Entrega</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="retirda">
+    <ion-segment-button value="retirar">
       <ion-label>🍴 Retirada</ion-label>
     </ion-segment-button>
   </ion-segment>
 
-  <ion-card>
+  <ion-card *ngIf="tipoPedido === 'na mesa'">
     <ion-card-content>
       <ion-input [(ngModel)]="mesa_identificacao" name="mesa_identificacao"
         placeholder="Identifique a mesa"></ion-input>

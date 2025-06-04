@@ -235,8 +235,9 @@ export class SqliteService {
                     tipo = ?, 
                     status = ?, 
                     forma_pagamento = ?, 
-                    cliente_id = ? 
-                    WHERE id = ?`,
+                    cliente_id = ?
+                    mesa_identificacao = ?
+                WHERE id = ?`,
                 [
                     JSON.stringify(pedido.itens),
                     pedido.total,
@@ -252,7 +253,7 @@ export class SqliteService {
             // Inserir novo pedido
             const result = await this.db.run(
                 `INSERT INTO pedidos (
-                    itens, total, tipo, status, data, forma_pagamento, cliente_id
+                    itens, total, tipo, status, data, forma_pagamento, cliente_id, mesa_identificacao
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     JSON.stringify(pedido.itens),
@@ -261,8 +262,8 @@ export class SqliteService {
                     pedido.status,
                     new Date().toISOString(),
                     pedido.forma_pagamento,
-                    pedido.mesa_identificacao,
-                    pedido.cliente_id
+                    pedido.cliente_id,
+                    pedido.mesa_identificacao
                 ]
             );
         }
