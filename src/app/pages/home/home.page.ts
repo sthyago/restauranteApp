@@ -32,97 +32,25 @@ export class HomePage {
     );
 
     if (!res?.values?.length) {
-      // Elemento temporário para formatação
-      const tempInput = document.createElement('input');
 
       const alert = await this.alertController.create({
-        header: 'Abertura de Caixa',
-        cssClass: 'custom-alert',
-        inputs: [
-          {
-            name: 'valor',
-            type: 'text',
-            placeholder: 'R$ 0,00',
-            id: 'valorAberturaInput',
-            cssClass: 'alert-input',
-            attributes: {
-              inputmode: 'decimal',
-              autofocus: true
-            }
-          },
-          {
-            name: 'observacoes',
-            type: 'text',
-            placeholder: 'Observações (opcional)',
-          }
-        ],
+        header: 'Nenhum caixa aberto!',
+        message: 'Deseja ir para a tela de abertura?',
         buttons: [
+          { text: 'Cancelar', role: 'cancel' },
           {
-            text: 'Cancelar',
-            role: 'cancel'
-          },
-          {
-            text: 'Abrir Caixa',
-            handler: async (data) => {
-              // Converte o valor formatado para número
-              const valorNumerico = this.converterMoedaParaNumero(data.valor);
-
-              // Validação melhorada
-              if (valorNumerico <= 0) {
-                const toast = await this.toastCtrl.create({
-                  message: 'Informe um valor válido maior que zero.',
-                  duration: 2000,
-                  color: 'danger'
-                });
-                await toast.present();
-                return false;
-              }
-
-              // Formata o valor com 2 casas decimais para o banco de dados
-              const valorAbertura = parseFloat(valorNumerico.toFixed(2));
-
-              await this.sqliteService.db?.run(
-                `INSERT INTO caixa (data_abertura, valor_abertura, observacoes) VALUES (?, ?, ?)`,
-                [new Date().toISOString(), valorAbertura, data.observacoes || null]
-              );
-
-              const toast = await this.toastCtrl.create({
-                message: 'Caixa aberto com sucesso!',
-                duration: 2000,
-                color: 'success'
-              });
-              await toast.present();
-              return true;
+            text: 'Sim',
+            handler: async () => {
+              this.router.navigateByUrl('/tabs/abertura-caixa')
             }
           }
         ]
       });
 
       await alert.present();
-
-      // Adiciona máscara monetária ao input
-      const inputEl = document.getElementById('valorAberturaInput') as HTMLInputElement;
-      if (inputEl) {
-        inputEl.addEventListener('input', (event) => {
-          this.aplicarMascaraMonetariaInput(event.target as HTMLInputElement);
-        });
-      }
     }
   }
 
-  private aplicarMascaraMonetariaInput(input: HTMLInputElement) {
-    // Mantém apenas números e vírgulas
-    let valor = input.value.replace(/[^0-9,]/g, '');
-
-    // Remove múltiplas vírgulas
-    const partes = valor.split(',');
-    if (partes.length > 2) {
-      valor = partes[0] + ',' + partes.slice(1).join('');
-    }
-
-    // Atualiza o valor mantendo a vírgula
-    input.value = 'R$ ' + valor;
-  }
 
   private converterMoedaParaNumero(valorFormatado: string): number {
     // Se for número, retorna diretamente
