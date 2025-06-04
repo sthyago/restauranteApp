@@ -34,9 +34,27 @@ export class PedidosPage implements OnInit {
   }
 
   async carregarPedidos() {
-    const result = await this.sqliteService.carregarPedidosQuery();
+    const result = await this.sqliteService.carregarTodosPedidos();
 
     this.pedidos = result || [];
     this.filtrar();
+  }
+
+  getStatusText(status: string): string {
+    switch (status) {
+      case 'em_andamento': return 'Em Andamento';
+      case 'na_conta': return 'Na Conta';
+      case 'finalizado': return 'Finalizado';
+      default: return status;
+    }
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'em_andamento': return 'warning';
+      case 'na_conta': return 'primary';
+      case 'finalizado': return 'success';
+      default: return 'medium';
+    }
   }
 }

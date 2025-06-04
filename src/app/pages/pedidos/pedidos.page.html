@@ -28,7 +28,9 @@
   </ion-segment>
 
   <ion-list class="ion-margin-top">
-    <ion-item *ngFor="let pedido of pedidosFiltrados">
+    <ion-item *ngFor="let pedido of pedidosFiltrados" [routerLink]="['/tabs/finalizar-pedido']"
+      [state]="{ pedido: pedido }">
+
       <ion-label>
         <h3>{{ pedido.tipo | titlecase }} • {{ pedido.data | date:'short' }}</h3>
         <p>Total: R$ <span appMoedaMask="display">{{ pedido.total }}</span></p>

@@ -223,32 +223,49 @@ export class SqliteService {
         const res = await this.db.query(`SELECT * FROM estoque`);
         return res.values || [];
     }
-    async salvarPedido(pedido: Pedido): Promise<number> {
-        if (!this.db) return 0;
+    async salvarPedido(pedido: Pedido): Promise<void> {
+        if (!this.db) return;
 
-        const itensString = JSON.stringify(pedido.itens);
-
-        const insert = `
-        INSERT INTO pedidos (
-            itens, total, tipo, status, forma_pagamento,
-            valor_pago, cliente_id, data, mesa_identificacao
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-        `;
-
-        const values = [
-            itensString, // JSON.stringify dos produtos com id e qtd
-            pedido.total,
-            pedido.tipo,
-            pedido.status,
-            pedido.forma_pagamento || null,
-            pedido.valor_pago || null,
-            pedido.cliente_id || null,
-            pedido.data,
-            pedido.mesa_identificacao || null
-        ];
-
-        const result = await this.db!.run(insert, values);
-        return result.changes?.lastId || 0;
+        if (pedido.id) {
+            // Atualizar pedido existente
+            await this.db.run(
+                `UPDATE pedidos SET 
+                    itens = ?, 
+                    total = ?, 
+                    tipo = ?, 
+                    status = ?, 
+                    forma_pagamento = ?, 
+                    cliente_id = ? 
+                    WHERE id = ?`,
+                [
+                    JSON.stringify(pedido.itens),
+                    pedido.total,
+                    pedido.tipo,
+                    pedido.status,
+                    pedido.mesa_identificacao,
+                    pedido.forma_pagamento,
+                    pedido.cliente_id,
+                    pedido.id
+                ]
+            );
+        } else {
+            // Inserir novo pedido
+            const result = await this.db.run(
+                `INSERT INTO pedidos (
+                    itens, total, tipo, status, data, forma_pagamento, cliente_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    JSON.stringify(pedido.itens),
+                    pedido.total,
+                    pedido.tipo,
+                    pedido.status,
+                    new Date().toISOString(),
+                    pedido.forma_pagamento,
+                    pedido.mesa_identificacao,
+                    pedido.cliente_id
+                ]
+            );
+        }
     }
     async listarPedidos(): Promise<Pedido[]> {
         if (!this.db) [];
@@ -421,5 +438,44 @@ export class SqliteService {
             console.error('Erro ao dar baixa no estoque:', e);
             return false;
         }
+    }
+    async carregarTodosPedidos(): Promise<Pedido[]> {
+        // Obter data atual
+        const hoje = new Date();
+        const dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+        const dataFim = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
+
+        const pedidos: Pedido[] = [];
+
+        try {
+            const result = await this.db?.query(
+                `SELECT * FROM pedidos 
+            WHERE data >= ? AND data < ? 
+            ORDER BY data DESC`,
+                [
+                    dataInicio.toISOString(),
+                    dataFim.toISOString()
+                ]
+            );
+
+            if (result?.values) {
+                for (const row of result.values) {
+                    pedidos.push({
+                        id: row.id,
+                        itens: JSON.parse(row.itens),
+                        total: row.total,
+                        tipo: row.tipo,
+                        status: row.status,
+                        data: row.data,
+                        forma_pagamento: row.forma_pagamento,
+                        cliente_id: row.cliente_id
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Erro ao carregar pedidos:', e);
+        }
+
+        return pedidos;
     }
 }
