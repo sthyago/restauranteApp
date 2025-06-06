@@ -58,7 +58,8 @@ export class PedidosPage implements OnInit {
     }
   }
 
-  getClientName(id: string) {
-    return this.sqliteService.db?.run('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
+  async buscarNomeCliente(id: string) {
+    const result = await this.sqliteService.db?.run('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
+    return result;
   }
 }
