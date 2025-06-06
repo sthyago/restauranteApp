@@ -8,6 +8,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false
 })
 export class FinanceiroPage {
+  dataHoje: string;
 
   constructor(private dbService: SqliteService) { }
 
@@ -43,22 +44,29 @@ export class FinanceiroPage {
     this.saldo = this.caixa.valor_abertura + entradas - totalSangrias;
   }
   async pegarCaixasDoDia() {
-    const agora = new Date();
-
-    // Usar mesmo formato que a abertura de caixa (YYYY-MM-DD)
-    const [dia, mes, ano] = [
-      agora.getDate().toString().padStart(2, '0'),
-      (agora.getMonth() + 1).toString().padStart(2, '0'),
-      agora.getFullYear()
-    ];
-
-    this.hoje = `${ano}-${mes}-${dia}`;
-
+    this.getDataHora
     return await this.dbService.db?.query(`
       SELECT * FROM caixa 
       WHERE DATE(data_abertura) = ? 
       ORDER BY id DESC 
       LIMIT 1
     `, [this.hoje]);
+  }
+
+  getDataHora() {
+    const data = new Date();
+
+    // Converte para o fuso de São Paulo (Goiânia)
+    const formatador = new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+
+    const [dataStr] = formatador.format(data).split(', ');
+    const [dia, mes, ano] = dataStr.split('/');
+
+    this.dataHoje = `${ano}-${mes}-${dia}`;
   }
 }
