@@ -111,4 +111,9 @@
       <p class="ion-padding">Nenhum caixa aberto hoje.</p>
     </ion-text>
   </ng-container>
+
+  <ng-container *ngIf="caixa === undefined">
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    <p class="ion-text-center">Carregando...</p>
+  </ng-container>
 </ion-content>

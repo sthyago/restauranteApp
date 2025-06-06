@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Cliente } from 'src/app/models/cliente';
 import { Pedido } from 'src/app/models/pedido';
 import { FormaPagamento } from 'src/app/models/tipos';
+import { PedidoService } from 'src/app/services/pedido.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class FinalizarPedidoPage {
   clienteSelecionadoId?: number;
 
 
-  constructor(private router: Router, private sqliteService: SqliteService) {
+  constructor(private router: Router, private sqliteService: SqliteService, private pedidoService: PedidoService) {
     const nav = this.router.getCurrentNavigation();
     if (nav?.extras?.state?.['pedido']) {
       this.pedido = nav.extras.state['pedido'];
@@ -76,6 +77,7 @@ export class FinalizarPedidoPage {
         // Salvar pedido
         await this.sqliteService.salvarPedido(this.pedido);
         alert('Pedido finalizado com sucesso!');
+        this.pedidoService.notificarPedidoFinalizado();
         this.router.navigateByUrl('/tabs/pedidos');
       } catch (e) {
         console.error('Erro ao finalizar pedido:', e);

@@ -7,7 +7,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   styleUrls: ['./financeiro.page.scss'],
   standalone: false
 })
-export class FinanceiroPage implements OnInit {
+export class FinanceiroPage {
 
   constructor(private dbService: SqliteService) { }
 
@@ -17,12 +17,8 @@ export class FinanceiroPage implements OnInit {
   sangrias: any[] = [];
   saldo: number = 0;
 
-  async ngOnInit() {
-    await this.carregarCaixaAtual();
-  }
-
   async carregarCaixaAtual() {
-    this.pegarCaixasDoDia();
+    this.caixaRes = await this.pegarCaixasDoDia();
 
     if (!this.caixaRes?.values?.length) return;
 
@@ -48,22 +44,21 @@ export class FinanceiroPage implements OnInit {
   }
   async pegarCaixasDoDia() {
     const agora = new Date();
-    const formatter = new Intl.DateTimeFormat('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-    const [dia, mes, ano] = formatter.format(agora).split('/');
+
+    // Usar mesmo formato que a abertura de caixa (YYYY-MM-DD)
+    const [dia, mes, ano] = [
+      agora.getDate().toString().padStart(2, '0'),
+      (agora.getMonth() + 1).toString().padStart(2, '0'),
+      agora.getFullYear()
+    ];
+
     this.hoje = `${ano}-${mes}-${dia}`;
 
-    const caixaRes = await this.dbService.db?.query(`
+    return await this.dbService.db?.query(`
       SELECT * FROM caixa 
       WHERE DATE(data_abertura) = ? 
       ORDER BY id DESC 
       LIMIT 1
     `, [this.hoje]);
-
-    return caixaRes
   }
 }

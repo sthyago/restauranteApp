@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Pedido } from 'src/app/models/pedido';
 import { Produto } from 'src/app/models/produto';
+import { PedidoService } from 'src/app/services/pedido.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -11,7 +13,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false,
 })
 export class NovoPedidoPage {
-
+  subscription!: Subscription;
   itemPedidoId = 0;
   produtos: Produto[] = [];
   pedidoSelecionado: any[] = [];
@@ -23,10 +25,19 @@ export class NovoPedidoPage {
   constructor(
     private cdr: ChangeDetectorRef,
     private sqlite: SqliteService,
+    private pedidoService: PedidoService,
     private router: Router) { }
 
   ionViewWillEnter() {
     this.carregarProdutos();
+
+    this.subscription = this.pedidoService.pedidoFinalizado$.subscribe(() => {
+      this.pedidoSelecionado = [];
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   async carregarProdutos() {
