@@ -35,6 +35,13 @@ export class PedidosPage implements OnInit {
 
   async carregarPedidos() {
     const result = await this.sqliteService.carregarTodosPedidos();
+    for (let index = 0; index < result.length; index++) {
+      const element = result[index];
+      if (element.cliente_id) {
+        const res = await this.buscarNomeCliente(element.cliente_id.toString());
+        element.cliente_nome = res?.values?.[0]?.nome || '';
+      }
+    }
 
     this.pedidos = result || [];
     this.filtrar();
@@ -59,7 +66,7 @@ export class PedidosPage implements OnInit {
   }
 
   async buscarNomeCliente(id: string) {
-    const result = await this.sqliteService.db?.run('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
+    const result = await this.sqliteService.db?.query('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
     return result;
   }
 }

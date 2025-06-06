@@ -9,6 +9,7 @@ export interface Pedido {
     forma_pagamento?: FormaPagamento;
     valor_pago?: number;
     cliente_id?: number;
+    cliente_nome?: string;
     data: string; // ISO string
     mesa_identificacao?: string;
 }
