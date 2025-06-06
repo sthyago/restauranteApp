@@ -8,17 +8,13 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   styleUrls: ['./pedidos.page.scss'],
   standalone: false,
 })
-export class PedidosPage implements OnInit {
+export class PedidosPage {
   statusFiltro: 'em_andamento' | 'na_conta' | 'finalizado' = 'em_andamento';
 
-  pedidos: Pedido[] = []; // será carregado do SQLite
+  pedidos: Pedido[] = [];
   pedidosFiltrados: any[] = [];
 
   constructor(private sqliteService: SqliteService) { }
-
-  ngOnInit() {
-    this.carregarPedidos();
-  }
 
   ionViewWillEnter() {
     this.carregarPedidos();

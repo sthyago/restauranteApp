@@ -20,7 +20,7 @@ export class NovoPedidoPage {
   tipoPedido: 'retirar' | 'entregar' | 'na mesa' = 'retirar';
   numeroDaMesa: any;
   pedido?: Pedido;
-  mesa_identificacao?: string;
+  mesa_identificacao?: string = 'Mesa';
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -30,14 +30,7 @@ export class NovoPedidoPage {
 
   ionViewWillEnter() {
     this.carregarProdutos();
-
-    this.subscription = this.pedidoService.pedidoFinalizado$.subscribe(() => {
-      this.pedidoSelecionado = [];
-    });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.pedidoSelecionado = [];
   }
 
   async carregarProdutos() {
@@ -151,7 +144,7 @@ export class NovoPedidoPage {
       data: new Date().toISOString(),
       forma_pagamento: undefined,
       cliente_id: undefined,
-      mesa_identificacao: this.tipoPedido === 'na mesa' ? this.mesa_identificacao : undefined
+      mesa_identificacao: this.mesa_identificacao
     };
 
     if (this.tipoPedido == 'na mesa') {
