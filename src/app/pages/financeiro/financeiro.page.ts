@@ -8,7 +8,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false
 })
 export class FinanceiroPage {
-  dataHoje: string;
+  dataHoje: string = '';
 
   constructor(private dbService: SqliteService) { }
 
