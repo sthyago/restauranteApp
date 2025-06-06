@@ -19,6 +19,7 @@ export class FinanceiroPage {
 
   ionViewWillEnter() {
     this.getDataHora();
+    this.carregarCaixaAtual();
   }
 
   async carregarCaixaAtual() {
@@ -47,7 +48,6 @@ export class FinanceiroPage {
     this.saldo = this.caixa.valor_abertura + entradas - totalSangrias;
   }
   async pegarCaixasDoDia() {
-    this.getDataHora
     return await this.dbService.db?.query(`
       SELECT * FROM caixa 
       WHERE DATE(data_abertura) = ? 

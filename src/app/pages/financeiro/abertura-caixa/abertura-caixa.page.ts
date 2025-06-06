@@ -31,6 +31,7 @@ export class AberturaCaixaPage implements OnInit {
 
     // Formatar apenas como data (sem hora) para armazenamento
     this.dataHoje = `${ano}-${mes}-${dia}`;
+    console.log(this.dataHoje)
   }
 
   async verificarCaixaAberto() {
