@@ -19,8 +19,29 @@ export class AberturaCaixaPage implements OnInit {
   constructor(private dbService: SqliteService, private toastCtrl: ToastController) { }
 
   async ngOnInit() {
-    this.dataHoje = new Date().toISOString().split('T')[0];
+
     await this.verificarCaixaAberto();
+  }
+
+  getDataHora() {
+    const data = new Date();
+
+    // Converte para o fuso de São Paulo (Goiânia)
+    const formatador = new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+
+    const [dataStr, horaStr] = formatador.format(data).split(', ');
+    const [dia, mes, ano] = dataStr.split('/');
+
+    this.dataHoje = `${ano}-${mes}-${dia} ${horaStr}`;
   }
 
   async verificarCaixaAberto() {
