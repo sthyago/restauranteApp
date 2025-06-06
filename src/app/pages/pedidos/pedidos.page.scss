@@ -1,3 +1,10 @@
 ion-button.add-btn {
     --background: red;
 }
+
+ion-segment-button {
+    ion-label {
+        text-overflow: clip;
+        font-size: 12px;
+    }
+}
