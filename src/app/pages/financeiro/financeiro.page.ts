@@ -8,11 +8,10 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false
 })
 export class FinanceiroPage {
-  dataHoje: string = '';
 
   constructor(private dbService: SqliteService) { }
 
-  hoje?: string;
+  dataHoje: string = '';
   caixaRes: any;
   caixa: any = null;
   sangrias: any[] = [];
@@ -29,7 +28,7 @@ export class FinanceiroPage {
     const sangriaRes = await this.dbService.db?.query(`
       SELECT valor, motivo, data FROM sangrias 
       WHERE DATE(data) = ?
-    `, [this.hoje]);
+    `, [this.dataHoje]);
 
     this.sangrias = sangriaRes?.values || [];
 
@@ -50,7 +49,7 @@ export class FinanceiroPage {
       WHERE DATE(data_abertura) = ? 
       ORDER BY id DESC 
       LIMIT 1
-    `, [this.hoje]);
+    `, [this.dataHoje]);
   }
 
   getDataHora() {
