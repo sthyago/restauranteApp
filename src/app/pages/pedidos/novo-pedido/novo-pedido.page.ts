@@ -151,12 +151,13 @@ export class NovoPedidoPage {
         console.error(error);
       }
 
-      this.router.navigateByUrl('/tabs/finalizar-pedido');
+      this.router.navigateByUrl('/tabs/pedidos');
+    } else {
+      this.router.navigateByUrl('/tabs/finalizar-pedido', {
+        state: { pedido }
+      });
     }
 
-    this.router.navigateByUrl('/tabs/finalizar-pedido', {
-      state: { pedido }
-    });
   }
 
   calcularTotal(): number {
