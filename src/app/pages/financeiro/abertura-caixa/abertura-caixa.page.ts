@@ -24,18 +24,12 @@ export class AberturaCaixaPage implements OnInit {
   }
 
   getDataHora() {
-    const data = new Date();
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    const dia = hoje.getDate().toString().padStart(2, '0');
 
-    const formatador = new Intl.DateTimeFormat('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-
-    const [dataStr] = formatador.format(data).split(', ');
-    const [dia, mes, ano] = dataStr.split('/');
-
+    // Formatar apenas como data (sem hora) para armazenamento
     this.dataHoje = `${ano}-${mes}-${dia}`;
   }
 
