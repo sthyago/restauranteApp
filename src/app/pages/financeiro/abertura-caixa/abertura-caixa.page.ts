@@ -19,7 +19,7 @@ export class AberturaCaixaPage implements OnInit {
   constructor(private dbService: SqliteService, private toastCtrl: ToastController) { }
 
   async ngOnInit() {
-
+    this.getDataHora();
     await this.verificarCaixaAberto();
   }
 
