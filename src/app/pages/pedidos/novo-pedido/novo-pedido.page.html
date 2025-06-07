@@ -12,7 +12,7 @@
   <h2>Escolha um produto</h2>
 
   <ion-item>
-    <ion-select [(ngModel)]="itemPedidoId" (ionChange)="adicionarItem()">
+    <ion-select interface="action-sheet" [(ngModel)]="itemPedidoId" (ionChange)="adicionarItem()">
       <ion-select-option *ngFor="let p of produtos" [value]="p.id">
         {{ p.nome }}
       </ion-select-option>

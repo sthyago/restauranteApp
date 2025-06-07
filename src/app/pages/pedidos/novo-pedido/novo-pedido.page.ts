@@ -25,12 +25,12 @@ export class NovoPedidoPage {
   constructor(
     private cdr: ChangeDetectorRef,
     private sqlite: SqliteService,
-    private pedidoService: PedidoService,
     private router: Router) { }
 
   ionViewWillEnter() {
     this.carregarProdutos();
     this.pedidoSelecionado = [];
+    this.itemPedidoId = 0;
   }
 
   async carregarProdutos() {
