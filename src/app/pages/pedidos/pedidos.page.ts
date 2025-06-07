@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Pedido } from 'src/app/models/pedido';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
@@ -14,7 +15,7 @@ export class PedidosPage {
   pedidos: Pedido[] = [];
   pedidosFiltrados: any[] = [];
 
-  constructor(private sqliteService: SqliteService) { }
+  constructor(private sqliteService: SqliteService, private router: Router) { }
 
   ionViewWillEnter() {
     this.carregarPedidos();
@@ -24,7 +25,6 @@ export class PedidosPage {
     this.pedidosFiltrados = this.pedidos.filter(p => p.status === this.statusFiltro);
   }
 
-  // Atualiza a filtragem quando o usuário muda o segmento
   onSegmentChange() {
     this.filtrar();
   }
@@ -64,5 +64,10 @@ export class PedidosPage {
   async buscarNomeCliente(id: string) {
     const result = await this.sqliteService.db?.query('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
     return result;
+  }
+
+  irParaFinalizado(pedido: Pedido) {
+    if (pedido.status === 'em_andamento')
+      this.router.navigateByUrl('/tabs/finalizar-pedido', { state: pedido });
   }
 }

@@ -14,6 +14,7 @@
     Novo Pedido
   </ion-button>
 
+  <h2>Pedidos do dia</h2>
   <ion-segment [(ngModel)]="statusFiltro" (ionChange)="onSegmentChange()" class="solution-segment ion-margin-top"
     value="em_andamento" color="danger">
     <ion-segment-button value="em_andamento">
@@ -28,8 +29,7 @@
   </ion-segment>
 
   <ion-list class="ion-margin-top">
-    <ion-item *ngFor="let pedido of pedidosFiltrados" [routerLink]="['/tabs/finalizar-pedido']"
-      [state]="{ pedido: pedido }">
+    <ion-item *ngFor="let pedido of pedidosFiltrados" (click)="irParaFinalizado(pedido.status)">
 
       <ion-label>
         <h3>{{ pedido.mesa_identificacao | titlecase }} • {{ pedido.data | date:'short' }}</h3>
