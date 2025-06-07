@@ -13,11 +13,11 @@ import { AlertController, ToastController } from '@ionic/angular';
 export class HomePage {
 
   mesas: any[] = [];
+  dataHoje: string = '';
 
   constructor(
     private sqliteService: SqliteService,
     private alertController: AlertController,
-    private toastCtrl: ToastController,
     private router: Router) { }
 
   async ionViewWillEnter() {
@@ -25,10 +25,9 @@ export class HomePage {
   }
 
   async verificarOuAbrirCaixa() {
-    const hoje = new Date().toISOString().slice(0, 10);
     const res = await this.sqliteService.db?.query(
       `SELECT id FROM caixa WHERE DATE(data_abertura) = ? LIMIT 1`,
-      [hoje]
+      [this.dataHoje]
     );
 
     if (!res?.values?.length) {
@@ -52,23 +51,13 @@ export class HomePage {
   }
 
 
-  private converterMoedaParaNumero(valorFormatado: string): number {
-    // Se for número, retorna diretamente
-    if (typeof valorFormatado === 'number') return valorFormatado;
+  getDataHora() {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    const dia = hoje.getDate().toString().padStart(2, '0');
 
-    // Se for string vazia, retorna 0
-    if (!valorFormatado) return 0;
-
-    // Mantém apenas números, pontos e vírgulas
-    const valorLimpo = valorFormatado
-      .replace('R$', '')
-      .replace(/[^0-9,.]/g, '')
-      .trim();
-
-    // Substitui vírgulas por pontos para conversão decimal
-    const valorNumerico = valorLimpo.replace(',', '.');
-
-    // Converte para float
-    return parseFloat(valorNumerico) || 0;
+    // Formatar apenas como data (sem hora) para armazenamento
+    this.dataHoje = `${ano}-${mes}-${dia}`;
   }
 }

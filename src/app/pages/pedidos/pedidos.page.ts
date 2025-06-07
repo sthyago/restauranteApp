@@ -34,7 +34,7 @@ export class PedidosPage {
     for (let index = 0; index < result.length; index++) {
       const element = result[index];
       if (element.cliente_id) {
-        const res = await this.buscarNomeCliente(element.cliente_id.toString());
+        const res = await this.buscarNomeCliente(element.cliente_id);
         element.cliente_nome = res?.values?.[0]?.nome || '';
       }
     }
@@ -61,7 +61,7 @@ export class PedidosPage {
     }
   }
 
-  async buscarNomeCliente(id: string) {
+  async buscarNomeCliente(id: number) {
     const result = await this.sqliteService.db?.query('SELECT clientes.nome FROM clientes WHERE id = ?', [id]);
     return result;
   }
