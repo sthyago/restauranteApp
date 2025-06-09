@@ -8,8 +8,10 @@ export interface Pedido {
     status: StatusPedido;
     forma_pagamento?: FormaPagamento;
     valor_pago?: number;
+    desconto?: number;
     cliente_id?: number;
     cliente_nome?: string;
     data: string; // ISO string
     mesa_identificacao?: string;
+    origem?: string;
 }

@@ -13,16 +13,27 @@
     <ion-input [(ngModel)]="filtroCliente" (ionInput)="filtrar()"></ion-input>
   </ion-item>
 
+  <ion-button *ngIf="contasFiltradas.length > 0" expand="block" color="success" (click)="pagarTodosFiltrados()">
+    <ion-icon slot="start" name="card"></ion-icon>
+    Pagar Todos ({{contasFiltradas.length}})
+  </ion-button>
+
   <ion-list>
     <ion-item *ngFor="let conta of contasFiltradas">
+      <ion-checkbox slot="start" [(ngModel)]="conta.selecionado"></ion-checkbox>
       <ion-label>
         <h3>{{ conta.cliente_nome }}</h3>
         <ion-label appMoedaMask="display">Valor: R$ {{ conta.total }}</ion-label>
         <ion-label>Data: {{ conta.data | date:'shortDate' }}</ion-label>
       </ion-label>
       <ion-button fill="clear" color="success" (click)="marcarComoPago(conta.id)">
-        Marcar como pago
+        Pagar
       </ion-button>
     </ion-item>
   </ion-list>
+
+  <ion-button *ngIf="haSelecionados()" expand="block" color="success" (click)="pagarSelecionados()">
+    <ion-icon slot="start" name="card"></ion-icon>
+    Pagar Selecionados ({{quantidadeSelecionados()}})
+  </ion-button>
 </ion-content>

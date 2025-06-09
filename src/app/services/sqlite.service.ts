@@ -8,6 +8,8 @@ import { Capacitor } from '@capacitor/core';
 import { Pedido } from '../models/pedido';
 import { Cliente } from '../models/cliente';
 import { Produto } from '../models/produto';
+import { Caixa } from '../models/caixa';
+import { FormaPagamento } from '../models/tipos';
 
 @Injectable({
     providedIn: 'root'
@@ -451,8 +453,8 @@ export class SqliteService {
         try {
             const result = await this.db?.query(
                 `SELECT * FROM pedidos 
-            WHERE data >= ? AND data < ? 
-            ORDER BY data DESC`,
+                 WHERE data >= ? AND data < ? 
+                 ORDER BY data DESC`,
                 [
                     dataInicio.toISOString(),
                     dataFim.toISOString()
@@ -478,5 +480,50 @@ export class SqliteService {
         }
 
         return pedidos;
+    }
+    async atualizarCaixa(pedido: Pedido): Promise<boolean> {
+        // 1. Verificar se o pedido tem dados necessários
+        if (!pedido.forma_pagamento || !pedido.valor_pago) {
+            console.error('Pedido sem forma de pagamento ou valor pago');
+            return false;
+        }
+
+        // 2. Mapear formas de pagamento para colunas do caixa
+        const colunasPagamento: Record<FormaPagamento, string> = {
+            'dinheiro': 'total_dinheiro',
+            'pix': 'total_pix',
+            'debito': 'total_debito',
+            'credito': 'total_credito'
+        };
+
+        const coluna = colunasPagamento[pedido.forma_pagamento];
+        if (!coluna) {
+            console.error('Forma de pagamento inválida:', pedido.forma_pagamento);
+            return false;
+        }
+
+        // 3. Obter data atual no formato ISO (YYYY-MM-DD)
+        const dataHoje = new Date().toISOString().split('T')[0];
+
+        const valorLiquido = pedido.total - (pedido.desconto || 0);
+        try {
+            // 4. Atualizar o caixa do dia
+            await this.db?.run(
+                `UPDATE caixa 
+                SET ${coluna} = ${coluna} + ?
+                WHERE date(data_abertura) = date(?)
+                AND data_fechamento IS NULL
+                RETURNING *`,
+                [
+                    valorLiquido,
+                    dataHoje
+                ]
+            );
+
+            return true;
+        } catch (e) {
+            console.error('Erro ao atualizar caixa:', e);
+            return false;
+        }
     }
 }

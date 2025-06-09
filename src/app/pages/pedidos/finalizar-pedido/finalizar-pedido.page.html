@@ -28,6 +28,22 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Desconto (R$)</ion-label>
+        <ion-input type="number" [(ngModel)]="desconto" (ionChange)="calcularValorPago()"
+          placeholder="0.00"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Valor Pago (R$)</ion-label>
+        <ion-input type="number" [(ngModel)]="valor_pago" (ionChange)="validarValorPago()"
+          [placeholder]="getTotal() | number : '1.2-2'"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
   <ion-item>
     <ion-label>Forma de pagamento</ion-label>
     <ion-select [(ngModel)]="formaPagamento">

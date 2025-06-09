@@ -29,7 +29,7 @@
   </ion-segment>
 
   <ion-list class="ion-margin-top">
-    <ion-item *ngFor="let pedido of pedidosFiltrados" (click)="irParaFinalizado(pedido.status)">
+    <ion-item *ngFor="let pedido of pedidosFiltrados" (click)="irParaFinalizado(pedido)">
 
       <ion-label>
         <h3>{{ pedido.mesa_identificacao | titlecase }} • {{ pedido.data | date:'short' }}</h3>
