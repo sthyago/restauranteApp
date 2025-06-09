@@ -43,6 +43,9 @@ export class CadastrarClientePage {
 
     await this.sqliteService.adicionarCliente(nome.trim(), telefone, email.trim());
     alert('Cliente salvo com sucesso!');
+    this.cliente.email = '';
+    this.cliente.nome = '';
+    this.cliente.telefone = '';
     this.router.navigateByUrl('/tabs/listar-clientes');
   }
 }

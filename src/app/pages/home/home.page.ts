@@ -14,6 +14,7 @@ export class HomePage {
 
   mesas: any[] = [];
   dataHoje: string = '';
+  haCaixaAberto?: boolean;
 
   constructor(
     private sqliteService: SqliteService,
@@ -21,43 +22,48 @@ export class HomePage {
     private router: Router) { }
 
   async ionViewWillEnter() {
+    this.getDataHora();
     await this.verificarOuAbrirCaixa();
+
+    this.haCaixaAberto = await this.verificarCaixaAberto();
+  }
+
+  private async verificarCaixaAberto(): Promise<boolean> {
+    try {
+      const res = await this.sqliteService.db?.query(
+        `SELECT id FROM caixa 
+        WHERE DATE(data_abertura) = ? 
+        AND data_fechamento IS NULL 
+        LIMIT 1`,
+        [this.dataHoje]
+      );
+      return (res?.values?.length ?? 0) > 0;
+    } catch (error) {
+      console.error('Erro ao verificar caixa:', error);
+      return false;
+    }
   }
 
   async verificarOuAbrirCaixa() {
-    const res = await this.sqliteService.db?.query(
-      `SELECT id FROM caixa WHERE DATE(data_abertura) = ? LIMIT 1`,
-      [this.dataHoje]
-    );
-
-    if (!res?.values?.length) {
-
-      const alert = await this.alertController.create({
-        header: 'Nenhum caixa aberto!',
-        message: 'Deseja ir para a tela de abertura?',
-        buttons: [
-          { text: 'Cancelar', role: 'cancel' },
-          {
-            text: 'Sim',
-            handler: async () => {
-              this.router.navigateByUrl('/tabs/abertura-caixa')
-            }
+    const alert = await this.alertController.create({
+      header: 'Nenhum caixa aberto!',
+      message: 'Deseja ir para a tela de abertura?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Sim',
+          handler: async () => {
+            this.router.navigateByUrl('/tabs/abertura-caixa')
           }
-        ]
-      });
+        }
+      ]
+    });
 
-      await alert.present();
-    }
+    await alert.present();
   }
 
 
   getDataHora() {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-    const dia = hoje.getDate().toString().padStart(2, '0');
-
-    // Formatar apenas como data (sem hora) para armazenamento
-    this.dataHoje = `${ano}-${mes}-${dia}`;
+    return new Date().toISOString().split('T')[0];
   }
 }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Caixa } from 'src/app/models/caixa';
 import { Cliente } from 'src/app/models/cliente';
 import { Pedido } from 'src/app/models/pedido';
+import { Produto } from 'src/app/models/produto';
 import { FormaPagamento } from 'src/app/models/tipos';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
@@ -21,19 +22,27 @@ export class FinalizarPedidoPage {
   caixa?: Caixa;
   desconto: number = 0;
   valor_pago: number = 0;
+  produto?: Produto;
+  produtos?: Produto[];
 
   constructor(private router: Router, private sqliteService: SqliteService) {
     const nav = this.router.getCurrentNavigation();
+    const state = nav?.extras?.state;
 
-    if (nav?.extras?.state?.['origem'] === 'contas') {
-      this.pedido = nav.extras.state['pedido'];
-      this.pedido!.status = 'finalizado'; // Muda status automaticamente
-      this.valor_pago = this.pedido!.total; // Preenche valor pago
+    if (state) {
+      // Caso venha da página de contas
+      if (state['origem'] === 'contas') {
+        this.pedido = state['pedido'];
+        this.pedido!.status = 'finalizado';
+        this.valor_pago = this.pedido!.total;
+      }
+      // Caso venha da página de pedidos
+      else if (state['pedido']) {
+        this.pedido = state['pedido'];
+      }
     }
 
-    if (nav?.extras?.state?.['pedido']) {
-      this.pedido = nav.extras.state['pedido'];
-    } else {
+    if (!this.pedido) {
       this.router.navigateByUrl('/tabs/pedidos');
     }
   }
@@ -44,15 +53,14 @@ export class FinalizarPedidoPage {
     this.valor_pago = this.pedido.total;
 
     this.clientes = await this.sqliteService.listarClientes();
+    this.produtos = await this.sqliteService.listarProdutos();
 
-    const itens = this.pedido.itens;
-    const produtos = await this.sqliteService.listarProdutos();
-
-    this.itensDetalhados = itens.map(i => {
-      const produto = produtos.find(p => p.id === i.id);
+    this.itensDetalhados = this.pedido.itens.map(item => {
+      const produto = this.produtos?.find(p => p.id === item.id || p.id === item.produto_id);
       return {
         ...produto,
-        qtd: i.qtd
+        qtd: item.qtd || item.quantidade,
+        valor_unitario: produto?.valor_unitario
       };
     });
   }
