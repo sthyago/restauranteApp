@@ -90,20 +90,11 @@ export class FinalizarPedidoPage {
       this.pedido.valor_pago = this.formaPagamento.toString() === 'na_conta' ? 0 : this.valor_pago;
 
       try {
-        // Se veio da página de contas, não precisa dar baixa no estoque novamente
-        if (!this.pedido?.origem || this.pedido.origem !== 'contas') {
-          for (const item of this.pedido!.itens) {
-            const sucesso = await this.sqliteService.darBaixaEstoque(item.id, item.qtd);
-            if (!sucesso) {
-              alert(`Estoque insuficiente para o produto ID ${item.id}. Pedido não finalizado.`);
-              return;
-            }
-          }
-        }
-
-        // Dar baixa no estoque para cada item do pedido
         for (const item of this.pedido.itens) {
-          const sucesso = await this.sqliteService.darBaixaEstoque(item.id, item.qtd);
+          const sucesso = await this.sqliteService.darBaixaEstoque(
+            item.id || item.produto_id, // Adicionar segurança para ID
+            item.qtd || item.quantidade // Adicionar segurança para quantidade
+          );
 
           if (!sucesso) {
             alert(`Estoque insuficiente para o produto ID ${item.id}. Pedido não finalizado.`);
@@ -122,7 +113,7 @@ export class FinalizarPedidoPage {
         this.router.navigateByUrl('/tabs/pedidos');
       } catch (e) {
         console.error('Erro ao finalizar pedido:', e);
-        alert('Erro ao finalizar pedido. Verifique o console.');
+        alert(`Erro ao finalizar pedido. Verifique o console. ${e}`);
       }
     }
   }

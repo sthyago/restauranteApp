@@ -256,7 +256,7 @@ export class SqliteService {
                     pedido.total,
                     pedido.tipo,
                     pedido.status,
-                    new Date().toISOString(),
+                    new Date().toISOString().split('T')[0],
                     pedido.forma_pagamento,
                     pedido.cliente_id,
                     pedido.mesa_identificacao
