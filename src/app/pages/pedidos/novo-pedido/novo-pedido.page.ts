@@ -132,7 +132,8 @@ export class NovoPedidoPage {
     // Criar cópia simplificada dos itens
     const itensSimplificados = this.pedidoSelecionado.map(item => ({
       id: item.id,
-      qtd: item.qtd
+      qtd: item.qtd,
+      produto_id: item.id
     }));
 
     const pedido: Pedido = {
@@ -143,7 +144,7 @@ export class NovoPedidoPage {
       data: new Date().toISOString().split('T')[0],
       forma_pagamento: undefined,
       cliente_id: undefined,
-      mesa_identificacao: this.mesa_identificacao || ''
+      mesa_identificacao: this.tipoPedido === 'na mesa' ? this.mesa_identificacao : ''
     };
 
     if (this.tipoPedido == 'na mesa') {

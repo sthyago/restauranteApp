@@ -60,7 +60,10 @@ export class FinalizarPedidoPage implements OnDestroy {
         };
       });
     } else {
-      this.router.navigateByUrl('/tabs/pedidos');
+      setTimeout(() => {
+        this.router.navigateByUrl('/tabs/pedidos');
+      }, 100);
+
       return;
     }
   }
