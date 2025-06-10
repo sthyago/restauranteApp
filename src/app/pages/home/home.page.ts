@@ -29,10 +29,8 @@ export class HomePage {
   private async verificarCaixaAberto(): Promise<boolean> {
     try {
       const res = await this.sqliteService.db?.query(
-        `SELECT id FROM caixa 
-        WHERE DATE(data_abertura) = ? 
-        AND data_fechamento IS NULL 
-        LIMIT 1`,
+        `SELECT * FROM caixa 
+        WHERE data_abertura = ?`,
         [this.dataHoje]
       );
       return (res?.values?.length ?? 0) > 0;
