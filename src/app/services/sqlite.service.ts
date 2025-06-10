@@ -412,21 +412,15 @@ export class SqliteService {
     }
     async carregarTodosPedidos(): Promise<Pedido[]> {
         // Obter data atual
-        const hoje = new Date();
-        const dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-        const dataFim = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
+        const hoje = new Date().toISOString().split('T')[0];
 
         const pedidos: Pedido[] = [];
 
         try {
             const result = await this.db?.query(
                 `SELECT * FROM pedidos 
-                 WHERE data >= ? AND data < ? 
-                 ORDER BY data DESC`,
-                [
-                    dataInicio.toISOString(),
-                    dataFim.toISOString()
-                ]
+                 WHERE data = ?`,
+                [hoje]
             );
 
             if (result?.values) {

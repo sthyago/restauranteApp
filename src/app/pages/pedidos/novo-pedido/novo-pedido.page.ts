@@ -140,7 +140,7 @@ export class NovoPedidoPage {
       total: this.calcularTotal(),
       tipo: this.tipoPedido,
       status: 'em_andamento',
-      data: new Date().toISOString(),
+      data: new Date().toISOString().split('T')[0],
       forma_pagamento: undefined,
       cliente_id: undefined,
       mesa_identificacao: this.mesa_identificacao

@@ -68,7 +68,7 @@ export class FechamentoPage implements OnInit {
   async salvarFechamento() {
     if (!this.dbService.db) return;
 
-    const hoje = new Date().toISOString().slice(0, 10);
+    const hoje = new Date().toISOString().split('T')[0];
     const agora = new Date().toISOString(); // data completa para o fechamento
 
     const dados = {
