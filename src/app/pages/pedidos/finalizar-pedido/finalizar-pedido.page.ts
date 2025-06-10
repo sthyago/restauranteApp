@@ -14,7 +14,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false,
 })
 export class FinalizarPedidoPage implements OnDestroy {
-  pedido?: Pedido;
+  pedido: Pedido | null = null;
   itensDetalhados: any[] = [];
   clientes: Cliente[] = [];
   formaPagamento?: FormaPagamento;
@@ -26,25 +26,7 @@ export class FinalizarPedidoPage implements OnDestroy {
   produtos?: Produto[];
 
   constructor(private router: Router, private sqliteService: SqliteService) {
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state;
-
-    if (state) {
-      // Caso venha da página de contas
-      if (state['origem'] === 'contas') {
-        this.pedido = state['pedido'];
-        this.pedido!.status = 'finalizado';
-        this.valor_pago = this.pedido!.total;
-      }
-      // Caso venha da página de pedidos
-      else if (state['pedido']) {
-        this.pedido = state['pedido'];
-      }
-    }
-
-    if (!this.pedido) {
-      this.router.navigateByUrl('/tabs/pedidos');
-    }
+    this.resetFormulario();
   }
 
   async ionViewWillEnter() {
@@ -79,6 +61,7 @@ export class FinalizarPedidoPage implements OnDestroy {
       });
     } else {
       this.router.navigateByUrl('/tabs/pedidos');
+      return;
     }
   }
 
@@ -166,16 +149,13 @@ export class FinalizarPedidoPage implements OnDestroy {
     this.desconto = 0;
     this.valor_pago = 0;
     this.itensDetalhados = [];
-
-    // Se houver um pedido em memória, mantenha apenas os dados essenciais
-    if (this.pedido) {
-      this.valor_pago = this.pedido.total;
-    }
+    this.clientes = [];
+    this.produtos = [];
+    this.pedido = null;
   }
 
   ngOnDestroy() {
     this.resetFormulario();
-    this.pedido = undefined;
   }
 }
 
