@@ -69,8 +69,7 @@ export class PedidosPage {
   irParaFinalizado(pedido: Pedido) {
     if (pedido.status === 'em_andamento') {
       this.router.navigate(['/tabs/finalizar-pedido'], {
-        state: { pedido },
-        replaceUrl: true
+        state: { pedido }
       });
     }
   }
