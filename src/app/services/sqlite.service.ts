@@ -8,7 +8,6 @@ import { Capacitor } from '@capacitor/core';
 import { Pedido } from '../models/pedido';
 import { Cliente } from '../models/cliente';
 import { Produto } from '../models/produto';
-import { Caixa } from '../models/caixa';
 import { FormaPagamento } from '../models/tipos';
 
 @Injectable({
@@ -220,11 +219,6 @@ export class SqliteService {
         const sql = `INSERT INTO estoque (produto_id, quantidade, valor_pago) VALUES (?, ?, ?)`;
         await this.db.run(sql, [produtoId, quantidade, valorPago]);
     }
-    async getInsumos() {
-        if (!this.db) return [];
-        const res = await this.db.query(`SELECT * FROM estoque`);
-        return res.values || [];
-    }
     async salvarPedido(pedido: Pedido): Promise<void> {
         if (!this.db) return;
 
@@ -269,12 +263,6 @@ export class SqliteService {
                 ]
             );
         }
-    }
-    async listarPedidos(): Promise<Pedido[]> {
-        if (!this.db) [];
-
-        const result = await this.db!.query('SELECT * FROM pedidos ORDER BY data DESC');
-        return result.values as Pedido[];
     }
     async listarClientes(): Promise<Cliente[]> {
         if (!this.db) return [];
@@ -325,20 +313,6 @@ export class SqliteService {
         const result = await this.db.query(sql);
         return result.values || [];
     }
-    async carregarPedidosQuery() {
-        if (!this.db) return [];
-
-        const result = await this.db!.query('SELECT p.*, c.nome AS cliente_nome FROM pedidos p LEFT JOIN clientes c ON c.id = p.cliente_id ORDER BY p.data DESC');
-
-        return result.values || [];
-    }
-    async carregarMesasQuery() {
-        if (!this.db) return [];
-
-        const result = await this.db!.query(`SELECT id, mesa_identificacao, status FROM pedidos WHERE tipo = 'local' AND status = 'em_andamento' AND mesa_identificacao IS NOT NULL`);
-
-        return result.values || [];
-    }
     async exportarDados(dataInicio: string, dataFim: string) {
         const pedidos = await this.db?.query(`
         SELECT * FROM pedidos WHERE data BETWEEN ? AND ?
@@ -363,12 +337,6 @@ export class SqliteService {
             sangrias: sangrias?.values || [],
             contas: contas?.values || []
         };
-    }
-    async limparDados() {
-        const tables = ['pedidos', 'caixa', 'sangrias'];
-        for (const t of tables) {
-            await this.db?.run(`DELETE FROM ${t}`);
-        }
     }
     async atualizarProduto(produto: Produto) {
         if (!this.db) return;

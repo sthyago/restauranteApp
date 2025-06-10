@@ -24,8 +24,6 @@ export class HomePage {
   async ionViewWillEnter() {
     this.getDataHora();
     await this.verificarOuAbrirCaixa();
-
-    this.haCaixaAberto = await this.verificarCaixaAberto();
   }
 
   private async verificarCaixaAberto(): Promise<boolean> {
@@ -45,25 +43,28 @@ export class HomePage {
   }
 
   async verificarOuAbrirCaixa() {
-    const alert = await this.alertController.create({
-      header: 'Nenhum caixa aberto!',
-      message: 'Deseja ir para a tela de abertura?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Sim',
-          handler: async () => {
-            this.router.navigateByUrl('/tabs/abertura-caixa')
-          }
-        }
-      ]
-    });
+    // Verifica primeiro se já existe caixa aberto
+    const caixaAberto = await this.verificarCaixaAberto();
 
-    await alert.present();
+    if (!caixaAberto) {
+      const alert = await this.alertController.create({
+        header: 'Nenhum caixa aberto!',
+        message: 'Deseja ir para a tela de abertura?',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Sim',
+            handler: () => {
+              this.router.navigateByUrl('/tabs/abertura-caixa');
+            }
+          }
+        ]
+      });
+      await alert.present();
+    }
   }
 
-
   getDataHora() {
-    return new Date().toISOString().split('T')[0];
+    this.dataHoje = new Date().toISOString().split('T')[0];
   }
 }

@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Pedido } from 'src/app/models/pedido';
 import { Produto } from 'src/app/models/produto';
-import { PedidoService } from 'src/app/services/pedido.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
