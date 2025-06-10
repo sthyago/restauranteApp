@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Caixa } from 'src/app/models/caixa';
 import { Cliente } from 'src/app/models/cliente';
@@ -13,7 +13,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   styleUrls: ['./finalizar-pedido.page.scss'],
   standalone: false,
 })
-export class FinalizarPedidoPage {
+export class FinalizarPedidoPage implements OnDestroy {
   pedido?: Pedido;
   itensDetalhados: any[] = [];
   clientes: Cliente[] = [];
@@ -48,21 +48,38 @@ export class FinalizarPedidoPage {
   }
 
   async ionViewWillEnter() {
-    if (!this.pedido) return;
+    this.resetFormulario();
 
-    this.valor_pago = this.pedido.total;
+    const nav = this.router.getCurrentNavigation();
+    const state = nav?.extras?.state;
 
-    this.clientes = await this.sqliteService.listarClientes();
-    this.produtos = await this.sqliteService.listarProdutos();
+    // Recarregue o pedido apenas se houver novo state
+    if (state) {
+      if (state['origem'] === 'contas') {
+        this.pedido = state['pedido'];
+        this.pedido!.status = 'finalizado';
+        this.valor_pago = this.pedido!.total;
+      } else if (state['pedido']) {
+        this.pedido = state['pedido'];
+      }
+    }
 
-    this.itensDetalhados = this.pedido.itens.map(item => {
-      const produto = this.produtos?.find(p => p.id === item.id || p.id === item.produto_id);
-      return {
-        ...produto,
-        qtd: item.qtd || item.quantidade,
-        valor_unitario: produto?.valor_unitario
-      };
-    });
+    if (this.pedido) {
+      this.valor_pago = this.pedido.total;
+      this.clientes = await this.sqliteService.listarClientes();
+      this.produtos = await this.sqliteService.listarProdutos();
+
+      this.itensDetalhados = this.pedido.itens.map(item => {
+        const produto = this.produtos?.find(p => p.id === item.id || p.id === item.produto_id);
+        return {
+          ...produto,
+          qtd: item.qtd || item.quantidade,
+          valor_unitario: produto?.valor_unitario
+        };
+      });
+    } else {
+      this.router.navigateByUrl('/tabs/pedidos');
+    }
   }
 
   async confirmarFinalizacao() {
@@ -108,6 +125,8 @@ export class FinalizarPedidoPage {
         // Atualizar Caixa
         await this.sqliteService.atualizarCaixa(this.pedido);
 
+        this.resetFormulario();
+
         alert('Pedido finalizado com sucesso!');
 
         this.router.navigateByUrl('/tabs/pedidos');
@@ -139,6 +158,24 @@ export class FinalizarPedidoPage {
       alert('Valor pago não pode ser menor que o valor líquido (Total - Desconto)');
       this.valor_pago = this.pedido.total - this.desconto;
     }
+  }
+
+  private resetFormulario() {
+    this.formaPagamento = undefined;
+    this.clienteSelecionadoId = undefined;
+    this.desconto = 0;
+    this.valor_pago = 0;
+    this.itensDetalhados = [];
+
+    // Se houver um pedido em memória, mantenha apenas os dados essenciais
+    if (this.pedido) {
+      this.valor_pago = this.pedido.total;
+    }
+  }
+
+  ngOnDestroy() {
+    this.resetFormulario();
+    this.pedido = undefined;
   }
 }
 

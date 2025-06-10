@@ -25,7 +25,8 @@ const routes: Routes = [
       },
       {
         path: 'finalizar-pedido',
-        loadChildren: () => import('../pages/pedidos/finalizar-pedido/finalizar-pedido.module').then(m => m.FinalizarPedidoPageModule)
+        loadChildren: () => import('../pages/pedidos/finalizar-pedido/finalizar-pedido.module').then(m => m.FinalizarPedidoPageModule),
+        data: { reuse: false }
       },
       {
         path: 'novo-pedido',

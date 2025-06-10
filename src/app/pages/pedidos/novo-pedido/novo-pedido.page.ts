@@ -143,7 +143,7 @@ export class NovoPedidoPage {
       data: new Date().toISOString().split('T')[0],
       forma_pagamento: undefined,
       cliente_id: undefined,
-      mesa_identificacao: this.mesa_identificacao
+      mesa_identificacao: this.mesa_identificacao || ''
     };
 
     if (this.tipoPedido == 'na mesa') {

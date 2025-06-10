@@ -231,7 +231,7 @@ export class SqliteService {
                     tipo = ?, 
                     status = ?, 
                     forma_pagamento = ?, 
-                    cliente_id = ?
+                    cliente_id = ?,
                     mesa_identificacao = ?
                 WHERE id = ?`,
                 [
@@ -239,9 +239,9 @@ export class SqliteService {
                     pedido.total,
                     pedido.tipo,
                     pedido.status,
-                    pedido.mesa_identificacao,
                     pedido.forma_pagamento,
                     pedido.cliente_id,
+                    pedido.mesa_identificacao,
                     pedido.id
                 ]
             );
