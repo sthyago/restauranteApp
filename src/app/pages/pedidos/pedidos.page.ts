@@ -67,10 +67,10 @@ export class PedidosPage {
   }
 
   irParaFinalizado(pedido: Pedido) {
-    if (pedido.tipo === 'na mesa') {
-      this.router.navigate(['/tabs/finalizar-pedido'], {
-        state: { pedido }
-      });
-    }
+    if (pedido.status == 'finalizado') return;
+
+    this.router.navigate(['/tabs/finalizar-pedido'], {
+      state: { pedido }
+    });
   }
 }

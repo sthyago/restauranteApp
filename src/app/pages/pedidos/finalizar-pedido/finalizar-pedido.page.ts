@@ -26,11 +26,11 @@ export class FinalizarPedidoPage implements OnDestroy {
   produtos?: Produto[];
 
   constructor(private router: Router, private sqliteService: SqliteService) {
-    this.resetFormulario();
+    //this.resetFormulario();
   }
 
   async ionViewWillEnter() {
-    this.resetFormulario();
+    //this.resetFormulario();
 
     const nav = this.router.getCurrentNavigation();
     const state = nav?.extras?.state;
@@ -39,13 +39,12 @@ export class FinalizarPedidoPage implements OnDestroy {
     if (state) {
       if (state['origem'] === 'contas') {
         this.pedido = state['pedido'];
-        this.pedido!.status = 'finalizado';
         this.valor_pago = this.pedido!.total;
       } else if (state['pedido']) {
         this.pedido = state['pedido'];
       }
     }
-
+    alert(this.pedido?.status)
     if (this.pedido) {
       this.valor_pago = this.pedido.total;
       this.clientes = await this.sqliteService.listarClientes();
