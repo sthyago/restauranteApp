@@ -27,25 +27,31 @@
     <ion-card>
       <ion-card-header><ion-card-title>Totais</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Geral:</strong> <span class="total-value">{{ relatorio.totalGeral }}</span>
+        <p>
+          <strong>Geral:</strong>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.totalGeral"></span>
         </p>
-        <p><strong>Dinheiro:</strong> <span class="total-value">{{ relatorio.porForma.dinheiro
-            }}</span></p>
-        <p><strong>Pix:</strong> <span class="total-value">{{ relatorio.porForma.pix }}</span>
+        <p><strong>Dinheiro:</strong>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.porForma.dinheiro"></span>
         </p>
-        <p><strong>Débito:</strong> <span class="total-value">{{ relatorio.porForma.debito
-            }}</span></p>
-        <p><strong>Crédito:</strong> <span class="total-value">{{ relatorio.porForma.credito
-            }}</span></p>
+        <p><strong>Pix:</strong>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.porForma.pix"></span>
+        </p>
+        <p><strong>Débito:</strong>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.porForma.debito"></span>
+        </p>
+        <p><strong>Crédito:</strong>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.porForma.credito"></span>
+        </p>
       </ion-card-content>
     </ion-card>
 
     <ion-card>
       <ion-card-header><ion-card-title>Por Tipo de Pedido</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Na mesa:</strong> <span> {{ relatorio.porTipo.local }}</span> </p>
-        <p><strong>Entregar:</strong> <span> {{ relatorio.porTipo.entrega }}</span></p>
-        <p><strong>Retirar:</strong> <span> {{ relatorio.porTipo.levar }}</span></p>
+        <p><strong>Na mesa:</strong> <span appMoedaMask="display" [valor]="relatorio.porTipo.local"></span> </p>
+        <p><strong>Entregar:</strong> <span appMoedaMask="display" [valor]="relatorio.porTipo.entrega"></span></p>
+        <p><strong>Retirar:</strong> <span appMoedaMask="display" [valor]="relatorio.porForma.levar"></span></p>
       </ion-card-content>
     </ion-card>
 
@@ -54,7 +60,7 @@
       <ion-card-content>
         <p>
           <strong>Total Gastos com Estoque:</strong>
-          <span class="total-value">{{ relatorio.totalGastosEstoque}}</span>
+          <span class="total-value" appMoedaMask="display" [valor]="relatorio.totalGastosEstoque"></span>
         </p>
       </ion-card-content>
     </ion-card>
@@ -66,7 +72,9 @@
           <ion-label>
             {{ s.data | date:'shortDate' }} - {{ s.motivo }}
           </ion-label>
-          <ion-note slot="end">{{ s.valor }}</ion-note>
+          <ion-note slot="end">
+            <span appMoedaMask="display" [valor]="s.valor"></span>
+          </ion-note>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -78,7 +86,9 @@
           <ion-label>
             {{ gasto.produto_nome }} - Qtd: {{ gasto.quantidade }}
           </ion-label>
-          <ion-note slot="end">{{ gasto.valor_pago }}</ion-note>
+          <ion-note slot="end">
+            <span appMoedaMask="display" [valor]="gasto.valor_pago"></span>
+          </ion-note>
         </ion-item>
       </ion-card-content>
     </ion-card>
