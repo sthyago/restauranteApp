@@ -75,28 +75,46 @@ export class BackupPage {
 
       const json = JSON.stringify(dados, null, 2);
       const timestamp = format(new Date(), 'yyyyMMdd-HHmmss');
-      let filename = `backup-${timestamp}.json`;
-      let finalData = json;
+      let filename = `backup-${timestamp}`;
+      let finalData: string;
+      let encoding = Encoding.UTF8;
 
-      // Implementar compactação ZIP
       if (this.compactarZip) {
+        // Criar arquivo ZIP
         const zip = new JSZip();
         zip.file(`backup-${timestamp}.json`, json);
 
-        const zipBlob = await zip.generateAsync({ type: 'blob' });
-        const zipBase64 = await this.blobToBase64(zipBlob);
+        // Gerar ZIP como ArrayBuffer
+        const zipArrayBuffer = await zip.generateAsync({
+          type: 'arraybuffer',
+          compression: 'DEFLATE',
+          compressionOptions: {
+            level: 6
+          }
+        });
 
-        filename = `backup-${timestamp}.zip`;
-        finalData = zipBase64;
+        // Converter ArrayBuffer para Base64
+        finalData = this.arrayBufferToBase64(zipArrayBuffer);
+        filename = `${filename}.zip`;
+
+        // Para arquivos binários, usar encoding UTF8 mas com dados em Base64
+        encoding = Encoding.UTF8;
+      } else {
+        // Arquivo JSON normal
+        finalData = json;
+        filename = `${filename}.json`;
+        encoding = Encoding.UTF8;
       }
 
+      // Salvar arquivo
       await Filesystem.writeFile({
         path: filename,
         data: finalData,
         directory: Directory.Documents,
-        encoding: this.compactarZip ? Encoding.UTF8 : Encoding.UTF8
+        encoding: encoding
       });
 
+      // Compartilhar se solicitado
       if (this.compartilharDepois) {
         const fileUri = await Filesystem.getUri({
           directory: Directory.Documents,
@@ -303,16 +321,20 @@ export class BackupPage {
     this.isDatePickerVisible = !this.isDatePickerVisible;
   }
 
-  // Converter Blob para Base64
-  private blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        resolve(result.split(',')[1]); // Remove o prefixo data:...;base64,
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+  // Converter ArrayBuffer para Base64 (método correto para arquivos ZIP)
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const uint8Array = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binary += String.fromCharCode(uint8Array[i]);
+    }
+    return btoa(binary);
+  }
+
+  // Método alternativo caso o anterior não funcione
+  private arrayBufferToBase64Alt(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    const binary = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
+    return btoa(binary);
   }
 }
