@@ -45,7 +45,7 @@ export class SangriasPage implements OnInit {
 
     await this.dbService.db?.run(
       `INSERT INTO sangrias (valor, motivo, data, caixa_id) VALUES (?, ?, ?, ?)`,
-      [this.valor, this.motivo, new Date().toLocaleDateString(), caixaId]
+      [this.valor, this.motivo, new Date().toLocaleDateString('sv-SE'), caixaId]
     );
 
     const toast = await this.toastCtrl.create({
@@ -64,7 +64,7 @@ export class SangriasPage implements OnInit {
     const hoje = new Date().toLocaleDateString('sv-SE');
 
     const res = await this.dbService.db?.query(
-      `SELECT valor, motivo, data FROM sangrias WHERE DATE(data) = ? ORDER BY data DESC`,
+      `SELECT * FROM sangrias WHERE data = ? ORDER BY data DESC`,
       [hoje]
     );
 

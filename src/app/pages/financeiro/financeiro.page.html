@@ -34,12 +34,11 @@
     </ion-button>
   </div>
 
-
   <ng-container *ngIf="caixa">
     <ion-card>
       <ion-card-header>
         <ion-card-title>Abertura</ion-card-title>
-        <ion-card-subtitle>{{ caixa.data_abertura | date:'short' }}</ion-card-subtitle>
+        <ion-card-subtitle>{{ caixa.data_abertura }}</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
         <p><strong>Valor inicial:</strong> R$ {{ caixa.valor_abertura | number:'1.2-2' }}</p>

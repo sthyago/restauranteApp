@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { SangriasPageRoutingModule } from './sangrias-routing.module';
 
 import { SangriasPage } from './sangrias.page';
+import { DirectivasModule } from 'src/app/directives/directivaes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SangriasPageRoutingModule
+    SangriasPageRoutingModule,
+    DirectivasModule
   ],
   declarations: [SangriasPage]
 })
