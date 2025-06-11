@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
-import * as JSZip from 'jszip';
 import { format } from 'date-fns';
 import { ToastController, AlertController } from '@ionic/angular';
 
@@ -14,6 +13,7 @@ import { ToastController, AlertController } from '@ionic/angular';
 })
 
 export class BackupPage {
+  compactarZip = false;
   limparAposExportar = false;
   caminhoBackup: string = '';
   mensagem = '';
@@ -213,26 +213,21 @@ Confirmar exclusão?`);
     try {
       alert('DEBUG: Iniciando limpeza...');
 
-      // Verificar se o serviço existe
-      if (!this.sqliteService) {
-        alert('DEBUG: ERRO - sqliteService não encontrado!');
-        return;
+      // Tentar executar limpeza com tratamento de transação
+      try {
+        await this.sqliteService.limparDadosGeral();
+        alert('DEBUG: Limpeza executada com sucesso!');
+      } catch (transactionError) {
+        alert(`DEBUG: Erro de transação detectado: ${transactionError}`);
+
+        // Tentar método alternativo se houver problema de transação
+        if (transactionError) {
+          alert('DEBUG: Tentando método alternativo de limpeza...');
+          await this.executarLimpezaAlternativa();
+        } else {
+          throw transactionError;
+        }
       }
-
-      alert('DEBUG: sqliteService OK, verificando método limparDadosGeral...');
-
-      // Verificar se o método existe
-      if (typeof this.sqliteService.limparDadosGeral !== 'function') {
-        alert('DEBUG: ERRO - Método limparDadosGeral não encontrado!');
-        return;
-      }
-
-      alert('DEBUG: Método existe, executando limpeza...');
-
-      // Executar limpeza no banco
-      await this.sqliteService.limparDadosGeral();
-
-      alert('DEBUG: Limpeza executada com sucesso!');
 
       // Sucesso
       const toast = await this.toastCtrl.create({
@@ -254,6 +249,36 @@ Confirmar exclusão?`);
         color: 'danger'
       });
       await toast.present();
+    }
+  }
+
+  // Método alternativo para limpeza sem usar transações complexas
+  async executarLimpezaAlternativa() {
+    alert('DEBUG: Executando limpeza alternativa...');
+
+    try {
+      // Lista das tabelas para limpar
+      const tabelas = ['pedidos', 'caixa', 'sangrias', 'contas', 'estoque'];
+
+      for (const tabela of tabelas) {
+        alert(`DEBUG: Limpando tabela: ${tabela}`);
+
+        try {
+          // Executar DELETE diretamente para cada tabela
+          const query = `DELETE FROM ${tabela}`;
+          await this.sqliteService.db?.query(query);
+          alert(`DEBUG: Tabela ${tabela} limpa com sucesso`);
+        } catch (tabelaError) {
+          alert(`DEBUG: Erro ao limpar tabela ${tabela}: ${tabelaError}`);
+          // Continua com as outras tabelas mesmo se uma falhar
+        }
+      }
+
+      alert('DEBUG: Limpeza alternativa concluída');
+
+    } catch (error) {
+      alert(`DEBUG: Erro na limpeza alternativa: ${error}`);
+      throw error;
     }
   }
 
@@ -294,4 +319,7 @@ Confirmar exclusão?`);
   toggleDatePicker() {
     this.isDatePickerVisible = !this.isDatePickerVisible;
   }
+
+
+
 }
