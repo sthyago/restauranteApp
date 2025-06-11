@@ -94,7 +94,7 @@ export class BackupPage {
         });
 
         // Converter ArrayBuffer para Base64
-        finalData = this.arrayBufferToBase64(zipArrayBuffer);
+        finalData = this.arrayBufferToBase64Alt(zipArrayBuffer);
         filename = `${filename}.zip`;
 
         // Para arquivos binários, usar encoding UTF8 mas com dados em Base64

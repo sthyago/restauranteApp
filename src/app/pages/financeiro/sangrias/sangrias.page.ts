@@ -10,7 +10,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class SangriasPage implements OnInit {
 
-  valor: number = 0;
+  valor: number | null = null;
   motivo: string = '';
   sangriasDoDia: any[] = [];
 

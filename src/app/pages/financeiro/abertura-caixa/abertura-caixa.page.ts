@@ -11,7 +11,7 @@ import { ToastController } from '@ionic/angular';
 
 export class AberturaCaixaPage implements OnInit {
 
-  valorAbertura?: number;
+  valorAbertura: number | null = null;
   observacoes: string = '';
   dataHoje: string = '';
   caixaAbertoHoje: boolean = false;
