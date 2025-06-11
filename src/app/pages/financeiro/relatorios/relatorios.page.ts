@@ -33,8 +33,8 @@ export class RelatoriosPage implements OnInit {
         total_debito,
         total_credito
       FROM caixa 
-      WHERE DATE(data_abertura) BETWEEN ? AND ?
-        OR (data_fechamento IS NOT NULL AND DATE(data_fechamento) BETWEEN ? AND ?)
+      WHERE data_abertura BETWEEN ? AND ?
+        OR (data_fechamento IS NOT NULL AND data_fechamento BETWEEN ? AND ?)
     `, [this.dataInicio.split('T')[0], this.dataFim.split('T')[0], this.dataInicio.split('T')[0], this.dataFim.split('T')[0]]);
 
     // Buscar pedidos para calcular totais por tipo
