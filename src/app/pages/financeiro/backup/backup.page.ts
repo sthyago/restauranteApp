@@ -14,7 +14,6 @@ import { ToastController, AlertController } from '@ionic/angular';
 })
 
 export class BackupPage {
-  compactarZip = false;
   limparAposExportar = false;
   caminhoBackup: string = '';
   mensagem = '';
@@ -79,32 +78,10 @@ export class BackupPage {
       let finalData: string;
       let encoding = Encoding.UTF8;
 
-      if (this.compactarZip) {
-        // Criar arquivo ZIP
-        const zip = new JSZip();
-        zip.file(`backup-${timestamp}.json`, json);
-
-        // Gerar ZIP como ArrayBuffer
-        const zipArrayBuffer = await zip.generateAsync({
-          type: 'arraybuffer',
-          compression: 'DEFLATE',
-          compressionOptions: {
-            level: 6
-          }
-        });
-
-        // Converter ArrayBuffer para Base64
-        finalData = this.arrayBufferToBase64Alt(zipArrayBuffer);
-        filename = `${filename}.zip`;
-
-        // Para arquivos binários, usar encoding UTF8 mas com dados em Base64
-        encoding = Encoding.UTF8;
-      } else {
-        // Arquivo JSON normal
-        finalData = json;
-        filename = `${filename}.json`;
-        encoding = Encoding.UTF8;
-      }
+      // Arquivo JSON normal
+      finalData = json;
+      filename = `${filename}.json`;
+      encoding = Encoding.UTF8;
 
       // Salvar arquivo
       await Filesystem.writeFile({
@@ -149,116 +126,113 @@ export class BackupPage {
   }
 
   async iniciarLimpezaGeral() {
-    const alert = await this.alertController.create({
-      header: '⚠️ ATENÇÃO - LIMPEZA GERAL',
-      message: `
-        <div style="text-align: center; padding: 10px;">
-          <ion-icon name="warning" style="font-size: 48px; color: #ff6b6b; margin-bottom: 15px;"></ion-icon>
-          <p style="font-weight: bold; color: #ff6b6b; margin-bottom: 10px;">
-            ESTA AÇÃO É IRREVERSÍVEL!
-          </p>
-          <p style="margin-bottom: 15px;">
-            Todos os dados das seguintes tabelas serão <strong>PERMANENTEMENTE EXCLUÍDOS</strong>:
-          </p>
-          <ul style="text-align: left; margin-bottom: 15px;">
-            <li>• Pedidos</li>
-            <li>• Caixa</li>
-            <li>• Sangrias</li>
-            <li>• Contas</li>
-            <li>• Estoque</li>
-          </ul>
-          <p style="font-weight: bold; color: #ff6b6b;">
-            Certifique-se de ter feito o BACKUP antes de continuar!
-          </p>
-        </div>
-      `,
-      cssClass: 'alert-danger',
-      inputs: [
-        {
-          name: 'senha',
-          type: 'password',
-          placeholder: 'Digite a senha de administrador',
-          attributes: {
-            style: 'text-align: center; font-size: 16px; padding: 10px; margin-top: 10px;'
-          }
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'alert-button-cancel',
-          handler: () => {
-            console.log('Limpeza cancelada');
-          }
-        },
-        {
-          text: 'CONFIRMAR LIMPEZA',
-          cssClass: 'alert-button-confirm-danger',
-          handler: (data) => {
-            if (data.senha === this.senhaAdmin) {
-              this.confirmarLimpeza();
-            } else {
-              this.senhaIncorreta();
-            }
-          }
-        }
-      ]
-    });
+    alert('DEBUG: Função iniciarLimpezaGeral() chamada');
 
-    await alert.present();
-  }
-
-  async confirmarLimpeza() {
-    const confirmAlert = await this.alertController.create({
-      header: '🔥 CONFIRMAÇÃO FINAL',
-      message: `
-        <div style="text-align: center; padding: 15px;">
-          <p style="font-size: 18px; font-weight: bold; color: #ff6b6b; margin-bottom: 15px;">
-            ÚLTIMA CHANCE!
-          </p>
-          <p style="margin-bottom: 15px;">
-            Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?
-          </p>
-          <p style="font-weight: bold; color: #333;">
-            Esta ação não pode ser desfeita!
-          </p>
-        </div>
-      `,
-      cssClass: 'alert-danger',
-      buttons: [
-        {
-          text: 'NÃO, CANCELAR',
-          role: 'cancel',
-          cssClass: 'alert-button-cancel'
-        },
-        {
-          text: 'SIM, EXCLUIR TUDO',
-          cssClass: 'alert-button-confirm-danger',
-          handler: () => {
-            this.executarLimpeza();
-          }
-        }
-      ]
-    });
-
-    await confirmAlert.present();
-  }
-
-  async executarLimpeza() {
     try {
-      // Mostrar loading
-      const loading = await this.toastCtrl.create({
-        message: 'Executando limpeza geral...',
-        duration: 0,
-        color: 'warning'
-      });
-      await loading.present();
+      alert('DEBUG: Criando primeiro alert...');
+
+      // Primeira confirmação simples
+      const confirmacao1 = confirm(`⚠️ ATENÇÃO - LIMPEZA GERAL ⚠️
+      
+ESTA AÇÃO É IRREVERSÍVEL!
+
+Todos os dados das seguintes tabelas serão PERMANENTEMENTE EXCLUÍDOS:
+• Pedidos
+• Caixa  
+• Sangrias
+• Contas
+• Estoque
+
+Certifique-se de ter feito o BACKUP antes de continuar!
+
+Deseja continuar?`);
+
+      if (!confirmacao1) {
+        alert('DEBUG: Usuário cancelou primeira confirmação');
+        return;
+      }
+
+      alert('DEBUG: Primeira confirmação OK, solicitando senha...');
+
+      // Solicitar senha
+      const senha = prompt('Digite a senha de administrador:');
+
+      if (!senha) {
+        alert('DEBUG: Usuário cancelou entrada de senha');
+        return;
+      }
+
+      alert(`DEBUG: Senha digitada, verificando... (senha: ${senha})`);
+
+      if (senha !== this.senhaAdmin) {
+        alert('❌ Senha incorreta! Acesso negado.');
+        alert('DEBUG: Senha incorreta');
+        return;
+      }
+
+      alert('DEBUG: Senha correta, indo para confirmação final...');
+      this.confirmarLimpezaDebug();
+
+    } catch (error) {
+      alert(`DEBUG: Erro em iniciarLimpezaGeral: ${error}`);
+      console.error('Erro:', error);
+    }
+  }
+
+  async confirmarLimpezaDebug() {
+    alert('DEBUG: Função confirmarLimpezaDebug() chamada');
+
+    try {
+      const confirmacao2 = confirm(`🔥 CONFIRMAÇÃO FINAL 🔥
+
+ÚLTIMA CHANCE!
+
+Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?
+
+Esta ação não pode ser desfeita!
+
+Confirmar exclusão?`);
+
+      if (!confirmacao2) {
+        alert('DEBUG: Usuário cancelou confirmação final');
+        return;
+      }
+
+      alert('DEBUG: Confirmação final OK, executando limpeza...');
+      this.executarLimpezaDebug();
+
+    } catch (error) {
+      alert(`DEBUG: Erro em confirmarLimpezaDebug: ${error}`);
+      console.error('Erro:', error);
+    }
+  }
+
+  async executarLimpezaDebug() {
+    alert('DEBUG: Função executarLimpezaDebug() chamada');
+
+    try {
+      alert('DEBUG: Iniciando limpeza...');
+
+      // Verificar se o serviço existe
+      if (!this.sqliteService) {
+        alert('DEBUG: ERRO - sqliteService não encontrado!');
+        return;
+      }
+
+      alert('DEBUG: sqliteService OK, verificando método limparDadosGeral...');
+
+      // Verificar se o método existe
+      if (typeof this.sqliteService.limparDadosGeral !== 'function') {
+        alert('DEBUG: ERRO - Método limparDadosGeral não encontrado!');
+        return;
+      }
+
+      alert('DEBUG: Método existe, executando limpeza...');
 
       // Executar limpeza no banco
       await this.sqliteService.limparDadosGeral();
 
-      await loading.dismiss();
+      alert('DEBUG: Limpeza executada com sucesso!');
 
       // Sucesso
       const toast = await this.toastCtrl.create({
@@ -268,18 +242,18 @@ export class BackupPage {
       });
       await toast.present();
 
-      alert('Limpeza concluída! Todas as tabelas foram limpas.');
+      alert('✅ Limpeza concluída! Todas as tabelas foram limpas.');
 
     } catch (error) {
+      alert(`DEBUG: Erro ao executar limpeza: ${error}`);
+      console.error('Erro na limpeza:', error);
+
       const toast = await this.toastCtrl.create({
         message: 'Erro ao executar limpeza geral.',
         duration: 3000,
         color: 'danger'
       });
       await toast.present();
-
-      alert(`Erro na limpeza: ${error}`);
-      console.error('Erro na limpeza:', error);
     }
   }
 
@@ -319,22 +293,5 @@ export class BackupPage {
 
   toggleDatePicker() {
     this.isDatePickerVisible = !this.isDatePickerVisible;
-  }
-
-  // Converter ArrayBuffer para Base64 (método correto para arquivos ZIP)
-  private arrayBufferToBase64(buffer: ArrayBuffer): string {
-    const uint8Array = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-      binary += String.fromCharCode(uint8Array[i]);
-    }
-    return btoa(binary);
-  }
-
-  // Método alternativo caso o anterior não funcione
-  private arrayBufferToBase64Alt(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    const binary = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
-    return btoa(binary);
   }
 }
