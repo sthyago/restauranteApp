@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { RelatoriosPageRoutingModule } from './relatorios-routing.module';
 
 import { RelatoriosPage } from './relatorios.page';
+import { DirectivasModule } from 'src/app/directives/directivaes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RelatoriosPageRoutingModule
+    RelatoriosPageRoutingModule,
+    DirectivasModule
   ],
   declarations: [RelatoriosPage]
 })
-export class RelatoriosPageModule {}
+export class RelatoriosPageModule { }

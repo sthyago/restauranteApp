@@ -8,41 +8,54 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <ion-item>
-    <ion-label>De:</ion-label>
-    <ion-datetime [(ngModel)]="dataInicio" presentation="date"></ion-datetime>
-  </ion-item>
-  <ion-item>
-    <ion-label>Até:</ion-label>
-    <ion-datetime [(ngModel)]="dataFim" presentation="date"></ion-datetime>
-  </ion-item>
+  <div *ngIf="isDatePickerVisible">
+    <ion-item>
+      <ion-label>De:</ion-label>
+      <ion-datetime [(ngModel)]="dataInicio" presentation="date"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Até:</ion-label>
+      <ion-datetime [(ngModel)]="dataFim" presentation="date"></ion-datetime>
+    </ion-item>
+  </div>
+
+  <ion-button *ngIf="!isDatePickerVisible" expand="block" (click)="toggleDatePicker()">Exibir Seletor de
+    Data</ion-button>
   <ion-button expand="block" (click)="gerarRelatorio()">Gerar Relatório</ion-button>
 
   <ng-container *ngIf="relatorio">
     <ion-card>
       <ion-card-header><ion-card-title>Totais</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Geral:</strong> <span appMoedaMask="display">{{ relatorio.totalGeral }}</span></p>
-        <p><strong>Dinheiro:</strong> <span appMoedaMask="display">{{ relatorio.porForma.dinheiro }}</span></p>
-        <p><strong>Pix:</strong> <span appMoedaMask="display">{{ relatorio.porForma.pix }}</span></p>
-        <p><strong>Débito:</strong> <span appMoedaMask="display">{{ relatorio.porForma.debito }}</span></p>
-        <p><strong>Crédito:</strong> <span appMoedaMask="display">{{ relatorio.porForma.credito }}</span></p>
+        <p><strong>Geral:</strong> <span class="total-value" appMoedaMask="display">{{ relatorio.totalGeral }}</span>
+        </p>
+        <p><strong>Dinheiro:</strong> <span class="total-value" appMoedaMask="display">{{ relatorio.porForma.dinheiro
+            }}</span></p>
+        <p><strong>Pix:</strong> <span class="total-value" appMoedaMask="display">{{ relatorio.porForma.pix }}</span>
+        </p>
+        <p><strong>Débito:</strong> <span class="total-value" appMoedaMask="display">{{ relatorio.porForma.debito
+            }}</span></p>
+        <p><strong>Crédito:</strong> <span class="total-value" appMoedaMask="display">{{ relatorio.porForma.credito
+            }}</span></p>
       </ion-card-content>
     </ion-card>
 
     <ion-card>
       <ion-card-header><ion-card-title>Por Tipo de Pedido</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Local:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.local }}</span> </p>
-        <p><strong>Entrega:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.entrega }}</span></p>
+        <p><strong>Na mesa:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.local }}</span> </p>
+        <p><strong>Entregar:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.entrega }}</span></p>
+        <p><strong>Retirar:</strong> <span appMoedaMask="display"> {{ relatorio.porTipo.levar }}</span></p>
       </ion-card-content>
     </ion-card>
 
     <ion-card>
       <ion-card-header><ion-card-title>Gastos</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Total Gastos com Estoque:</strong> <span appMoedaMask="display">{{ relatorio.totalGastosEstoque
-            }}</span></p>
+        <p>
+          <strong>Total Gastos com Estoque:</strong>
+          <span class="total-value" appMoedaMask="display">{{ relatorio.totalGastosEstoque}}</span>
+        </p>
       </ion-card-content>
     </ion-card>
 

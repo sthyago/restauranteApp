@@ -14,6 +14,7 @@ export class RelatoriosPage implements OnInit {
   relatorio: any = null;
   sangrias: any[] = [];
   gastosEstoque: any[] = [];
+  isDatePickerVisible = false;
 
   constructor(private db: SqliteService) { }
 
@@ -23,8 +24,6 @@ export class RelatoriosPage implements OnInit {
 
   async gerarRelatorio() {
     if (!this.dataInicio || !this.dataFim) return;
-
-    alert(this.dataInicio.split('T')[0]);
 
     // Buscar dados da tabela caixa no período especificado
     const caixas = await this.db.db?.query(`
@@ -109,5 +108,11 @@ export class RelatoriosPage implements OnInit {
     this.relatorio = totais;
     this.sangrias = sangriasRes?.values || [];
     this.gastosEstoque = estoque?.values || [];
+
+    this.toggleDatePicker();
+  }
+
+  toggleDatePicker() {
+    this.isDatePickerVisible = !this.isDatePickerVisible;
   }
 }
