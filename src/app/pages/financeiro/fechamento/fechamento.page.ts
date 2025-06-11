@@ -15,9 +15,10 @@ export class FechamentoPage implements OnInit {
   dataHoje: string = '';
   observacoesFechamento: string = '';
 
-
   totaisPorForma: { [key: string]: number } = {};
   totalGeral: number = 0;
+  valorAbertura: number = 0;
+  totalSangrias: number = 0;
 
   constructor(
     private dbService: SqliteService,
@@ -41,67 +42,61 @@ export class FechamentoPage implements OnInit {
   }
 
   async carregarTotais() {
-    if (!this.dbService) return;
+    if (!this.dbService || !this.caixaAbertoHoje) return;
 
-    const sql = `
-      SELECT forma_pagamento, SUM(total) as total
-      FROM pedidos
-      WHERE status = 'finalizado'
-        AND cliente_id IS NULL
-        AND DATE(data) = DATE('now')
-      GROUP BY forma_pagamento
+    // Buscar totais da tabela caixa
+    const sqlCaixa = `
+      SELECT valor_abertura, total_dinheiro, total_pix, total_debito, total_credito
+      FROM caixa 
+      WHERE id = ?
     `;
 
-    const result = await this.dbService.db?.query(sql);
-    const totais: { [forma: string]: number } = {};
-    let soma = 0;
+    const resultCaixa = await this.dbService.db?.query(sqlCaixa, [this.caixaAbertoHoje.id]);
+    const caixaData = resultCaixa?.values?.[0];
 
-    for (const row of result?.values || []) {
-      totais[row.forma_pagamento] = row.total;
-      soma += row.total;
+    if (caixaData) {
+      this.valorAbertura = caixaData.valor_abertura || 0;
+      this.totaisPorForma = {
+        'dinheiro': caixaData.total_dinheiro || 0,
+        'pix': caixaData.total_pix || 0,
+        'debito': caixaData.total_debito || 0,
+        'credito': caixaData.total_credito || 0
+      };
     }
 
-    this.totaisPorForma = totais;
-    this.totalGeral = soma;
+    // Buscar total de sangrias do dia
+    const sqlSangrias = `
+      SELECT COALESCE(SUM(valor), 0) as total_sangrias
+      FROM sangrias 
+      WHERE caixa_id = ?
+    `;
+
+    const resultSangrias = await this.dbService.db?.query(sqlSangrias, [this.caixaAbertoHoje.id]);
+    this.totalSangrias = resultSangrias?.values?.[0]?.total_sangrias || 0;
+
+    // Calcular total geral: valor_abertura + totais_vendas - sangrias
+    const totalVendas = Object.values(this.totaisPorForma).reduce((sum, valor) => sum + valor, 0);
+    this.totalGeral = this.valorAbertura + totalVendas - this.totalSangrias;
   }
 
   async salvarFechamento() {
-    if (!this.dbService.db) return;
+    if (!this.dbService.db || !this.caixaAbertoHoje) return;
 
-    const hoje = new Date().toLocaleDateString('sv-SE');
-    const agora = new Date().toLocaleDateString(); // data completa para o fechamento
-
-    const dados = {
-      valor_fechamento: this.totalGeral,
-      total_dinheiro: this.totaisPorForma['dinheiro'] || 0,
-      total_pix: this.totaisPorForma['pix'] || 0,
-      total_debito: this.totaisPorForma['debito'] || 0,
-      total_credito: this.totaisPorForma['credito'] || 0,
-      data_fechamento: agora,
-      observacoes_fechamento: this.observacoesFechamento || ''
-    };
+    const agora = new Date().toISOString();
 
     const update = `
       UPDATE caixa
       SET valor_fechamento = ?, 
           data_fechamento = ?, 
-          total_dinheiro = ?, 
-          total_pix = ?, 
-          total_debito = ?, 
-          total_credito = ?, 
           observacoes_fechamento = ?
-      WHERE DATE(data_abertura) = ?
+      WHERE id = ?
     `;
 
     const values = [
-      dados.valor_fechamento,
-      dados.data_fechamento,
-      dados.total_dinheiro,
-      dados.total_pix,
-      dados.total_debito,
-      dados.total_credito,
-      dados.observacoes_fechamento,
-      hoje
+      this.totalGeral,
+      agora,
+      this.observacoesFechamento || '',
+      this.caixaAbertoHoje.id
     ];
 
     await this.dbService.db.run(update, values);
@@ -113,5 +108,4 @@ export class FechamentoPage implements OnInit {
     });
     await toast.present();
   }
-
 }
