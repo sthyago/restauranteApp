@@ -24,7 +24,7 @@ export class AberturaCaixaPage implements OnInit {
   }
 
   getDataHora() {
-    this.dataHoje = new Date().toISOString().split('T')[0];
+    this.dataHoje = new Date().toLocaleDateString('sv-SE');
   }
 
   async verificarCaixaAberto() {

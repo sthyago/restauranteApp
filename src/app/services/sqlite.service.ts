@@ -256,7 +256,7 @@ export class SqliteService {
                     pedido.total,
                     pedido.tipo,
                     pedido.status,
-                    new Date().toISOString().split('T')[0],
+                    new Date().toLocaleDateString('sv-SE'),
                     pedido.forma_pagamento,
                     pedido.cliente_id,
                     pedido.mesa_identificacao
@@ -412,7 +412,7 @@ export class SqliteService {
     }
     async carregarTodosPedidos(): Promise<Pedido[]> {
         // Obter data atual
-        const hoje = new Date().toISOString().split('T')[0];
+        const hoje = new Date().toLocaleDateString('sv-SE');
 
         const pedidos: Pedido[] = [];
 
@@ -466,7 +466,7 @@ export class SqliteService {
         }
 
         // 3. Obter data atual no formato ISO (YYYY-MM-DD)
-        const dataHoje = new Date().toISOString().split('T')[0];
+        const dataHoje = new Date().toLocaleDateString('sv-SE');
 
         const valorLiquido = pedido.total - (pedido.desconto || 0);
         try {

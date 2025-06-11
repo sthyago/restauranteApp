@@ -150,7 +150,7 @@ export class ContasPage implements OnInit {
   }
   // Realiza os pagamentos no banco de dados
   async realizarPagamentos(contas: any[], formaPagamento: string) {
-    const dataAtual = new Date().toISOString().split('T')[0];
+    const dataAtual = new Date().toLocaleDateString('sv-SE');
 
     for (const conta of contas) {
       const sql = `

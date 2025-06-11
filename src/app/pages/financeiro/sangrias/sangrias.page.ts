@@ -24,7 +24,7 @@ export class SangriasPage implements OnInit {
   }
 
   async registrarSangria() {
-    const hoje = new Date().toISOString().slice(0, 10);
+    const hoje = new Date().toLocaleDateString('sv-SE');
 
     const res = await this.dbService.db?.query(
       `SELECT id FROM caixa WHERE DATE(data_abertura) = ? AND data_fechamento IS NULL LIMIT 1`,
@@ -45,7 +45,7 @@ export class SangriasPage implements OnInit {
 
     await this.dbService.db?.run(
       `INSERT INTO sangrias (valor, motivo, data, caixa_id) VALUES (?, ?, ?, ?)`,
-      [this.valor, this.motivo, new Date().toISOString(), caixaId]
+      [this.valor, this.motivo, new Date().toLocaleDateString(), caixaId]
     );
 
     const toast = await this.toastCtrl.create({
@@ -61,7 +61,7 @@ export class SangriasPage implements OnInit {
     await this.carregarSangriasDoDia();
   }
   async carregarSangriasDoDia() {
-    const hoje = new Date().toISOString().slice(0, 10);
+    const hoje = new Date().toLocaleDateString('sv-SE');
 
     const res = await this.dbService.db?.query(
       `SELECT valor, motivo, data FROM sangrias WHERE DATE(data) = ? ORDER BY data DESC`,

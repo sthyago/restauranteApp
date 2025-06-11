@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { Pedido } from 'src/app/models/pedido';
 import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
@@ -12,13 +11,10 @@ import { SqliteService } from 'src/app/services/sqlite.service';
   standalone: false,
 })
 export class NovoPedidoPage {
-  subscription!: Subscription;
-  itemPedidoId = 0;
+  itemPedidoId: number | undefined = 0;
   produtos: Produto[] = [];
   pedidoSelecionado: any[] = [];
   tipoPedido: 'retirar' | 'entregar' | 'na mesa' = 'retirar';
-  numeroDaMesa: any;
-  pedido?: Pedido;
   mesa_identificacao?: string = 'Mesa';
 
   constructor(
@@ -28,8 +24,12 @@ export class NovoPedidoPage {
 
   ionViewWillEnter() {
     this.carregarProdutos();
+    this.resetForm();
+  }
+
+  private resetForm() {
     this.pedidoSelecionado = [];
-    this.itemPedidoId = 0;
+    this.itemPedidoId = undefined;
   }
 
   async carregarProdutos() {
@@ -141,7 +141,7 @@ export class NovoPedidoPage {
       total: this.calcularTotal(),
       tipo: this.tipoPedido,
       status: 'em_andamento',
-      data: new Date().toISOString().split('T')[0],
+      data: new Date().toLocaleDateString('sv-SE'),
       forma_pagamento: undefined,
       cliente_id: undefined,
       mesa_identificacao: this.tipoPedido === 'na mesa' ? this.mesa_identificacao : ''
@@ -154,14 +154,16 @@ export class NovoPedidoPage {
         alert('Falha ao salvar pedido.');
         console.error(error);
       }
+      this.resetForm();
 
       this.router.navigateByUrl('/tabs/pedidos');
     } else {
       this.router.navigateByUrl('/tabs/finalizar-pedido', {
         state: { pedido }
       });
-    }
 
+      this.resetForm();
+    }
   }
 
   calcularTotal(): number {

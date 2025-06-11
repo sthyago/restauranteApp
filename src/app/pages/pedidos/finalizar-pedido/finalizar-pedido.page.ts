@@ -110,11 +110,15 @@ export class FinalizarPedidoPage implements OnDestroy {
         // Atualizar Caixa
         await this.sqliteService.atualizarCaixa(this.pedido);
 
+        // RESET COMPLETO DA PÁGINA
         this.resetFormulario();
+
+        // Limpar o state da navegação para evitar reutilização
+        this.state = null;
 
         alert('Pedido finalizado com sucesso!');
 
-        this.router.navigateByUrl('/tabs/pedidos');
+        this.router.navigateByUrl('/tabs/pedidos', { replaceUrl: true });
       } catch (e) {
         console.error('Erro ao finalizar pedido:', e);
         alert(`Erro ao finalizar pedido. Verifique o console. ${e}`);
@@ -154,6 +158,9 @@ export class FinalizarPedidoPage implements OnDestroy {
     this.clientes = [];
     this.produtos = [];
     this.pedido = null;
+    this.caixa = undefined;
+    this.produto = undefined;
+    // Força a detecção de mudanças se necessário
   }
 
   ngOnDestroy() {

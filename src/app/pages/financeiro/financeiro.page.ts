@@ -55,6 +55,6 @@ export class FinanceiroPage {
   }
 
   getDataHora() {
-    this.dataHoje = new Date().toISOString().split('T')[0];
+    this.dataHoje = new Date().toLocaleDateString('sv-SE');
   }
 }

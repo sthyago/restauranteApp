@@ -25,7 +25,7 @@ export class FechamentoPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.dataHoje = new Date().toISOString().split('T')[0];
+    this.dataHoje = new Date().toLocaleDateString('sv-SE');
     await this.verificarCaixaAberto();
     await this.carregarTotais();
   }
@@ -68,8 +68,8 @@ export class FechamentoPage implements OnInit {
   async salvarFechamento() {
     if (!this.dbService.db) return;
 
-    const hoje = new Date().toISOString().split('T')[0];
-    const agora = new Date().toISOString(); // data completa para o fechamento
+    const hoje = new Date().toLocaleDateString('sv-SE');
+    const agora = new Date().toLocaleDateString(); // data completa para o fechamento
 
     const dados = {
       valor_fechamento: this.totalGeral,
