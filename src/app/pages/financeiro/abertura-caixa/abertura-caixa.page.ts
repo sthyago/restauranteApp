@@ -24,13 +24,7 @@ export class AberturaCaixaPage implements OnInit {
   }
 
   getDataHora() {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-    const dia = hoje.getDate().toString().padStart(2, '0');
-
-    // Formatar apenas como data (sem hora) para armazenamento
-    this.dataHoje = `${ano}-${mes}-${dia}`;
+    this.dataHoje = new Date().toISOString().split('T')[0];
   }
 
   async verificarCaixaAberto() {

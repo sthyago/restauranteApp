@@ -44,7 +44,15 @@ export class FinalizarPedidoPage implements OnDestroy {
         this.pedido = state['pedido'];
       }
     }
-    alert(this.pedido?.status)
+    const pedidoConsole =
+      `${this.pedido?.itens.toString()} + 
+      ${this.pedido?.total} + 
+      ${this.pedido?.valor_pago} +
+      ${this.pedido?.status} + 
+      ${this.pedido?.mesa_identificacao} + `
+
+    alert(pedidoConsole)
+
     if (this.pedido) {
       this.valor_pago = this.pedido.total;
       this.clientes = await this.sqliteService.listarClientes();

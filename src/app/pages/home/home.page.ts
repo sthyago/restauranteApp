@@ -33,6 +33,7 @@ export class HomePage {
         WHERE data_abertura = ?`,
         [this.dataHoje]
       );
+      alert(res?.values?.toString());
       return (res?.values?.length ?? 0) > 0;
     } catch (error) {
       console.error('Erro ao verificar caixa:', error);
