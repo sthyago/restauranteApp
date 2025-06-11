@@ -21,7 +21,7 @@ export class BackupPage {
   dataInicio: string = '';
   dataFim: string = '';
   compartilharDepois: boolean = false;
-
+  isDatePickerVisible = false;
 
   constructor(private sqliteService: SqliteService, private toastCtrl: ToastController) { }
 
@@ -91,6 +91,10 @@ export class BackupPage {
       url: fileUri.uri,
       dialogTitle: 'Compartilhar backup'
     });
+  }
+
+  toggleDatePicker() {
+    this.isDatePickerVisible = !this.isDatePickerVisible;
   }
 }
 

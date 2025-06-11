@@ -8,15 +8,21 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <ion-item>
-    <h1 position="stacked">Data de Início</h1>
-    <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataInicio"></ion-datetime>
-  </ion-item>
+  <div *ngIf="isDatePickerVisible">
+    <ion-item>
+      <h1 position="stacked">Data Início</h1>
+      <ion-datetime presentation="date" [(ngModel)]="dataInicio"></ion-datetime>
+    </ion-item>
 
-  <ion-item>
-    <h1 position="stacked">Data de Fim</h1>
-    <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="dataFim"></ion-datetime>
-  </ion-item>
+    <ion-item>
+      <h1 position="stacked">Data Fim</h1>
+      <ion-datetime presentation="date" [(ngModel)]="dataFim"></ion-datetime>
+    </ion-item>
+  </div>
+
+  <ion-button *ngIf="!isDatePickerVisible" expand="block" (click)="toggleDatePicker()">
+    Exibir Seletor de Data
+  </ion-button>
 
   <ion-button expand="block" (click)="gerarBackup()">
     Gerar Backup
