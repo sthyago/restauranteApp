@@ -158,7 +158,7 @@ export class NovoPedidoPage {
 
       this.router.navigateByUrl('/tabs/pedidos');
     } else {
-      this.router.navigateByUrl('/tabs/finalizar-pedido', {
+      this.router.navigate(['/tabs/finalizar-pedido'], {
         state: { pedido }
       });
 
