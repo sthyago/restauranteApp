@@ -433,6 +433,7 @@ export class SqliteService {
                         status: row.status,
                         data: row.data,
                         forma_pagamento: row.forma_pagamento,
+                        mesa_identificacao: row.mesa_identificacao,
                         cliente_id: row.cliente_id
                     });
                 }

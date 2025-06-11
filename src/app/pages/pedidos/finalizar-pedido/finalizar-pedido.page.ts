@@ -24,24 +24,23 @@ export class FinalizarPedidoPage implements OnDestroy {
   valor_pago: number = 0;
   produto?: Produto;
   produtos?: Produto[];
+  state: any;
 
   constructor(private router: Router, private sqliteService: SqliteService) {
-    //this.resetFormulario();
+    const nav = this.router.getCurrentNavigation();
+    this.state = nav?.extras?.state;
   }
 
   async ionViewWillEnter() {
-    //this.resetFormulario();
-
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state;
+    this.resetFormulario();
 
     // Recarregue o pedido apenas se houver novo state
-    if (state) {
-      if (state['origem'] === 'contas') {
-        this.pedido = state['pedido'];
+    if (this.state) {
+      if (this.state['origem'] === 'contas') {
+        this.pedido = this.state['pedido'];
         this.valor_pago = this.pedido!.total;
-      } else if (state['pedido']) {
-        this.pedido = state['pedido'];
+      } else if (this.state['pedido']) {
+        this.pedido = this.state['pedido'];
       }
     }
     const pedidoConsole =
