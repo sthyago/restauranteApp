@@ -1,0 +1,159 @@
+// Estilos para o componente de backup
+ion-card {
+    margin: 16px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-icon {
+        font-size: 20px;
+    }
+}
+
+ion-item {
+    --border-radius: 8px;
+    margin: 8px 0;
+}
+
+ion-button {
+    margin: 8px 0;
+    --border-radius: 8px;
+}
+
+// Estilos globais para alertas personalizados
+:global(.alert-danger) {
+    .alert-wrapper {
+        --background: #fff;
+        --color: #333;
+        border: 2px solid #ff6b6b;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+    }
+
+    .alert-head {
+        background: linear-gradient(135deg, #ff6b6b, #ff5252);
+        color: white;
+        padding: 16px;
+        border-radius: 10px 10px 0 0;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .alert-message {
+        padding: 20px;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    .alert-input-wrapper {
+        padding: 0 20px 20px;
+
+        .alert-input {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            text-align: center;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+
+            &:focus {
+                border-color: #ff6b6b;
+                background: white;
+                box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            }
+        }
+    }
+
+    .alert-button-group {
+        padding: 0 20px 20px;
+        display: flex;
+        gap: 12px;
+
+        .alert-button {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+
+            &.alert-button-cancel {
+                background: #f8f9fa;
+                color: #6c757d;
+                border: 2px solid #dee2e6;
+
+                &:hover {
+                    background: #e9ecef;
+                    border-color: #adb5bd;
+                }
+            }
+
+            &.alert-button-confirm-danger {
+                background: linear-gradient(135deg, #ff6b6b, #ff5252);
+                color: white;
+                border: 2px solid #ff6b6b;
+
+                &:hover {
+                    background: linear-gradient(135deg, #ff5252, #f44336);
+                    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+                }
+            }
+        }
+    }
+}
+
+// Animações
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+:global(.alert-danger .alert-wrapper) {
+    animation: slideInUp 0.3s ease-out;
+}
+
+:global(.alert-danger .alert-head ion-icon) {
+    animation: pulse 2s infinite;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+    ion-card {
+        margin: 8px 0;
+    }
+
+    :global(.alert-danger .alert-button-group) {
+        flex-direction: column;
+
+        .alert-button {
+            margin: 4px 0;
+        }
+    }
+}

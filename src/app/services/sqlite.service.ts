@@ -490,4 +490,34 @@ export class SqliteService {
             return false;
         }
     }
+    async limparDadosGeral(): Promise<void> {
+        try {
+            // Iniciar transação para garantir que tudo seja executado ou nada
+            await this.db?.execute('BEGIN TRANSACTION');
+
+            // Limpar todas as tabelas (mantém estrutura, remove dados)
+            await this.db?.execute('DELETE FROM pedidos');
+            await this.db?.execute('DELETE FROM caixa');
+            await this.db?.execute('DELETE FROM sangrias');
+            await this.db?.execute('DELETE FROM estoque');
+
+            // Se houver outras tabelas relacionadas, adicione aqui:
+            // await this.db?.execute('DELETE FROM produtos');
+            // await this.db?.execute('DELETE FROM clientes');
+
+            // Resetar sequências/IDs auto-incremento (se necessário)
+            await this.db?.execute('DELETE FROM sqlite_sequence WHERE name IN ("pedidos", "caixa", "sangrias", "estoque")');
+
+            // Confirmar transação
+            await this.db?.execute('COMMIT');
+
+            console.log('Limpeza geral concluída com sucesso');
+
+        } catch (error) {
+            // Reverter em caso de erro
+            await this.db?.execute('ROLLBACK');
+            console.error('Erro na limpeza geral:', error);
+            throw new Error(`Falha na limpeza geral: ${error}`);
+        }
+    }
 }

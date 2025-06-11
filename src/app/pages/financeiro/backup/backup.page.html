@@ -3,38 +3,116 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/financeiro"></ion-back-button>
     </ion-buttons>
-    <ion-title>Backup</ion-title>
+    <ion-title>Backup & Limpeza</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
-  <div *ngIf="isDatePickerVisible">
-    <ion-item>
-      <h1 position="stacked">Data Início</h1>
-      <ion-datetime presentation="date" [(ngModel)]="dataInicio"></ion-datetime>
-    </ion-item>
+  <!-- Seção de Backup -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="download-outline"></ion-icon>
+        Gerar Backup
+      </ion-card-title>
+    </ion-card-header>
 
-    <ion-item>
-      <h1 position="stacked">Data Fim</h1>
-      <ion-datetime presentation="date" [(ngModel)]="dataFim"></ion-datetime>
-    </ion-item>
-  </div>
+    <ion-card-content>
+      <div *ngIf="isDatePickerVisible">
+        <ion-item>
+          <ion-label position="stacked">Data Início</ion-label>
+          <ion-datetime presentation="date" [(ngModel)]="dataInicio"></ion-datetime>
+        </ion-item>
 
-  <ion-button *ngIf="!isDatePickerVisible" expand="block" (click)="toggleDatePicker()">
-    Exibir Seletor de Data
-  </ion-button>
+        <ion-item>
+          <ion-label position="stacked">Data Fim</ion-label>
+          <ion-datetime presentation="date" [(ngModel)]="dataFim"></ion-datetime>
+        </ion-item>
+      </div>
 
-  <ion-button expand="block" (click)="gerarBackup()">
-    Gerar Backup
-  </ion-button>
+      <ion-button *ngIf="!isDatePickerVisible" expand="block" fill="outline" (click)="toggleDatePicker()">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        Selecionar Período
+      </ion-button>
 
-  <ion-item lines="none">
-    <ion-label>Compactar (ZIP)</ion-label>
-    <ion-checkbox [(ngModel)]="compactarZip"></ion-checkbox>
-  </ion-item>
+      <ion-button *ngIf="isDatePickerVisible" expand="block" fill="outline" (click)="toggleDatePicker()">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        Ocultar Seletor
+      </ion-button>
 
-  <ion-item lines="none">
-    <ion-label>Compartilhar após salvar</ion-label>
-    <ion-checkbox [(ngModel)]="compartilharDepois"></ion-checkbox>
-  </ion-item>
+      <ion-item lines="none">
+        <ion-checkbox [(ngModel)]="compactarZip" slot="start"></ion-checkbox>
+        <ion-label>
+          <h3>Compactar (ZIP)</h3>
+          <p>Reduz o tamanho do arquivo</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox [(ngModel)]="compartilharDepois" slot="start"></ion-checkbox>
+        <ion-label>
+          <h3>Compartilhar após salvar</h3>
+          <p>Abre menu de compartilhamento</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-button expand="block" color="primary" (click)="gerarBackup()">
+        <ion-icon name="download" slot="start"></ion-icon>
+        Gerar Backup
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Seção de Limpeza -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title color="danger">
+        <ion-icon name="trash-outline"></ion-icon>
+        Limpeza Geral
+      </ion-card-title>
+      <ion-card-subtitle>
+        ⚠️ Use com extrema cautela
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-text color="medium">
+        <p>
+          <strong>Esta função remove TODOS os dados das seguintes tabelas:</strong>
+        </p>
+        <ul>
+          <li>Pedidos</li>
+          <li>Caixa</li>
+          <li>Sangrias</li>
+          <li>Contas</li>
+          <li>Estoque</li>
+        </ul>
+        <p>
+          <ion-text color="danger">
+            <strong>Recomendado: Faça um backup completo antes de usar esta função!</strong>
+          </ion-text>
+        </p>
+      </ion-text>
+
+      <ion-button expand="block" color="danger" fill="outline" (click)="iniciarLimpezaGeral()">
+        <ion-icon name="nuclear-outline" slot="start"></ion-icon>
+        Iniciar Limpeza Geral
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Informações -->
+  <ion-card>
+    <ion-card-content>
+      <ion-text color="medium">
+        <h3>💡 Dicas importantes:</h3>
+        <ul>
+          <li>Arquivos são salvos na pasta <strong>Documents</strong> do dispositivo</li>
+          <li>Use "Compartilhar após salvar" para facilitar o acesso</li>
+          <li>A limpeza geral é irreversível - sempre faça backup primeiro</li>
+          <li>Recomenda-se fazer limpeza a cada 3-6 meses</li>
+        </ul>
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
