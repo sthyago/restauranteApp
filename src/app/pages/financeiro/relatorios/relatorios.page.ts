@@ -13,6 +13,7 @@ export class RelatoriosPage implements OnInit {
   dataFim: string = '';
   relatorio: any = null;
   sangrias: any[] = [];
+  gastosEstoque: any[] = [];
 
   constructor(private db: SqliteService) { }
 
@@ -22,6 +23,8 @@ export class RelatoriosPage implements OnInit {
 
   async gerarRelatorio() {
     if (!this.dataInicio || !this.dataFim) return;
+
+    alert(this.dataInicio.toString());
 
     // Buscar dados da tabela caixa no período especificado
     const caixas = await this.db.db?.query(`
@@ -49,11 +52,24 @@ export class RelatoriosPage implements OnInit {
       WHERE DATE(data) BETWEEN ? AND ?
     `, [this.dataInicio, this.dataFim]);
 
+    // Buscar gastos com estoque no período (assumindo que há um campo data na tabela estoque)
+    // Caso não tenha campo data, você pode usar a data de criação ou outro critério
+    const estoque = await this.db.db?.query(`
+      SELECT 
+        e.valor_pago,
+        p.nome as produto_nome,
+        e.quantidade
+      FROM estoque e
+      INNER JOIN produtos p ON e.produto_id = p.id
+      WHERE DATE(e.data) BETWEEN ? AND ?
+    `, [this.dataInicio, this.dataFim]);
+
     // Inicializar totais
     const totais = {
       totalGeral: 0,
       porForma: { dinheiro: 0, pix: 0, debito: 0, credito: 0 },
-      porTipo: { local: 0, entrega: 0, levar: 0 }
+      porTipo: { local: 0, entrega: 0, levar: 0 },
+      totalGastosEstoque: 0
     };
 
     // Somar valores da tabela caixa
@@ -85,7 +101,13 @@ export class RelatoriosPage implements OnInit {
       }
     });
 
+    // Calcular total de gastos com estoque
+    estoque?.values?.forEach(item => {
+      totais.totalGastosEstoque += item.valor_pago || 0;
+    });
+
     this.relatorio = totais;
     this.sangrias = sangriasRes?.values || [];
+    this.gastosEstoque = estoque?.values || [];
   }
 }

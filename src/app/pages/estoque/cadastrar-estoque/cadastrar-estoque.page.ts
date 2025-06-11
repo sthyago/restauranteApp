@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CadastrarEstoquePage {
 
-  novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
+  novoInsumo = { produto_id: 0, quantidade: null, valor_pago: null };
   produtos: Produto[] = [];
 
   constructor(
@@ -31,7 +31,7 @@ export class CadastrarEstoquePage {
 
   async salvar() {
 
-    if (!this.novoInsumo.produto_id || this.novoInsumo.quantidade <= 0) {
+    if (!this.novoInsumo.produto_id || this.novoInsumo.quantidade! <= 0) {
       this.mostrarAlerta('Atenção', 'Preencha todos os campos corretamente.');
       return;
     }
@@ -39,12 +39,13 @@ export class CadastrarEstoquePage {
     try {
       await this.sqlite.addInsumo(
         this.novoInsumo.produto_id,
-        this.novoInsumo.quantidade,
-        this.novoInsumo.valor_pago
+        this.novoInsumo.quantidade!,
+        this.novoInsumo.valor_pago || 0,
+        new Date().toLocaleDateString('sv-SE')
       );
 
       this.mostrarAlerta('Sucesso', 'Insumo cadastrado com sucesso!');
-      this.novoInsumo = { produto_id: 0, quantidade: 0, valor_pago: 0 };
+      this.novoInsumo = { produto_id: 0, quantidade: null, valor_pago: null };
     } catch (error) {
       console.error('Erro ao salvar insumo:', error);
     }

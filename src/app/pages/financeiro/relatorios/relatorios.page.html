@@ -38,6 +38,14 @@
       </ion-card-content>
     </ion-card>
 
+    <ion-card>
+      <ion-card-header><ion-card-title>Gastos</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <p><strong>Total Gastos com Estoque:</strong> <span appMoedaMask="display">{{ relatorio.totalGastosEstoque
+            }}</span></p>
+      </ion-card-content>
+    </ion-card>
+
     <ion-card *ngIf="sangrias.length > 0">
       <ion-card-header><ion-card-title>Sangrias</ion-card-title></ion-card-header>
       <ion-card-content>
@@ -46,6 +54,18 @@
             {{ s.data | date:'shortDate' }} - {{ s.motivo }}
           </ion-label>
           <ion-note appMoedaMask="display" slot="end">{{ s.valor }}</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="gastosEstoque.length > 0">
+      <ion-card-header><ion-card-title>Compras de Estoque</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ion-item *ngFor="let gasto of gastosEstoque">
+          <ion-label>
+            {{ gasto.produto_nome }} - Qtd: {{ gasto.quantidade }}
+          </ion-label>
+          <ion-note appMoedaMask="display" slot="end">{{ gasto.valor_pago }}</ion-note>
         </ion-item>
       </ion-card-content>
     </ion-card>

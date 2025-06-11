@@ -10,7 +10,7 @@
 <ion-content fullscreen="true" class="ion-padding">
 
   <ion-item>
-    <ion-label position="floating">Produto</ion-label>
+    <ion-label position="floating">Produto*</ion-label>
     <ion-select [(ngModel)]="novoInsumo.produto_id">
       <ion-select-option *ngFor="let p of produtos" [value]="p.id">
         <ion-thumbnail slot="start">
@@ -22,7 +22,7 @@
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Quantidade</ion-label>
+    <ion-label position="floating">Quantidade*</ion-label>
     <ion-input type="number" [(ngModel)]="novoInsumo.quantidade"></ion-input>
   </ion-item>
 

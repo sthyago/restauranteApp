@@ -59,6 +59,7 @@ export class SqliteService {
                 produto_id INTEGER NOT NULL,
                 quantidade INTEGER NOT NULL,
                 valor_pago REAL NOT NULL,
+                data TEXT  NOT NULL,
                 FOREIGN KEY (produto_id) REFERENCES produtos(id)
             );
         `;
@@ -214,10 +215,10 @@ export class SqliteService {
             await this.db.run(sql, [p.nome, p.descricao, p.valor_unitario, p.foto_path, 0]);
         }
     }
-    async addInsumo(produtoId: number, quantidade: number, valorPago: number) {
+    async addInsumo(produtoId: number, quantidade: number, valorPago: number, data: string) {
         if (!this.db) return;
-        const sql = `INSERT INTO estoque (produto_id, quantidade, valor_pago) VALUES (?, ?, ?)`;
-        await this.db.run(sql, [produtoId, quantidade, valorPago]);
+        const sql = `INSERT INTO estoque (produto_id, quantidade, valor_pago, data) VALUES (?, ?, ?, ?)`;
+        await this.db.run(sql, [produtoId, quantidade, valorPago, data]);
     }
     async salvarPedido(pedido: Pedido): Promise<void> {
         if (!this.db) return;
