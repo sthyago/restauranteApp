@@ -32,7 +32,7 @@ export class FinanceiroPage {
     // Buscar sangrias do dia
     const sangriaRes = await this.dbService.db?.query(`
       SELECT valor, motivo, data FROM sangrias 
-      WHERE DATE(data) = ?
+      WHERE data = ?
     `, [this.dataHoje]);
 
     this.sangrias = sangriaRes?.values || [];
@@ -50,19 +50,11 @@ export class FinanceiroPage {
   async pegarCaixasDoDia() {
     return await this.dbService.db?.query(`
       SELECT * FROM caixa 
-      WHERE DATE(data_abertura) = ? 
-      ORDER BY id DESC 
-      LIMIT 1
+      WHERE data_abertura = ?
     `, [this.dataHoje]);
   }
 
   getDataHora() {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-    const dia = hoje.getDate().toString().padStart(2, '0');
-
-    // Formatar apenas como data (sem hora) para armazenamento
-    this.dataHoje = `${ano}-${mes}-${dia}`;
+    this.dataHoje = new Date().toISOString().split('T')[0];
   }
 }

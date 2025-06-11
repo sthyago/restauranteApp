@@ -27,6 +27,7 @@ export class FinalizarPedidoPage implements OnDestroy {
   state: any;
 
   constructor(private router: Router, private sqliteService: SqliteService) {
+    this.resetFormulario();
     const nav = this.router.getCurrentNavigation();
     this.state = nav?.extras?.state;
   }
@@ -43,14 +44,6 @@ export class FinalizarPedidoPage implements OnDestroy {
         this.pedido = this.state['pedido'];
       }
     }
-    const pedidoConsole =
-      `${this.pedido?.itens.toString()} + 
-      ${this.pedido?.total} + 
-      ${this.pedido?.valor_pago} +
-      ${this.pedido?.status} + 
-      ${this.pedido?.mesa_identificacao} + `
-
-    alert(pedidoConsole)
 
     if (this.pedido) {
       this.valor_pago = this.pedido.total;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +12,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 
 export class HomePage {
 
-  mesas: any[] = [];
   dataHoje: string = '';
-  haCaixaAberto?: boolean;
 
   constructor(
     private sqliteService: SqliteService,
@@ -33,7 +31,6 @@ export class HomePage {
         WHERE data_abertura = ?`,
         [this.dataHoje]
       );
-      alert(res?.values?.toString());
       return (res?.values?.length ?? 0) > 0;
     } catch (error) {
       console.error('Erro ao verificar caixa:', error);
