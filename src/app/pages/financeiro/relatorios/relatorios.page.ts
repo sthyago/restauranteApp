@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
@@ -16,15 +16,16 @@ export class RelatoriosPage implements OnInit {
   gastosEstoque: any[] = [];
   isDatePickerVisible = false;
 
-  constructor(private db: SqliteService) { }
+  constructor(
+    private db: SqliteService,
+    private cdr: ChangeDetectorRef  // Adicionar para forçar detecção de mudanças
+  ) { }
 
   async ngOnInit() {
-    // Inicializar com data atual se necessário
     this.inicializarDatas();
     await this.gerarRelatorio();
   }
 
-  // Método para inicializar datas padrão
   inicializarDatas() {
     if (!this.dataInicio || !this.dataFim) {
       const hoje = new Date();
@@ -35,14 +36,12 @@ export class RelatoriosPage implements OnInit {
     }
   }
 
-  // Método auxiliar para formatar data para SQL
   private formatarDataParaSQL(data: string): string {
     return data.split('T')[0];
   }
 
   async gerarRelatorio() {
     try {
-      // Se não houver datas, inicializar
       if (!this.dataInicio || !this.dataFim) {
         this.inicializarDatas();
       }
@@ -52,7 +51,7 @@ export class RelatoriosPage implements OnInit {
 
       console.log('Gerando relatório para período:', dataInicioSQL, 'até', dataFimSQL);
 
-      // Buscar dados da tabela caixa no período especificado
+      // Suas consultas aqui (igual ao código anterior)
       const caixas = await this.db.db?.query(`
         SELECT 
           COALESCE(total_dinheiro, 0) as total_dinheiro,
@@ -64,7 +63,6 @@ export class RelatoriosPage implements OnInit {
           OR (data_fechamento IS NOT NULL AND DATE(data_fechamento) BETWEEN ? AND ?)
       `, [dataInicioSQL, dataFimSQL, dataInicioSQL, dataFimSQL]);
 
-      // Buscar pedidos para calcular totais por tipo
       const pedidos = await this.db.db?.query(`
         SELECT tipo, COALESCE(total, 0) as total
         FROM pedidos 
@@ -72,13 +70,11 @@ export class RelatoriosPage implements OnInit {
           AND DATE(data) BETWEEN ? AND ?
       `, [dataInicioSQL, dataFimSQL]);
 
-      // Buscar sangrias no período
       const sangriasRes = await this.db.db?.query(`
         SELECT * FROM sangrias 
         WHERE DATE(data) BETWEEN ? AND ?
       `, [dataInicioSQL, dataFimSQL]);
 
-      // Buscar gastos com estoque no período
       const estoque = await this.db.db?.query(`
         SELECT 
           COALESCE(e.valor_pago, 0) as valor_pago,
@@ -89,23 +85,31 @@ export class RelatoriosPage implements OnInit {
         WHERE DATE(e.data) BETWEEN ? AND ?
       `, [dataInicioSQL, dataFimSQL]);
 
-      // Inicializar totais
+      // Recriar o objeto completamente para forçar detecção de mudança
       const totais = {
         totalGeral: 0,
-        porForma: { dinheiro: 0, pix: 0, debito: 0, credito: 0 },
-        porTipo: { local: 0, entrega: 0, levar: 0 },
+        porForma: {
+          dinheiro: 0,
+          pix: 0,
+          debito: 0,
+          credito: 0
+        },
+        porTipo: {
+          local: 0,
+          entrega: 0,
+          levar: 0
+        },
         totalGastosEstoque: 0
       };
 
-      // Debug: Log dos resultados das consultas
-      console.log('Resultados das consultas:', {
+      console.log('Dados das consultas:', {
         caixas: caixas?.values,
         pedidos: pedidos?.values,
         sangrias: sangriasRes?.values,
         estoque: estoque?.values
       });
-      alert(`${caixas?.values?.toString()}`)
-      // Somar valores da tabela caixa
+
+      // Processar dados da tabela caixa
       if (caixas?.values && caixas.values.length > 0) {
         caixas.values.forEach((caixa: any) => {
           totais.porForma.dinheiro += Number(caixa.total_dinheiro) || 0;
@@ -115,11 +119,10 @@ export class RelatoriosPage implements OnInit {
         });
       }
 
-      // Calcular total geral das formas de pagamento
       totais.totalGeral = totais.porForma.dinheiro + totais.porForma.pix +
         totais.porForma.debito + totais.porForma.credito;
 
-      // Calcular totais por tipo de pedido
+      // Processar pedidos por tipo
       if (pedidos?.values && pedidos.values.length > 0) {
         pedidos.values.forEach((pedido: any) => {
           const tipo = pedido.tipo as string;
@@ -139,27 +142,32 @@ export class RelatoriosPage implements OnInit {
         });
       }
 
-      // Calcular total de gastos com estoque
+      // Processar gastos com estoque
       if (estoque?.values && estoque.values.length > 0) {
         estoque.values.forEach((item: any) => {
           totais.totalGastosEstoque += Number(item.valor_pago) || 0;
         });
       }
 
-      alert(`${totais.porForma.dinheiro.toString()}+${totais.totalGeral.toString()}`)
+      console.log('Totais calculados:', totais);
 
-      this.relatorio = totais;
-      this.sangrias = sangriasRes?.values || [];
-      this.gastosEstoque = estoque?.values || [];
+      // Atribuir valores e forçar detecção de mudança
+      this.relatorio = { ...totais };  // Criar novo objeto
+      this.sangrias = [...(sangriasRes?.values || [])];  // Criar novo array
+      this.gastosEstoque = [...(estoque?.values || [])];  // Criar novo array
 
-      // Só esconde o date picker se não estava visível
+      // Forçar detecção de mudanças do Angular
+      this.cdr.detectChanges();
+
       if (this.isDatePickerVisible) {
         this.toggleDatePicker();
       }
 
+      // Debug final
+      console.log('Relatório final atribuído:', this.relatorio);
+
     } catch (error) {
       console.error('Erro ao gerar relatório:', error);
-      // Inicializar com valores zerados em caso de erro
       this.relatorio = {
         totalGeral: 0,
         porForma: { dinheiro: 0, pix: 0, debito: 0, credito: 0 },
@@ -168,6 +176,7 @@ export class RelatoriosPage implements OnInit {
       };
       this.sangrias = [];
       this.gastosEstoque = [];
+      this.cdr.detectChanges();
     }
   }
 
