@@ -24,7 +24,7 @@ export class RelatoriosPage implements OnInit {
   async gerarRelatorio() {
     if (!this.dataInicio || !this.dataFim) return;
 
-    alert(this.dataInicio.toString());
+    alert(this.dataInicio.split('T')[0]);
 
     // Buscar dados da tabela caixa no período especificado
     const caixas = await this.db.db?.query(`
@@ -36,7 +36,7 @@ export class RelatoriosPage implements OnInit {
       FROM caixa 
       WHERE DATE(data_abertura) BETWEEN ? AND ?
         OR (data_fechamento IS NOT NULL AND DATE(data_fechamento) BETWEEN ? AND ?)
-    `, [this.dataInicio, this.dataFim, this.dataInicio, this.dataFim]);
+    `, [this.dataInicio.split('T')[0], this.dataFim.split('T')[0], this.dataInicio.split('T')[0], this.dataFim.split('T')[0]]);
 
     // Buscar pedidos para calcular totais por tipo
     const pedidos = await this.db.db?.query(`
