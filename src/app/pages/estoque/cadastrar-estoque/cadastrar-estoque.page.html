@@ -28,7 +28,8 @@
 
   <ion-item>
     <ion-label position="floating">Valor Pago (total)</ion-label>
-    <ion-input type="text" appMoedaMask [(ngModel)]="novoInsumo.valor_pago"></ion-input>
+    <ion-input placeholder="R$ 0,00" inputmode="decimal" type="text" appMoedaMask
+      [(ngModel)]="novoInsumo.valor_pago"></ion-input>
   </ion-item>
 
   <ion-button expand="block" (click)="salvar()">Salvar</ion-button>

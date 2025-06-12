@@ -4,14 +4,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
     selector: '[appMoedaMask]',
-    standalone: false
+    standalone: false,
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => MoedaMaskDirective),
+            multi: true
+        }
+    ]
 })
-export class MoedaMaskDirective implements OnInit, OnChanges {
+export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccessor {
     @Input('appMoedaMask') tipo: 'input' | 'display' | '' = '';
     @Input() valor: number | string | null = null;
 
     private onChange: any = () => { };
     private onTouched: any = () => { };
+    private isUpdating = false;
 
     constructor(
         private el: ElementRef,
@@ -19,9 +27,15 @@ export class MoedaMaskDirective implements OnInit, OnChanges {
     ) { }
 
     ngOnInit() {
+        // Define o inputmode para teclado numérico
+        this.renderer.setAttribute(this.el.nativeElement, 'inputmode', 'decimal');
+
         // Formata exibições na inicialização
         if (this.tipo === 'display') {
             this.formatarExibicao();
+        } else {
+            // Para inputs, inicia com formato base
+            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
         }
     }
 
@@ -32,30 +46,98 @@ export class MoedaMaskDirective implements OnInit, OnChanges {
         }
     }
 
-    @HostListener('input', ['$event.target.value'])
-    onInput(value: string) {
-        const valorLimpo = value.replace(/[^\d,]/g, '');
-        this.renderer.setProperty(this.el.nativeElement, 'value', valorLimpo);
+    // Implementação do ControlValueAccessor
+    writeValue(value: any): void {
+        if (value !== null && value !== undefined) {
+            const valorFormatado = this.formatarMoeda(this.converterParaNumero(value));
+            this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
+        }
     }
 
-    @HostListener('ionFocus', ['$event.target.value'])
-    @HostListener('focus', ['$event.target.value'])
-    onFocus(value: string) {
-        // Remove formatação ao focar
-        const valorNumerico = this.converterParaNumero(value);
-        this.renderer.setProperty(this.el.nativeElement, 'value', valorNumerico.toString());
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
     }
 
-    @HostListener('ionBlur', ['$event.target.value']) // Usa ionBlur para Ionic
-    @HostListener('blur', ['$event.target.value']) // Fallback para elementos padrão
-    onBlur(value: string) {
-        if (!value) return;
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
 
-        // Formata o valor
-        const numero = this.converterParaNumero(value);
-        const valorFormatado = this.formatarMoeda(numero);
+    @HostListener('input', ['$event'])
+    onInput(event: any) {
+        if (this.isUpdating) return;
 
+        const value = event.target.value;
+        const cursorPosition = event.target.selectionStart;
+
+        // Remove tudo exceto números
+        const apenasNumeros = value.replace(/[^\d]/g, '');
+
+        // Converte para centavos
+        const centavos = parseInt(apenasNumeros) || 0;
+        const reais = centavos / 100;
+
+        // Formata como moeda
+        const valorFormatado = this.formatarMoeda(reais);
+
+        // Atualiza o campo sem criar loop
+        this.isUpdating = true;
         this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
+        this.isUpdating = false;
+
+        // Posiciona cursor no final
+        const novoTamanho = valorFormatado.length;
+        this.el.nativeElement.setSelectionRange(novoTamanho, novoTamanho);
+
+        // Notifica o ngModel
+        this.onChange(reais);
+    }
+
+    @HostListener('focus', ['$event'])
+    onFocus(event: any) {
+        this.onTouched();
+
+        // Se o campo estiver vazio ou com valor zero, limpa para facilitar digitação
+        const value = event.target.value;
+        if (value === 'R$ 0,00' || !value) {
+            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ ');
+            // Posiciona cursor após o R$
+            setTimeout(() => {
+                this.el.nativeElement.setSelectionRange(3, 3);
+            }, 0);
+        }
+    }
+
+    @HostListener('blur', ['$event'])
+    onBlur(event: any) {
+        const value = event.target.value;
+
+        // Se o campo estiver vazio ou só com "R$ ", define como zero
+        if (!value || value === 'R$ ' || value === 'R$') {
+            const valorZero = this.formatarMoeda(0);
+            this.renderer.setProperty(this.el.nativeElement, 'value', valorZero);
+            this.onChange(0);
+        }
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        // Permite apenas números, backspace, delete, tab, escape, enter, e ponto decimal
+        const allowedKeys = [
+            'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
+        ];
+
+        if (allowedKeys.includes(event.key)) {
+            return;
+        }
+
+        // Permite números
+        if (event.key >= '0' && event.key <= '9') {
+            return;
+        }
+
+        // Bloqueia outras teclas
+        event.preventDefault();
     }
 
     private formatarExibicao() {
@@ -103,11 +185,11 @@ export class MoedaMaskDirective implements OnInit, OnChanges {
     }
 
     private formatarMoeda(valor: number): string {
-        return valor.toLocaleString('pt-BR', {
+        return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
-        });
+        }).format(valor);
     }
 }

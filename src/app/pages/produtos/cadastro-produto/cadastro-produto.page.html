@@ -20,7 +20,8 @@
 
   <ion-item>
     <ion-label position="floating">Valor de Venda</ion-label>
-    <ion-input appMoedaMask type="text" [(ngModel)]="produto.valor_unitario"></ion-input>
+    <ion-input placeholder="R$ 0,00" inputmode="decimal" appMoedaMask type="text"
+      [(ngModel)]="produto.valor_unitario"></ion-input>
   </ion-item>
 
   <ion-button expand="block" (click)="salvar()" class="add-btn">Salvar</ion-button>
