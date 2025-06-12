@@ -38,7 +38,7 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Install Ionic CLI
-        run: npm install -g @ionic/cli
+        run: npm install -g @ionic/cli --registry=https://registry.npmmirror.com
 
       - name: Install Capacitor Android
         run: npm install @capacitor/android
