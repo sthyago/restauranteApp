@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Produto } from 'src/app/models/produto';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { AlertController } from '@ionic/angular';
@@ -18,7 +18,8 @@ export class EditarProdutoPage {
   constructor(
     private modalCtrl: ModalController,
     private sqlite: SqliteService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastCtrl: ToastController
   ) { }
 
   ngOnInit() {
@@ -35,11 +36,11 @@ export class EditarProdutoPage {
 
     try {
       await this.sqlite.atualizarProduto(this.produtoEditado);
-      this.mostrarAlerta('Sucesso', 'Produto atualizado com sucesso!');
+      this.mostrarAlerta('success', 'Produto atualizado com sucesso!');
       this.modalCtrl.dismiss({ atualizado: true });
     } catch (error) {
       console.error('Erro ao atualizar produto:', error);
-      this.mostrarAlerta('Erro', 'Falha ao atualizar produto. Tente novamente.');
+      this.mostrarAlerta('danger', 'Falha ao atualizar produto. Tente novamente.');
     } finally {
       this.salvando = false;
     }
@@ -49,14 +50,15 @@ export class EditarProdutoPage {
     this.modalCtrl.dismiss();
   }
 
-  private async mostrarAlerta(titulo: string, mensagem: string) {
-    const alert = await this.alertController.create({
-      header: titulo,
-      message: mensagem,
-      buttons: ['OK']
-    });
+  private async mostrarAlerta(color: string, mensagem: string) {
 
-    await alert.present();
+    const toast = await this.toastCtrl.create({
+      message: mensagem,
+      duration: 2000,
+      position: 'middle',
+      color: color
+    });
+    await toast.present();
   }
   private async confirmarAlteracoes(): Promise<boolean> {
     return new Promise(async (resolve) => {

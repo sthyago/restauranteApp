@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { ModalController, NavController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Produto } from 'src/app/models/produto';
 import { EditarProdutoPage } from '../editar-produto/editar-produto.page';
 
@@ -23,8 +23,8 @@ export class CadastroProdutoPage {
 
   constructor(
     private sqlite: SqliteService,
-    private navCtrl: NavController,
-    private modalCtrl: ModalController) { }
+    private modalCtrl: ModalController,
+    private toastCtrl: ToastController) { }
 
   async ngOnInit() {
     await this.carregarProdutos();
@@ -60,6 +60,15 @@ export class CadastroProdutoPage {
     const insert = `INSERT INTO produtos (nome, descricao, valor_unitario) VALUES (?, ?, ?)`;
     const values = [this.produto!.nome, this.produto!.descricao, this.produto!.valor_unitario];
     await this.sqlite.db?.run(insert, values);
+
+    const toast = await this.toastCtrl.create({
+      message: 'Produto salvo com sucesso!',
+      duration: 2000,
+      position: 'middle',
+      color: 'success'
+    });
+    await toast.present();
+
     this.carregarProdutos();
   }
 

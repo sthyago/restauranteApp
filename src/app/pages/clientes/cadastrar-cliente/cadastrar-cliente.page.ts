@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-cadastrar-cliente',
@@ -17,7 +18,7 @@ export class CadastrarClientePage {
     email: ''
   };
 
-  constructor(private sqliteService: SqliteService, private router: Router) { }
+  constructor(private sqliteService: SqliteService, private router: Router, private toastCtrl: ToastController) { }
 
   async salvarCliente() {
     const { nome, telefone, email } = this.cliente;
@@ -42,7 +43,15 @@ export class CadastrarClientePage {
     }
 
     await this.sqliteService.adicionarCliente(nome.trim(), telefone, email.trim());
-    alert('Cliente salvo com sucesso!');
+
+    const toast = await this.toastCtrl.create({
+      message: 'Clinte salvoo com sucesso!',
+      duration: 2000,
+      position: 'middle',
+      color: 'success'
+    });
+    await toast.present();
+
     this.cliente.email = '';
     this.cliente.nome = '';
     this.cliente.telefone = '';

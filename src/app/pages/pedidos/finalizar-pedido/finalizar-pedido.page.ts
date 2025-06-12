@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { Caixa } from 'src/app/models/caixa';
 import { Cliente } from 'src/app/models/cliente';
 import { Pedido } from 'src/app/models/pedido';
@@ -26,7 +27,7 @@ export class FinalizarPedidoPage implements OnDestroy {
   produtos?: Produto[];
   state: any;
 
-  constructor(private router: Router, private sqliteService: SqliteService) {
+  constructor(private router: Router, private sqliteService: SqliteService, private toastCtrl: ToastController) {
     this.resetFormulario();
     const nav = this.router.getCurrentNavigation();
     this.state = nav?.extras?.state;
@@ -116,7 +117,13 @@ export class FinalizarPedidoPage implements OnDestroy {
         // Limpar o state da navegação para evitar reutilização
         this.state = null;
 
-        alert('Pedido finalizado com sucesso!');
+        const toast = await this.toastCtrl.create({
+          message: 'Pedido finalizado com sucesso!',
+          duration: 2000,
+          position: 'middle',
+          color: 'success'
+        });
+        await toast.present();
 
         this.router.navigateByUrl('/tabs/pedidos', { replaceUrl: true });
       } catch (e) {
