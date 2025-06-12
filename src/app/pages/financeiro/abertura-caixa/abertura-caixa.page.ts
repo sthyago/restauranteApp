@@ -55,6 +55,7 @@ export class AberturaCaixaPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message: 'Caixa aberto com sucesso!',
       duration: 2000,
+      position: 'middle',
       color: 'success'
     });
     await toast.present();

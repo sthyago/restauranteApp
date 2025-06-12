@@ -104,6 +104,7 @@ export class FechamentoPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message: 'Fechamento salvo com sucesso!',
       duration: 2000,
+      position: 'middle',
       color: 'success'
     });
     await toast.present();

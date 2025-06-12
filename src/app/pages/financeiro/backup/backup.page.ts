@@ -3,7 +3,7 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { format } from 'date-fns';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-backup',
@@ -24,11 +24,13 @@ export class BackupPage {
 
   // Senha de administrador (considere mover para um serviço de configuração)
   private senhaAdmin = 'but23eco'; // ALTERE PARA SUA SENHA
+  private senhaTemporaria = ''; // Para armazenar temporariamente a senha digitada
+  private aguardandoSenha = false;
+  private confirmandoLimpeza = false;
 
   constructor(
     private sqliteService: SqliteService,
-    private toastCtrl: ToastController,
-    private alertController: AlertController
+    private toastCtrl: ToastController
   ) { }
 
   async gerarBackup() {
@@ -36,8 +38,9 @@ export class BackupPage {
       if (!this.dataInicio || !this.dataFim) {
         const alerta = await this.toastCtrl.create({
           message: 'Selecione o período desejado.',
-          duration: 2000,
-          color: 'warning'
+          duration: 3000,
+          color: 'warning',
+          position: 'middle'
         });
         await alerta.present();
         return;
@@ -49,8 +52,9 @@ export class BackupPage {
       if (isNaN(dataInicioObj.getTime()) || isNaN(dataFimObj.getTime())) {
         const toast = await this.toastCtrl.create({
           message: 'Erro: Datas inválidas',
-          duration: 2000,
-          color: 'danger'
+          duration: 3000,
+          color: 'danger',
+          position: 'middle'
         });
         await toast.present();
         return;
@@ -59,8 +63,9 @@ export class BackupPage {
       if (dataInicioObj > dataFimObj) {
         const toast = await this.toastCtrl.create({
           message: 'Erro: Data início deve ser anterior à data fim',
-          duration: 2000,
-          color: 'danger'
+          duration: 3000,
+          color: 'danger',
+          position: 'middle'
         });
         await toast.present();
         return;
@@ -75,8 +80,9 @@ export class BackupPage {
       if (!dados) {
         const toast = await this.toastCtrl.create({
           message: 'Nenhum dado encontrado no período selecionado.',
-          duration: 2000,
-          color: 'warning'
+          duration: 3000,
+          color: 'warning',
+          position: 'middle'
         });
         await toast.present();
         return;
@@ -116,9 +122,10 @@ export class BackupPage {
       }
 
       const toast = await this.toastCtrl.create({
-        message: `Backup salvo: ${filename}`,
+        message: `✅ Backup salvo: ${filename}`,
         duration: 4000,
-        color: 'success'
+        color: 'success',
+        position: 'middle'
       });
       await toast.present();
 
@@ -128,7 +135,8 @@ export class BackupPage {
       const toast = await this.toastCtrl.create({
         message: 'Erro ao gerar backup. Tente novamente.',
         duration: 3000,
-        color: 'danger'
+        color: 'danger',
+        position: 'middle'
       });
       await toast.present();
     }
@@ -136,181 +144,196 @@ export class BackupPage {
 
   async iniciarLimpezaGeral() {
     try {
-      // Primeira confirmação
-      const alert1 = await this.alertController.create({
-        header: '⚠️ LIMPEZA GERAL',
-        subHeader: 'ATENÇÃO - AÇÃO IRREVERSÍVEL!',
+      // Primeira confirmação via toast
+      const toast = await this.toastCtrl.create({
         message: `
-          <div class="limpeza-warning">
-            <p><strong>Todos os dados das seguintes tabelas serão PERMANENTEMENTE EXCLUÍDOS:</strong></p>
-            <ul>
-              <li>• Pedidos</li>
-              <li>• Caixa</li>
-              <li>• Sangrias</li>
-              <li>• Contas</li>
-              <li>• Estoque</li>
-            </ul>
-            <p><ion-text color="danger"><strong>Certifique-se de ter feito o BACKUP antes de continuar!</strong></ion-text></p>
-          </div>
+          ⚠️ LIMPEZA GERAL - ATENÇÃO!
+          
+          Todos os dados serão PERMANENTEMENTE EXCLUÍDOS:
+          • Pedidos • Caixa • Sangrias • Contas • Estoque
+          
+          Certifique-se de ter feito BACKUP!
+          
+          Toque novamente para confirmar ou aguarde para cancelar.
         `,
+        duration: 8000,
+        color: 'warning',
+        position: 'middle',
         buttons: [
           {
-            text: 'Cancelar',
-            role: 'cancel',
-            cssClass: 'secondary'
-          },
-          {
-            text: 'Continuar',
-            cssClass: 'danger',
+            text: 'CONFIRMAR LIMPEZA',
+            role: 'confirm',
             handler: () => {
               this.solicitarSenha();
             }
+          },
+          {
+            text: 'Cancelar',
+            role: 'cancel'
           }
         ]
       });
 
-      await alert1.present();
+      await toast.present();
 
     } catch (error) {
       console.error('Erro em iniciarLimpezaGeral:', error);
       const toast = await this.toastCtrl.create({
         message: 'Erro ao iniciar limpeza.',
-        duration: 2000,
-        color: 'danger'
+        duration: 3000,
+        color: 'danger',
+        position: 'middle'
       });
       await toast.present();
     }
   }
 
   async solicitarSenha() {
-    const alert = await this.alertController.create({
-      header: '🔐 Autorização Necessária',
-      message: 'Digite a senha de administrador:',
-      inputs: [
-        {
-          name: 'senha',
-          type: 'password',
-          placeholder: 'Senha do administrador',
-          attributes: {
-            maxlength: 20
-          }
-        }
-      ],
+    this.aguardandoSenha = true;
+
+    const toast = await this.toastCtrl.create({
+      message: `
+        🔐 AUTORIZAÇÃO NECESSÁRIA
+        
+        Digite a senha de administrador e toque em VERIFICAR:
+        
+        [A senha será solicitada via prompt do navegador]
+      `,
+      duration: 6000,
+      color: 'primary',
+      position: 'middle',
       buttons: [
+        {
+          text: 'VERIFICAR SENHA',
+          handler: () => {
+            this.verificarSenha();
+          }
+        },
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Verificar',
-          cssClass: 'primary',
-          handler: (data) => {
-            if (!data.senha) {
-              this.mostrarErroSenha('Senha não pode estar vazia');
-              return false;
-            }
-
-            if (data.senha !== this.senhaAdmin) {
-              this.mostrarErroSenha('Senha incorreta! Acesso negado.');
-              return false;
-            }
-
-            this.confirmarLimpezaFinal();
-            return true;
+          handler: () => {
+            this.aguardandoSenha = false;
           }
         }
       ]
     });
 
-    await alert.present();
+    await toast.present();
+  }
+
+  verificarSenha() {
+    const senha = prompt('Digite a senha de administrador:');
+
+    if (!senha) {
+      this.mostrarErroSenha('Senha não pode estar vazia');
+      this.aguardandoSenha = false;
+      return;
+    }
+
+    if (senha !== this.senhaAdmin) {
+      this.mostrarErroSenha('Senha incorreta! Acesso negado.');
+      this.aguardandoSenha = false;
+      return;
+    }
+
+    this.aguardandoSenha = false;
+    this.confirmarLimpezaFinal();
   }
 
   async mostrarErroSenha(mensagem: string) {
     const toast = await this.toastCtrl.create({
       message: `❌ ${mensagem}`,
       duration: 3000,
-      color: 'danger'
+      color: 'danger',
+      position: 'middle'
     });
     await toast.present();
   }
 
   async confirmarLimpezaFinal() {
-    const alert = await this.alertController.create({
-      header: '🔥 CONFIRMAÇÃO FINAL',
-      subHeader: 'ÚLTIMA CHANCE!',
+    this.confirmandoLimpeza = true;
+
+    const toast = await this.toastCtrl.create({
       message: `
-        <div class="confirmacao-final">
-          <p><strong>Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?</strong></p>
-          <p><ion-text color="danger">Esta ação não pode ser desfeita!</ion-text></p>
-        </div>
+        🔥 CONFIRMAÇÃO FINAL - ÚLTIMA CHANCE!
+        
+        Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?
+        
+        Esta ação não pode ser desfeita!
+        
+        Toque em CONFIRMAR EXCLUSÃO para prosseguir.
       `,
+      duration: 10000,
+      color: 'danger',
+      position: 'middle',
       buttons: [
+        {
+          text: 'CONFIRMAR EXCLUSÃO',
+          handler: () => {
+            this.executarLimpeza();
+          }
+        },
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'CONFIRMAR EXCLUSÃO',
-          cssClass: 'danger',
           handler: () => {
-            this.executarLimpeza();
+            this.confirmandoLimpeza = false;
           }
         }
       ]
     });
 
-    await alert.present();
+    await toast.present();
   }
 
   async executarLimpeza() {
     try {
-      // Mostrar loading
-      const loading = await this.alertController.create({
-        header: 'Executando Limpeza...',
-        message: 'Por favor, aguarde...',
-        backdropDismiss: false
+      this.confirmandoLimpeza = false;
+
+      // Mostrar toast de loading
+      const loadingToast = await this.toastCtrl.create({
+        message: '⏳ Executando limpeza... Por favor, aguarde...',
+        duration: 0, // Indefinido
+        color: 'medium',
+        position: 'middle'
       });
-      await loading.present();
+      await loadingToast.present();
 
       // Lista das tabelas para limpar
       const tabelas = ['pedidos', 'caixa', 'sangrias', 'estoque'];
+      let tabelasLimpas = 0;
 
       for (const tabela of tabelas) {
         try {
           const query = `DELETE FROM ${tabela}`;
           await this.sqliteService.db?.query(query);
+          tabelasLimpas++;
         } catch (tabelaError) {
           console.error(`Erro ao limpar tabela ${tabela}:`, tabelaError);
           // Continua com as outras tabelas mesmo se uma falhar
         }
       }
 
-      await loading.dismiss();
+      await loadingToast.dismiss();
 
-      // Sucesso
-      const sucessoAlert = await this.alertController.create({
-        header: '✅ Limpeza Concluída',
-        message: 'Todas as tabelas foram limpas com sucesso!',
-        buttons: ['OK']
+      // Toast de sucesso
+      const sucessoToast = await this.toastCtrl.create({
+        message: `✅ Limpeza concluída! ${tabelasLimpas}/${tabelas.length} tabelas foram limpas com sucesso.`,
+        duration: 5000,
+        color: 'success',
+        position: 'middle'
       });
-      await sucessoAlert.present();
-
-      const toast = await this.toastCtrl.create({
-        message: '✅ Limpeza geral concluída com sucesso!',
-        duration: 4000,
-        color: 'success'
-      });
-      await toast.present();
+      await sucessoToast.present();
 
     } catch (error) {
       console.error('Erro na limpeza:', error);
 
       const toast = await this.toastCtrl.create({
-        message: 'Erro ao executar limpeza geral.',
-        duration: 3000,
-        color: 'danger'
+        message: '❌ Erro ao executar limpeza geral. Tente novamente.',
+        duration: 4000,
+        color: 'danger',
+        position: 'middle'
       });
       await toast.present();
     }
@@ -321,8 +344,9 @@ export class BackupPage {
       if (!this.caminhoBackup) {
         const toast = await this.toastCtrl.create({
           message: 'Erro: Caminho do backup não definido',
-          duration: 2000,
-          color: 'danger'
+          duration: 3000,
+          color: 'danger',
+          position: 'middle'
         });
         await toast.present();
         return;
@@ -341,12 +365,21 @@ export class BackupPage {
         dialogTitle: 'Compartilhar backup'
       });
 
+      const toast = await this.toastCtrl.create({
+        message: '✅ Backup compartilhado com sucesso!',
+        duration: 3000,
+        color: 'success',
+        position: 'middle'
+      });
+      await toast.present();
+
     } catch (error) {
       console.error('Erro ao compartilhar:', error);
       const toast = await this.toastCtrl.create({
         message: 'Erro ao compartilhar backup.',
-        duration: 2000,
-        color: 'danger'
+        duration: 3000,
+        color: 'danger',
+        position: 'middle'
       });
       await toast.present();
     }

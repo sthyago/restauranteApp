@@ -37,6 +37,7 @@ export class SangriasPage implements OnInit {
       const toast = await this.toastCtrl.create({
         message: 'Nenhum caixa aberto encontrado!',
         duration: 2000,
+        position: 'middle',
         color: 'danger'
       });
       await toast.present();
@@ -51,6 +52,7 @@ export class SangriasPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message: 'Sangria registrada com sucesso!',
       duration: 2000,
+      position: 'middle',
       color: 'success'
     });
     await toast.present();
