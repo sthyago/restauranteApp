@@ -47,12 +47,22 @@ export class BackupPage {
       const dataFimObj = new Date(this.dataFim);
 
       if (isNaN(dataInicioObj.getTime()) || isNaN(dataFimObj.getTime())) {
-        alert('Erro: Datas inválidas');
+        const toast = await this.toastCtrl.create({
+          message: 'Erro: Datas inválidas',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         return;
       }
 
       if (dataInicioObj > dataFimObj) {
-        alert('Erro: Data início deve ser anterior à data fim');
+        const toast = await this.toastCtrl.create({
+          message: 'Erro: Data início deve ser anterior à data fim',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         return;
       }
 
@@ -113,7 +123,6 @@ export class BackupPage {
       await toast.present();
 
     } catch (error) {
-      alert(`Erro ao gerar backup: ${error}`);
       console.error('Erro no backup:', error);
 
       const toast = await this.toastCtrl.create({
@@ -126,110 +135,168 @@ export class BackupPage {
   }
 
   async iniciarLimpezaGeral() {
-    alert('DEBUG: Função iniciarLimpezaGeral() chamada');
-
     try {
-      alert('DEBUG: Criando primeiro alert...');
+      // Primeira confirmação
+      const alert1 = await this.alertController.create({
+        header: '⚠️ LIMPEZA GERAL',
+        subHeader: 'ATENÇÃO - AÇÃO IRREVERSÍVEL!',
+        message: `
+          <div class="limpeza-warning">
+            <p><strong>Todos os dados das seguintes tabelas serão PERMANENTEMENTE EXCLUÍDOS:</strong></p>
+            <ul>
+              <li>• Pedidos</li>
+              <li>• Caixa</li>
+              <li>• Sangrias</li>
+              <li>• Contas</li>
+              <li>• Estoque</li>
+            </ul>
+            <p><ion-text color="danger"><strong>Certifique-se de ter feito o BACKUP antes de continuar!</strong></ion-text></p>
+          </div>
+        `,
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            cssClass: 'secondary'
+          },
+          {
+            text: 'Continuar',
+            cssClass: 'danger',
+            handler: () => {
+              this.solicitarSenha();
+            }
+          }
+        ]
+      });
 
-      // Primeira confirmação simples
-      const confirmacao1 = confirm(`⚠️ ATENÇÃO - LIMPEZA GERAL ⚠️
-      
-ESTA AÇÃO É IRREVERSÍVEL!
-
-Todos os dados das seguintes tabelas serão PERMANENTEMENTE EXCLUÍDOS:
-• Pedidos
-• Caixa  
-• Sangrias
-• Contas
-• Estoque
-
-Certifique-se de ter feito o BACKUP antes de continuar!
-
-Deseja continuar?`);
-
-      if (!confirmacao1) {
-        alert('DEBUG: Usuário cancelou primeira confirmação');
-        return;
-      }
-
-      alert('DEBUG: Primeira confirmação OK, solicitando senha...');
-
-      // Solicitar senha
-      const senha = prompt('Digite a senha de administrador:');
-
-      if (!senha) {
-        alert('DEBUG: Usuário cancelou entrada de senha');
-        return;
-      }
-
-      alert(`DEBUG: Senha digitada, verificando... (senha: ${senha})`);
-
-      if (senha !== this.senhaAdmin) {
-        alert('❌ Senha incorreta! Acesso negado.');
-        alert('DEBUG: Senha incorreta');
-        return;
-      }
-
-      alert('DEBUG: Senha correta, indo para confirmação final...');
-      this.confirmarLimpezaDebug();
+      await alert1.present();
 
     } catch (error) {
-      alert(`DEBUG: Erro em iniciarLimpezaGeral: ${error}`);
-      console.error('Erro:', error);
+      console.error('Erro em iniciarLimpezaGeral:', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Erro ao iniciar limpeza.',
+        duration: 2000,
+        color: 'danger'
+      });
+      await toast.present();
     }
   }
 
-  async confirmarLimpezaDebug() {
-    alert('DEBUG: Função confirmarLimpezaDebug() chamada');
+  async solicitarSenha() {
+    const alert = await this.alertController.create({
+      header: '🔐 Autorização Necessária',
+      message: 'Digite a senha de administrador:',
+      inputs: [
+        {
+          name: 'senha',
+          type: 'password',
+          placeholder: 'Senha do administrador',
+          attributes: {
+            maxlength: 20
+          }
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Verificar',
+          cssClass: 'primary',
+          handler: (data) => {
+            if (!data.senha) {
+              this.mostrarErroSenha('Senha não pode estar vazia');
+              return false;
+            }
 
-    try {
-      const confirmacao2 = confirm(`🔥 CONFIRMAÇÃO FINAL 🔥
+            if (data.senha !== this.senhaAdmin) {
+              this.mostrarErroSenha('Senha incorreta! Acesso negado.');
+              return false;
+            }
 
-ÚLTIMA CHANCE!
+            this.confirmarLimpezaFinal();
+            return true;
+          }
+        }
+      ]
+    });
 
-Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?
-
-Esta ação não pode ser desfeita!
-
-Confirmar exclusão?`);
-
-      if (!confirmacao2) {
-        alert('DEBUG: Usuário cancelou confirmação final');
-        return;
-      }
-
-      alert('DEBUG: Confirmação final OK, executando limpeza...');
-      this.executarLimpezaDebug();
-
-    } catch (error) {
-      alert(`DEBUG: Erro em confirmarLimpezaDebug: ${error}`);
-      console.error('Erro:', error);
-    }
+    await alert.present();
   }
 
-  async executarLimpezaDebug() {
-    alert('DEBUG: Função executarLimpezaDebug() chamada');
+  async mostrarErroSenha(mensagem: string) {
+    const toast = await this.toastCtrl.create({
+      message: `❌ ${mensagem}`,
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  }
 
+  async confirmarLimpezaFinal() {
+    const alert = await this.alertController.create({
+      header: '🔥 CONFIRMAÇÃO FINAL',
+      subHeader: 'ÚLTIMA CHANCE!',
+      message: `
+        <div class="confirmacao-final">
+          <p><strong>Você tem certeza absoluta de que deseja excluir TODOS OS DADOS?</strong></p>
+          <p><ion-text color="danger">Esta ação não pode ser desfeita!</ion-text></p>
+        </div>
+      `,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'CONFIRMAR EXCLUSÃO',
+          cssClass: 'danger',
+          handler: () => {
+            this.executarLimpeza();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async executarLimpeza() {
     try {
-      alert('DEBUG: Iniciando limpeza...');
+      // Mostrar loading
+      const loading = await this.alertController.create({
+        header: 'Executando Limpeza...',
+        message: 'Por favor, aguarde...',
+        backdropDismiss: false
+      });
+      await loading.present();
 
-      // Tentar executar limpeza com tratamento de transação
-      try {
-        await this.sqliteService.limparDadosGeral();
-        alert('DEBUG: Limpeza executada com sucesso!');
-      } catch (transactionError) {
-        alert(`DEBUG: Erro de transação detectado: ${transactionError}`);
+      // Lista das tabelas para limpar
+      const tabelas = ['pedidos', 'caixa', 'sangrias', 'estoque'];
 
-        // Tentar método alternativo se houver problema de transação
-        if (transactionError) {
-          alert('DEBUG: Tentando método alternativo de limpeza...');
-          await this.executarLimpezaAlternativa();
-        } else {
-          throw transactionError;
+      for (const tabela of tabelas) {
+        try {
+          const query = `DELETE FROM ${tabela}`;
+          await this.sqliteService.db?.query(query);
+        } catch (tabelaError) {
+          console.error(`Erro ao limpar tabela ${tabela}:`, tabelaError);
+          // Continua com as outras tabelas mesmo se uma falhar
         }
       }
 
+      await loading.dismiss();
+
       // Sucesso
+      const sucessoAlert = await this.alertController.create({
+        header: '✅ Limpeza Concluída',
+        message: 'Todas as tabelas foram limpas com sucesso!',
+        buttons: ['OK']
+      });
+      await sucessoAlert.present();
+
       const toast = await this.toastCtrl.create({
         message: '✅ Limpeza geral concluída com sucesso!',
         duration: 4000,
@@ -237,10 +304,7 @@ Confirmar exclusão?`);
       });
       await toast.present();
 
-      alert('✅ Limpeza concluída! Todas as tabelas foram limpas.');
-
     } catch (error) {
-      alert(`DEBUG: Erro ao executar limpeza: ${error}`);
       console.error('Erro na limpeza:', error);
 
       const toast = await this.toastCtrl.create({
@@ -252,49 +316,15 @@ Confirmar exclusão?`);
     }
   }
 
-  // Método alternativo para limpeza sem usar transações complexas
-  async executarLimpezaAlternativa() {
-    alert('DEBUG: Executando limpeza alternativa...');
-
-    try {
-      // Lista das tabelas para limpar
-      const tabelas = ['pedidos', 'caixa', 'sangrias', 'contas', 'estoque'];
-
-      for (const tabela of tabelas) {
-        alert(`DEBUG: Limpando tabela: ${tabela}`);
-
-        try {
-          // Executar DELETE diretamente para cada tabela
-          const query = `DELETE FROM ${tabela}`;
-          await this.sqliteService.db?.query(query);
-          alert(`DEBUG: Tabela ${tabela} limpa com sucesso`);
-        } catch (tabelaError) {
-          alert(`DEBUG: Erro ao limpar tabela ${tabela}: ${tabelaError}`);
-          // Continua com as outras tabelas mesmo se uma falhar
-        }
-      }
-
-      alert('DEBUG: Limpeza alternativa concluída');
-
-    } catch (error) {
-      alert(`DEBUG: Erro na limpeza alternativa: ${error}`);
-      throw error;
-    }
-  }
-
-  async senhaIncorreta() {
-    const toast = await this.toastCtrl.create({
-      message: '❌ Senha incorreta! Acesso negado.',
-      duration: 3000,
-      color: 'danger'
-    });
-    await toast.present();
-  }
-
   async compartilharBackup() {
     try {
       if (!this.caminhoBackup) {
-        alert('Erro: Caminho do backup não definido');
+        const toast = await this.toastCtrl.create({
+          message: 'Erro: Caminho do backup não definido',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         return;
       }
 
@@ -312,14 +342,17 @@ Confirmar exclusão?`);
       });
 
     } catch (error) {
-      alert(`Erro ao compartilhar: ${JSON.stringify(error)}`);
+      console.error('Erro ao compartilhar:', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Erro ao compartilhar backup.',
+        duration: 2000,
+        color: 'danger'
+      });
+      await toast.present();
     }
   }
 
   toggleDatePicker() {
     this.isDatePickerVisible = !this.isDatePickerVisible;
   }
-
-
-
 }
