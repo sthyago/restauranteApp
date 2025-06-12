@@ -24,7 +24,9 @@
   <ion-button expand="block" (click)="gerarRelatorio()">Gerar Relatório</ion-button>
 
   <ng-container *ngIf="relatorio">
+    <br>
     <h1 style="margin: 5px;">Visão por Período</h1>
+    <br>
     <ion-card>
       <ion-card-header><ion-card-title>Totais</ion-card-title></ion-card-header>
       <ion-card-content>
@@ -50,9 +52,12 @@
     <ion-card>
       <ion-card-header><ion-card-title>Por Tipo de Pedido</ion-card-title></ion-card-header>
       <ion-card-content>
-        <p><strong>Na mesa:</strong> <span appMoedaMask="display" [valor]="relatorio.porTipo.local"></span> </p>
-        <p><strong>Entregar:</strong> <span appMoedaMask="display" [valor]="relatorio.porTipo.entrega"></span></p>
-        <p><strong>Retirar:</strong> <span appMoedaMask="display" [valor]="relatorio.porForma.levar"></span></p>
+        <p><strong>Na mesa:</strong> <span class="total-value" appMoedaMask="display"
+            [valor]="relatorio.porTipo.local"></span> </p>
+        <p><strong>Entregar:</strong> <span class="total-value" appMoedaMask="display"
+            [valor]="relatorio.porTipo.entrega"></span></p>
+        <p><strong>Retirar:</strong> <span class="total-value" appMoedaMask="display"
+            [valor]="relatorio.porForma.levar"></span></p>
       </ion-card-content>
     </ion-card>
 

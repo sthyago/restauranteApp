@@ -8,3 +8,10 @@
 ion-badge {
     margin-left: 10px;
 }
+
+.status-badge {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    padding: 10px;
+}

@@ -42,7 +42,8 @@
       </ion-card-header>
       <ion-card-content>
         <p><strong>Valor inicial:</strong> R$ {{ caixa.valor_abertura | number:'1.2-2' }}</p>
-        <p><strong>Status:</strong>
+        <p class="status-badge">
+          <strong>Status:</strong>
           <ion-badge [color]="caixa.data_fechamento ? 'medium' : 'success'">
             {{ caixa.data_fechamento ? 'Fechado' : 'Aberto' }}
           </ion-badge>
