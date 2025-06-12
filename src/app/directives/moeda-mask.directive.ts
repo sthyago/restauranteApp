@@ -17,9 +17,9 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
     @Input('appMoedaMask') tipo: 'input' | 'display' | '' = '';
     @Input() valor: number | string | null = null;
 
-    private onChange: any = () => { };
-    private onTouched: any = () => { };
-    private isUpdating = false;
+    private onChange = (value: any) => { };
+    private onTouched = () => { };
+    private valorAtual: number | null = null;
 
     constructor(
         private el: ElementRef,
@@ -33,12 +33,6 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         // Formata exibições na inicialização
         if (this.tipo === 'display') {
             this.formatarExibicao();
-        } else {
-            // Para inputs, inicia com formato base se não houver valor
-            const valorAtual = this.el.nativeElement.value;
-            if (!valorAtual) {
-                this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
-            }
         }
     }
 
@@ -49,14 +43,15 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         }
     }
 
-    // Implementação do ControlValueAccessor
+    // ControlValueAccessor
     writeValue(value: any): void {
-        if (value !== null && value !== undefined && value > 0) {
-            const valorFormatado = this.formatarMoeda(this.converterParaNumero(value));
+        this.valorAtual = value;
+        if (value !== null && value !== undefined && value !== '') {
+            const numero = typeof value === 'number' ? value : this.converterParaNumero(value);
+            const valorFormatado = this.formatarMoeda(numero);
             this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
         } else {
-            // Para valores null, undefined ou 0, mostra formato padrão
-            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
+            this.renderer.setProperty(this.el.nativeElement, 'value', '');
         }
     }
 
@@ -68,7 +63,7 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         this.onTouched = fn;
     }
 
-    setDisabledState?(isDisabled: boolean): void {
+    setDisabledState(isDisabled: boolean): void {
         if (isDisabled) {
             this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'true');
         } else {
@@ -77,79 +72,77 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
     }
 
     @HostListener('input', ['$event'])
-    onInput(event: any) {
-        if (this.isUpdating) return;
-
-        const value = event.target.value;
+    onInput(event: any): void {
+        const inputValue = event.target.value;
 
         // Remove tudo exceto números
-        const apenasNumeros = value.replace(/[^\d]/g, '');
+        const numerosApenas = inputValue.replace(/[^\d]/g, '');
 
-        if (!apenasNumeros) {
-            // Se não há números, mostra formato padrão e envia null
-            this.isUpdating = true;
-            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
-            this.isUpdating = false;
+        if (numerosApenas === '' || numerosApenas === '0') {
+            this.valorAtual = null;
             this.onChange(null);
+            this.renderer.setProperty(this.el.nativeElement, 'value', '');
             return;
         }
 
-        // Converte para centavos
-        const centavos = parseInt(apenasNumeros) || 0;
+        // Converte centavos para reais
+        const centavos = parseInt(numerosApenas, 10);
         const reais = centavos / 100;
 
-        // Formata como moeda
+        // Formata e atualiza
         const valorFormatado = this.formatarMoeda(reais);
-
-        // Atualiza o campo sem criar loop
-        this.isUpdating = true;
         this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
-        this.isUpdating = false;
 
         // Posiciona cursor no final
-        const novoTamanho = valorFormatado.length;
-        this.el.nativeElement.setSelectionRange(novoTamanho, novoTamanho);
+        setTimeout(() => {
+            const tamanho = valorFormatado.length;
+            this.el.nativeElement.setSelectionRange(tamanho, tamanho);
+        });
 
-        // Notifica o ngModel - envia null se for zero, senão envia o valor
-        this.onChange(reais > 0 ? reais : null);
+        // Atualiza o modelo
+        this.valorAtual = reais;
+        this.onChange(reais);
     }
 
     @HostListener('focus', ['$event'])
-    onFocus(event: any) {
+    onFocus(event: any): void {
         this.onTouched();
 
-        // Se o campo estiver com valor zero, limpa para facilitar digitação
         const value = event.target.value;
-        if (value === 'R$ 0,00' || !value) {
+        if (!value || value === 'R$ 0,00') {
             this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ ');
-            // Posiciona cursor após o R$
             setTimeout(() => {
                 this.el.nativeElement.setSelectionRange(3, 3);
-            }, 0);
+            });
         }
     }
 
     @HostListener('blur', ['$event'])
-    onBlur(event: any) {
+    onBlur(event: any): void {
         const value = event.target.value;
 
-        // Se o campo estiver vazio ou só com "R$ ", volta para formato padrão
         if (!value || value === 'R$ ' || value === 'R$') {
-            const valorZero = this.formatarMoeda(0);
-            this.renderer.setProperty(this.el.nativeElement, 'value', valorZero);
+            this.renderer.setProperty(this.el.nativeElement, 'value', '');
+            this.valorAtual = null;
             this.onChange(null);
+        } else if (this.valorAtual !== null) {
+            // Reaplica a formatação
+            const valorFormatado = this.formatarMoeda(this.valorAtual);
+            this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
         }
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
-        // Permite apenas números, backspace, delete, tab, escape, enter, e setas
-        const allowedKeys = [
+    onKeyDown(event: KeyboardEvent): void {
+        // Teclas permitidas
+        const teclasPermitidas = [
             'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
-            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
+            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Home', 'End'
         ];
 
-        if (allowedKeys.includes(event.key)) {
+        // Permite teclas de controle
+        if (teclasPermitidas.includes(event.key)) {
             return;
         }
 
@@ -158,19 +151,18 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
             return;
         }
 
-        // Permite Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-        if (event.ctrlKey && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase())) {
+        // Permite Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
+        if (event.ctrlKey && ['a', 'c', 'v', 'x', 'z'].includes(event.key.toLowerCase())) {
             return;
         }
 
-        // Bloqueia outras teclas
+        // Bloqueia todo o resto
         event.preventDefault();
     }
 
-    private formatarExibicao() {
+    private formatarExibicao(): void {
         let valorNumerico = 0;
 
-        // Obtém o valor a ser formatado
         if (this.valor !== null && this.valor !== undefined) {
             valorNumerico = this.converterParaNumero(this.valor);
         } else {
@@ -178,7 +170,6 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
             valorNumerico = this.converterParaNumero(conteudo);
         }
 
-        // Formata como moeda brasileira
         const valorFormatado = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
@@ -186,19 +177,15 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
             maximumFractionDigits: 2
         }).format(valorNumerico);
 
-        // Atualiza o conteúdo do elemento
         this.renderer.setProperty(this.el.nativeElement, 'textContent', valorFormatado);
     }
 
     private converterParaNumero(valor: any): number {
-        // Se já for número, retorna diretamente
         if (typeof valor === 'number') {
             return valor;
         }
 
-        // Se for string, converte
         if (typeof valor === 'string') {
-            // Remove formatação existente se houver
             const valorLimpo = valor
                 .replace('R$', '')
                 .replace(/\./g, '')
@@ -207,7 +194,7 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
 
             return parseFloat(valorLimpo) || 0;
         }
-        // Para outros tipos, converte para número
+
         return Number(valor) || 0;
     }
 
