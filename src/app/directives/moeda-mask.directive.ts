@@ -34,8 +34,11 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         if (this.tipo === 'display') {
             this.formatarExibicao();
         } else {
-            // Para inputs, inicia com formato base
-            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
+            // Para inputs, inicia com formato base se não houver valor
+            const valorAtual = this.el.nativeElement.value;
+            if (!valorAtual) {
+                this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
+            }
         }
     }
 
@@ -48,9 +51,12 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
 
     // Implementação do ControlValueAccessor
     writeValue(value: any): void {
-        if (value !== null && value !== undefined) {
+        if (value !== null && value !== undefined && value > 0) {
             const valorFormatado = this.formatarMoeda(this.converterParaNumero(value));
             this.renderer.setProperty(this.el.nativeElement, 'value', valorFormatado);
+        } else {
+            // Para valores null, undefined ou 0, mostra formato padrão
+            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
         }
     }
 
@@ -62,15 +68,31 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         this.onTouched = fn;
     }
 
+    setDisabledState?(isDisabled: boolean): void {
+        if (isDisabled) {
+            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'true');
+        } else {
+            this.renderer.removeAttribute(this.el.nativeElement, 'disabled');
+        }
+    }
+
     @HostListener('input', ['$event'])
     onInput(event: any) {
         if (this.isUpdating) return;
 
         const value = event.target.value;
-        const cursorPosition = event.target.selectionStart;
 
         // Remove tudo exceto números
         const apenasNumeros = value.replace(/[^\d]/g, '');
+
+        if (!apenasNumeros) {
+            // Se não há números, mostra formato padrão e envia null
+            this.isUpdating = true;
+            this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ 0,00');
+            this.isUpdating = false;
+            this.onChange(null);
+            return;
+        }
 
         // Converte para centavos
         const centavos = parseInt(apenasNumeros) || 0;
@@ -88,15 +110,15 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
         const novoTamanho = valorFormatado.length;
         this.el.nativeElement.setSelectionRange(novoTamanho, novoTamanho);
 
-        // Notifica o ngModel
-        this.onChange(reais);
+        // Notifica o ngModel - envia null se for zero, senão envia o valor
+        this.onChange(reais > 0 ? reais : null);
     }
 
     @HostListener('focus', ['$event'])
     onFocus(event: any) {
         this.onTouched();
 
-        // Se o campo estiver vazio ou com valor zero, limpa para facilitar digitação
+        // Se o campo estiver com valor zero, limpa para facilitar digitação
         const value = event.target.value;
         if (value === 'R$ 0,00' || !value) {
             this.renderer.setProperty(this.el.nativeElement, 'value', 'R$ ');
@@ -111,17 +133,17 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
     onBlur(event: any) {
         const value = event.target.value;
 
-        // Se o campo estiver vazio ou só com "R$ ", define como zero
+        // Se o campo estiver vazio ou só com "R$ ", volta para formato padrão
         if (!value || value === 'R$ ' || value === 'R$') {
             const valorZero = this.formatarMoeda(0);
             this.renderer.setProperty(this.el.nativeElement, 'value', valorZero);
-            this.onChange(0);
+            this.onChange(null);
         }
     }
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
-        // Permite apenas números, backspace, delete, tab, escape, enter, e ponto decimal
+        // Permite apenas números, backspace, delete, tab, escape, enter, e setas
         const allowedKeys = [
             'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
             'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
@@ -133,6 +155,11 @@ export class MoedaMaskDirective implements OnInit, OnChanges, ControlValueAccess
 
         // Permite números
         if (event.key >= '0' && event.key <= '9') {
+            return;
+        }
+
+        // Permite Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        if (event.ctrlKey && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase())) {
             return;
         }
 

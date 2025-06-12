@@ -24,7 +24,7 @@
     <ion-textarea [(ngModel)]="observacoes"></ion-textarea>
   </ion-item>
 
-  <ion-button expand="block" color="success" [disabled]="!valorAbertura || caixaAbertoHoje" (click)="abrirCaixa()">
+  <ion-button expand="block" color="success" [disabled]="!podeAbrirCaixa" (click)="abrirCaixa()">
     Abrir Caixa
   </ion-button>
 </ion-content>

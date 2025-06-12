@@ -60,5 +60,9 @@ export class AberturaCaixaPage implements OnInit {
     await toast.present();
     this.caixaAbertoHoje = true;
   }
+
+  get podeAbrirCaixa(): boolean {
+    return this.valorAbertura !== null && this.valorAbertura !== undefined && this.valorAbertura > 0 && !this.caixaAbertoHoje;
+  }
 }
 
