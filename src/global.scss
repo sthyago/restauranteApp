@@ -59,3 +59,14 @@ ion-content {
     font-size: 1.4em !important;
     font-weight: bold !important;
 }
+
+/* Força todos os toasts para o centro */
+ion-toast {
+    --position: fixed !important;
+    --top: 50% !important;
+    --left: 50% !important;
+    --transform: translate(-50%, -50%) !important;
+    --bottom: auto !important;
+    --max-width: 90%;
+    --border-radius: 12px;
+}
