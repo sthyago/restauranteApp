@@ -361,6 +361,8 @@ export class SqliteService {
         ]);
     }
     async darBaixaEstoque(produtoId: number, quantidade: number): Promise<boolean> {
+        if (produtoId == 49) return true; //marmita infinita
+
         if (!this.db) return false;
 
         try {
